@@ -4,13 +4,47 @@ End-to-end destination wedding planning prototype: a **landing page** + **conver
 
 > **Status:** Personal prototype for design review. Not affiliated with the brands referenced.
 
-## Live site
+## Live site (after you push + enable Pages)
 
-After GitHub Pages is enabled on `main`:
+Once the repo exists at **`nicolettetran/aiw-wedding-prototype`** and GitHub Pages is wired up:
 
-- Landing page: `https://nicolettetran.github.io/aiw-wedding-prototype/`
-- Planner chatbot: `https://nicolettetran.github.io/aiw-wedding-prototype/aiw-prototype/plan.html`
-- Design system showcase: `https://nicolettetran.github.io/aiw-wedding-prototype/rcd-design-system/`
+- **Landing:** `https://nicolettetran.github.io/aiw-wedding-prototype/`
+- **Planner:** `https://nicolettetran.github.io/aiw-wedding-prototype/aiw-prototype/plan.html`
+- **Design system:** `https://nicolettetran.github.io/aiw-wedding-prototype/rcd-design-system/`
+
+### One-time: push this folder to GitHub
+
+This repo lives at **`~/aiw-wedding-prototype`** (outside OneDrive — safe for git).
+
+The GitHub CLI was installed to **`~/bin/gh`** (no Homebrew / no sudo). Add it to your shell once:
+
+```bash
+echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+```
+
+Then authenticate and create the public repo + push:
+
+```bash
+cd ~/aiw-wedding-prototype
+gh auth login          # choose GitHub.com → HTTPS → Login with a web browser
+gh repo create aiw-wedding-prototype --public --source=. --remote=origin --push
+```
+
+If `gh repo create` says the remote already exists, use instead:
+
+```bash
+git remote add origin https://github.com/nicolettetran/aiw-wedding-prototype.git
+git push -u origin main
+```
+
+### One-time: turn on GitHub Pages (GitHub Actions)
+
+1. Open the repo on GitHub → **Settings** → **Pages**
+2. Under **Build and deployment** → **Source**, pick **GitHub Actions** (not "Deploy from a branch")
+3. Go to **Actions** tab — the **Deploy GitHub Pages** workflow should run automatically on `main`
+4. When it finishes green, the site URL appears at the top of the workflow run summary
+
+> **Alternative:** If you prefer the classic branch deploy instead of Actions, set Source to **Deploy from a branch** → Branch **`main`** → folder **`/` (root)**. You can then delete `.github/workflows/deploy-pages.yml` — but the Actions route is already configured for you.
 
 ## Repo layout
 
