@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plan with All In Weddings</title>
+  <link rel="icon" href="../rcd-design-system/assets/logos/aiw-circle-black.png" />
+
+  <link rel="stylesheet" href="../rcd-design-system/tokens.css" />
+  <link rel="stylesheet" href="./_theme.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      --color-ink:            #2A2A28;
+      --color-ink-soft:       #5A554D;
+      --color-ink-muted:      #948D80;
+      --color-paper:          #FFFFFF;
+      --color-canvas:         #F5EFE6;
+      --color-cream:          #E8DDD0;
+      --color-cream-soft:     #F0E8DC;
+      --color-copper:         #B4814D;
+      --color-copper-hover:   #9A6E40;
+      --color-copper-active:  #805B33;
+      --color-copper-soft:    #E8D5BD;
+      --color-disabled-bg:    #E5E0D8;
+      --color-disabled-fg:    #B8B0A6;
+      --color-border-strong:  #2A2A28;
+      --color-border-default: #C9C2B6;
+      --color-border-subtle:  #E5E0D8;
+      --font-sans:            "Poppins","Inter",system-ui,sans-serif;
+      --font-title:           "Isabella Grand","Cormorant Garamond",serif;
+      --font-title-plain:     "Isabella Grand Plain","Cormorant Garamond",serif;
+      --radius-pill:          9999px;
+    }
+    @layer components {
+      .btn {
+        @apply inline-flex items-center justify-center gap-2 font-sans font-semibold leading-none whitespace-nowrap
+               rounded-pill cursor-pointer transition-colors duration-200
+               focus:outline-none focus-visible:ring-[3px] focus-visible:ring-offset-2
+               focus-visible:ring-offset-canvas focus-visible:ring-ink
+               disabled:bg-disabled-bg disabled:text-disabled-fg disabled:cursor-not-allowed;
+      }
+      .btn--default { @apply h-11 px-6 text-base; }
+      .btn--small   { @apply h-9  px-[18px] text-sm; }
+      .btn--primary   { @apply bg-ink text-paper hover:bg-ink-soft; }
+      .btn--secondary { @apply bg-copper text-paper hover:bg-copper-hover; }
+      .btn--ghost     { @apply bg-transparent text-ink border border-ink hover:bg-cream; }
+      .btn--invert    { @apply bg-paper text-ink hover:bg-cream; }
+
+      .chip {
+        @apply inline-flex items-center gap-2 px-4 h-9 rounded-pill text-sm font-semibold
+               bg-paper border border-border-default text-ink
+               hover:bg-cream hover:border-ink cursor-pointer transition-colors;
+      }
+      .chip[data-selected="true"] { @apply bg-ink text-paper border-ink; }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-canvas text-ink font-sans antialiased">
+
+  <div id="nav-mount"></div>
+
+  <main class="max-w-7xl mx-auto px-4 lg:px-8 py-6">
+    <div class="grid lg:grid-cols-12 gap-6 h-[calc(100vh-7rem)] min-h-[640px]">
+
+      <!-- ============ CHAT THREAD ============ -->
+      <section class="lg:col-span-5 flex flex-col bg-paper rounded-2xl border border-border-subtle overflow-hidden">
+        <header class="px-6 py-4 border-b border-border-subtle flex items-center gap-3">
+          <div class="relative">
+            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-paper"></span>
+            <div class="w-10 h-10 rounded-full bg-ink text-paper grid place-items-center font-title text-xl">A</div>
+          </div>
+          <div>
+            <p class="font-semibold leading-none">Ana — your AI planner</p>
+            <p class="text-xs text-ink-muted mt-1">All In Weddings · concierge online</p>
+          </div>
+          <button id="reset-btn" class="ml-auto text-xs text-ink-muted hover:text-copper">Reset</button>
+        </header>
+
+        <div id="chat" class="flex-1 overflow-y-auto thin-scroll p-6 space-y-4"></div>
+
+        <div id="chips" class="px-6 pb-3 flex flex-wrap gap-2 border-t border-border-subtle pt-3"></div>
+
+        <form id="input-form" class="flex items-center gap-2 p-3 border-t border-border-subtle bg-canvas">
+          <input id="text-input" type="text" placeholder="Type anything — or tap a suggestion above"
+                 class="flex-1 h-11 px-4 rounded-pill bg-paper border border-border-default text-ink
+                        focus:outline-none focus:border-ink focus:ring-[3px] focus:ring-ink/20" />
+          <button type="submit" class="btn btn--primary btn--default">Send</button>
+        </form>
+      </section>
+
+      <!-- ============ CANVAS ============ -->
+      <section class="lg:col-span-7 relative flex flex-col">
+        <div id="canvas" class="flex-1 overflow-y-auto thin-scroll bg-paper rounded-2xl border border-border-subtle p-6"></div>
+
+        <!-- Floating package summary -->
+        <aside id="package-summary" class="hidden absolute bottom-6 right-6 w-80 max-w-[90%] glass rounded-2xl p-5 shadow-lg">
+          <div class="flex items-center justify-between mb-3">
+            <p class="font-semibold text-sm">Your wedding so far</p>
+            <button id="package-toggle" class="text-xs text-ink-muted hover:text-copper">Hide</button>
+          </div>
+          <div id="package-body" class="text-sm space-y-1.5"></div>
+          <div class="border-t border-border-subtle mt-3 pt-3 flex items-baseline justify-between">
+            <span class="text-xs uppercase tracking-widest text-ink-muted">Estimated total</span>
+            <span id="package-total" class="font-title text-3xl text-ink">$0</span>
+          </div>
+        </aside>
+      </section>
+    </div>
+  </main>
+
+  <!-- ===== Deposit modal ===== -->
+  <div id="deposit-modal" class="hidden fixed inset-0 z-50 bg-ink/70 backdrop-blur-sm grid place-items-center p-4">
+    <div class="bg-paper rounded-3xl max-w-lg w-full p-8 shadow-2xl">
+      <div class="flex items-center gap-3 mb-4">
+        <img src="../rcd-design-system/assets/logos/aiw-circle-black.png" class="w-9 h-9 object-contain" alt="" />
+        <p class="text-xs uppercase tracking-[0.22em] text-ink-muted">Save the date</p>
+      </div>
+      <h2 class="font-title text-5xl leading-tight tracking-tight">Officially yours.</h2>
+      <p class="text-ink-soft mt-3">A fully-refundable $500 deposit blocks your weekend across the venue, vendors, and room block.
+        Concierge takes it from here.</p>
+
+      <div class="mt-6 bg-canvas rounded-2xl p-5 space-y-2 text-sm" id="deposit-summary"></div>
+
+      <div class="mt-6 grid gap-3">
+        <label class="text-xs uppercase tracking-widest text-ink-muted">Card on file</label>
+        <input class="h-11 px-4 rounded-pill bg-paper border border-border-default focus:outline-none focus:border-ink"
+               placeholder="•••• •••• •••• 4242" disabled value="•••• •••• •••• 4242"/>
+        <p class="text-xs text-ink-muted">Prototype — no real charge will be made.</p>
+      </div>
+
+      <div class="mt-7 flex gap-3 justify-end">
+        <button id="deposit-cancel" class="btn btn--ghost btn--default">Not yet</button>
+        <button id="deposit-confirm" class="btn btn--secondary btn--default">Place $500 hold</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Logic ===== -->
+  <script type="module">
+    import {
+      HOTELS, BRANDS, SPACES, VIBES, BRIDES, VENDOR_CATEGORIES, VENDORS,
+      byId, spacesOf, bridesOf, vendorsOf
+    } from "./_data.js";
+    import {
+      renderNav, paletteGradient, venueMockSVG, $h, usd, compact,
+      saveState, loadState, clearState, timeUntil, brandOfHotel
+    } from "./_app.js";
+
+    document.getElementById("nav-mount").innerHTML = renderNav({ active: "plan" });
+
+    /* ============ STATE ============ */
+    const pkg = {
+      date: null, region: null, guests: null, vibeId: null,
+      hotelId: null, spaceId: null,
+      vendors: {},   // { hairmakeup: id, florist: id, dj: id, band: id }
+      roomBlock: { rooms: 25, nights: 3 },
+      designServices: 4500,
+      heldUntil: null,
+      deposited: false,
+    };
+
+    const ROOM_PER_NIGHT = 320;
+
+    function priceBreakdown() {
+      const space   = pkg.spaceId  ? byId(SPACES, pkg.spaceId).fromUSD : 0;
+      const vendors = Object.values(pkg.vendors)
+        .map(id => byId(VENDORS, id)?.fromUSD || 0).reduce((a,b)=>a+b, 0);
+      const rooms   = pkg.roomBlock.rooms * pkg.roomBlock.nights * ROOM_PER_NIGHT;
+      const design  = pkg.spaceId ? pkg.designServices : 0;
+      return { space, vendors, rooms, design, total: space + vendors + rooms + design };
+    }
+
+    /* ============ CHAT PRIMITIVES ============ */
+    const chatEl  = document.getElementById("chat");
+    const chipsEl = document.getElementById("chips");
+    const formEl  = document.getElementById("input-form");
+    const inputEl = document.getElementById("text-input");
+    const canvasEl = document.getElementById("canvas");
+
+    function scroll() { chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: "smooth" }); }
+
+    function bubble(side, content) {
+      const el = $h(`<div class="flex chat-fade-in ${side==="user"?"justify-end":"justify-start"}">
+                       <div class="chat-bubble chat-bubble--${side}">${content}</div>
+                     </div>`);
+      chatEl.appendChild(el); scroll(); return el;
+    }
+
+    function userSay(text) { bubble("user", escapeHtml(text)); }
+
+    function botTyping() {
+      const el = $h(`<div class="flex chat-fade-in justify-start">
+                       <div class="chat-bubble chat-bubble--bot chat-typing"><span></span><span></span><span></span></div>
+                     </div>`);
+      chatEl.appendChild(el); scroll(); return el;
+    }
+
+    async function bot(text, { delay = 600 } = {}) {
+      const t = botTyping();
+      await new Promise(r => setTimeout(r, delay));
+      t.remove();
+      return bubble("bot", text);
+    }
+
+    function setChips(items, onPick) {
+      chipsEl.innerHTML = "";
+      items.forEach(it => {
+        const c = $h(`<button class="chip" type="button">${it.label}</button>`);
+        c.addEventListener("click", () => { setChips([], null); onPick(it); });
+        chipsEl.appendChild(c);
+      });
+    }
+    function clearChips() { chipsEl.innerHTML = ""; }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[<>&"']/g, ch => ({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;","'":"&#39;"}[ch]));
+    }
+
+    /* ============ INPUT HANDLER (free text) ============ */
+    let textHandler = null;
+    formEl.addEventListener("submit", e => {
+      e.preventDefault();
+      const v = inputEl.value.trim();
+      if (!v) return;
+      inputEl.value = "";
+      userSay(v);
+      if (textHandler) textHandler(v);
+    });
+
+    /* ============ CANVAS ============ */
+    function setCanvas(html) {
+      canvasEl.innerHTML = html;
+      canvasEl.scrollTop = 0;
+    }
+
+    function emptyCanvas(headline = "We'll build your wedding here.", sub = "Pick a suggestion in the chat to begin.") {
+      setCanvas(`
+        <div class="h-full grid place-items-center text-center p-10">
+          <div>
+            <div class="mx-auto w-20 h-20 rounded-full grid place-items-center mb-5"
+                 style="background:${paletteGradient(["#2A2A28","#B4814D","#E8DDD0"])}">
+              <svg viewBox="0 0 24 24" class="w-9 h-9 text-paper" fill="none">
+                <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <p class="text-xs uppercase tracking-[0.22em] text-ink-muted mb-2">Your canvas</p>
+            <h2 class="font-title text-4xl">${headline}</h2>
+            <p class="text-ink-soft mt-3 max-w-md mx-auto">${sub}</p>
+          </div>
+        </div>
+      `);
+    }
+
+    /* ============ PACKAGE PANEL ============ */
+    const pkgEl     = document.getElementById("package-summary");
+    const pkgBodyEl = document.getElementById("package-body");
+    const pkgTotalEl= document.getElementById("package-total");
+    document.getElementById("package-toggle").addEventListener("click", () => {
+      pkgEl.classList.toggle("opacity-0");
+      pkgEl.classList.toggle("translate-y-4");
+    });
+
+    function refreshPackage() {
+      const has = pkg.spaceId || Object.keys(pkg.vendors).length;
+      pkgEl.classList.toggle("hidden", !has);
+      const hotel = pkg.hotelId ? byId(HOTELS, pkg.hotelId) : null;
+      const space = pkg.spaceId ? byId(SPACES, pkg.spaceId) : null;
+      const vibe  = pkg.vibeId  ? byId(VIBES,  pkg.vibeId)  : null;
+      const b = priceBreakdown();
+      const lines = [];
+      if (hotel) lines.push(`<div class="flex justify-between"><span class="text-ink-soft">Venue</span><span class="font-semibold">${hotel.name.replace(/^(Hard Rock|Nobu|UNICO|AVA)[^]*?\b/, m=>m)}</span></div>`);
+      if (space) lines.push(`<div class="flex justify-between"><span class="text-ink-soft">Space</span><span>${space.name}</span></div>`);
+      if (vibe)  lines.push(`<div class="flex justify-between"><span class="text-ink-soft">Vibe</span><span>${vibe.label}</span></div>`);
+      if (pkg.guests) lines.push(`<div class="flex justify-between"><span class="text-ink-soft">Guests</span><span>${pkg.guests}</span></div>`);
+      Object.entries(pkg.vendors).forEach(([cat,id]) => {
+        const v = byId(VENDORS, id);
+        const c = VENDOR_CATEGORIES.find(c=>c.id===cat);
+        lines.push(`<div class="flex justify-between"><span class="text-ink-soft">${c.label}</span><span>${v.name}</span></div>`);
+      });
+      pkgBodyEl.innerHTML = lines.join("");
+      pkgTotalEl.textContent = usd(b.total);
+    }
+
+    /* ============ FLOW ============ */
+    async function start() {
+      chatEl.innerHTML = "";
+      clearChips();
+      emptyCanvas();
+      pkg.date = pkg.region = pkg.guests = pkg.vibeId = null;
+      pkg.hotelId = pkg.spaceId = null;
+      pkg.vendors = {};
+      pkg.heldUntil = null;
+      pkg.deposited = false;
+      refreshPackage();
+
+      await bot(`Hi! I'm <strong>Ana</strong> — your All In Weddings planner. We'll go from "where do we even start" to "save the date" together.`);
+      await bot(`First — when are you imagining? You can type a month or year, or pick below.`);
+      setChips(
+        [
+          { label: "Spring 2026 (Mar–May)" },
+          { label: "Summer 2026 (Jun–Aug)" },
+          { label: "Fall 2026 (Sep–Nov)" },
+          { label: "Winter 2026/27 (Dec–Feb)" },
+          { label: "I'm flexible" },
+        ],
+        async pick => {
+          userSay(pick.label);
+          pkg.date = pick.label;
+          await askRegion();
+        }
+      );
+      textHandler = async v => { pkg.date = v; await askRegion(); };
+    }
+
+    async function askRegion() {
+      await bot(`Lovely — <em>${escapeHtml(pkg.date)}</em>. Which coast pulls you?`);
+      setChips(
+        [
+          { label: "Caribbean (DR + Yucatán)", value: "caribbean" },
+          { label: "Pacific (Cabos, Vallarta, Nayarit)", value: "pacific" },
+          { label: "Stateside (Miami, Orlando)", value: "atlantic" },
+          { label: "Show me everything", value: null },
+        ],
+        async pick => {
+          userSay(pick.label);
+          pkg.region = pick.value;
+          await askGuests();
+        }
+      );
+      textHandler = async v => {
+        const lower = v.toLowerCase();
+        pkg.region = lower.includes("pacific")||lower.includes("cabo")||lower.includes("vallarta")?"pacific"
+                   : lower.includes("miami")||lower.includes("orlando")||lower.includes("state")?"atlantic"
+                   : lower.includes("carib")||lower.includes("punta")||lower.includes("yuc")?"caribbean"
+                   : null;
+        await askGuests();
+      };
+    }
+
+    async function askGuests() {
+      await bot(`How many guests are we planning around?`);
+      setChips(
+        [{label:"Intimate · 50"},{label:"Mid · 100"},{label:"Big · 180"},{label:"Big big · 250+"}],
+        async pick => {
+          userSay(pick.label);
+          pkg.guests = parseInt(pick.label.match(/\d+/)?.[0]) || 100;
+          await askVibe();
+        }
+      );
+      textHandler = async v => {
+        pkg.guests = parseInt(v) || 100;
+        await askVibe();
+      };
+    }
+
+    async function askVibe() {
+      await bot(`Last quick one before I show you spaces — what does the day <em>feel</em> like?`);
+      setChips(
+        VIBES.map(v => ({ label: v.label, value: v.id })),
+        async pick => {
+          userSay(pick.label);
+          pkg.vibeId = pick.value;
+          await suggestVenues();
+        }
+      );
+      textHandler = async v => {
+        // Best-effort match free-text to a vibe
+        const lower = v.toLowerCase();
+        const match = VIBES.find(x => x.tags.some(t => lower.includes(t.toLowerCase())) || lower.includes(x.label.toLowerCase()));
+        pkg.vibeId = match?.id || "soft-romantic";
+        await suggestVenues();
+      };
+    }
+
+    async function suggestVenues() {
+      await bot(`Pulling matches…`);
+      const filtered = HOTELS.filter(h => !pkg.region || h.region === pkg.region);
+      const ranked = filtered.sort((a,b) => (a.upcoming?1:0) - (b.upcoming?1:0));
+      await new Promise(r=>setTimeout(r, 400));
+      await bot(`I found <strong>${ranked.length}</strong> properties that fit. Take a look — tap one to see its spaces.`);
+      renderVenuesCanvas(ranked);
+      clearChips();
+      textHandler = async v => {
+        const lower = v.toLowerCase();
+        const hit = ranked.find(h => lower.includes(h.city.toLowerCase()) || lower.includes(h.name.toLowerCase().split(" ")[0]));
+        if (hit) { await pickVenue(hit.id); }
+        else await bot(`Hmm, I didn't catch a property in that — try tapping a card on the right.`);
+      };
+    }
+
+    function renderVenuesCanvas(hotels) {
+      setCanvas(`
+        <div>
+          <div class="mb-5">
+            <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 1 · Browse venues</p>
+            <h2 class="font-title text-4xl">Properties matching ${pkg.region ? pkg.region : "all destinations"}</h2>
+            <p class="text-ink-soft text-sm mt-1">${hotels.length} matches · sorted by availability</p>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-4" id="venue-grid"></div>
+        </div>
+      `);
+      const grid = document.getElementById("venue-grid");
+      hotels.forEach(h => {
+        const brand = brandOfHotel(h.id);
+        const card = $h(`
+          <article class="rounded-xl overflow-hidden border border-border-subtle bg-paper hover:shadow-lg transition cursor-pointer"
+                   data-id="${h.id}">
+            <div class="h-32 relative" style="background:${paletteGradient(h.palette)}">
+              <div class="absolute inset-0 aiw-grain"></div>
+              <span class="absolute top-2 left-2 text-[10px] uppercase tracking-widest text-paper/85 px-2 py-1 rounded-pill bg-ink/40">${brand.name}</span>
+              ${h.upcoming?`<span class="absolute top-2 right-2 text-[10px] uppercase tracking-widest text-ink px-2 py-1 rounded-pill bg-copper-soft">Opening soon</span>`:""}
+            </div>
+            <div class="p-4">
+              <p class="font-semibold leading-snug">${h.name}</p>
+              <p class="text-xs text-ink-muted mt-0.5">${h.city}, ${h.country}</p>
+              <p class="text-sm text-ink-soft mt-2 line-clamp-2">${h.blurb}</p>
+              <p class="mt-3 text-xs text-copper font-semibold">From ${usd(h.fromUSD)} · all-in</p>
+            </div>
+          </article>`);
+        card.addEventListener("click", () => pickVenue(h.id));
+        grid.appendChild(card);
+      });
+    }
+
+    async function pickVenue(hotelId) {
+      const h = byId(HOTELS, hotelId);
+      pkg.hotelId = hotelId;
+      pkg.spaceId = null;
+      refreshPackage();
+      userSay(`I like ${h.name}.`);
+      await bot(`${h.name} — beautiful pick. ${h.blurb}`);
+      await bot(`Here are the spaces inside it. Pick one for the ceremony or reception.`);
+      renderSpacesCanvas(h);
+      clearChips();
+    }
+
+    function renderSpacesCanvas(hotel) {
+      const spaces = spacesOf(hotel.id);
+      setCanvas(`
+        <div>
+          <button id="back-venues" class="text-xs text-ink-muted hover:text-copper mb-3">← Back to venues</button>
+          <div class="rounded-2xl overflow-hidden mb-6 relative" style="aspect-ratio:21/9; background:${paletteGradient(hotel.palette)}">
+            <div class="absolute inset-0 aiw-grain"></div>
+            <div class="absolute inset-0 p-6 flex flex-col justify-end">
+              <p class="text-xs uppercase tracking-[0.22em] text-paper/80">${brandOfHotel(hotel.id).name}</p>
+              <h2 class="font-title text-5xl text-paper leading-tight">${hotel.name}</h2>
+            </div>
+          </div>
+          <div class="mb-4">
+            <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 2 · Pick a space</p>
+            <p class="text-ink-soft text-sm">${spaces.length} spaces available · capacity · feel</p>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-4" id="space-grid"></div>
+        </div>
+      `);
+      document.getElementById("back-venues").addEventListener("click", suggestVenues);
+      const grid = document.getElementById("space-grid");
+      spaces.forEach(s => {
+        const card = $h(`
+          <article class="rounded-xl overflow-hidden border border-border-subtle bg-paper hover:shadow-lg transition cursor-pointer">
+            <div class="h-28">${venueMockSVG({ palette: hotel.palette, label: s.type, aspect: "16/7" })}</div>
+            <div class="p-4">
+              <div class="flex items-baseline justify-between gap-2">
+                <p class="font-semibold">${s.name}</p>
+                <span class="text-xs text-ink-muted">${s.type}</span>
+              </div>
+              <p class="text-xs text-ink-muted mt-1">Up to ${s.capacity} guests · From ${usd(s.fromUSD)}</p>
+              <div class="flex flex-wrap gap-1 mt-3">
+                ${s.vibe.map(v=>`<span class="text-[11px] uppercase tracking-wider text-ink-soft px-2 py-1 bg-cream rounded-pill">${v}</span>`).join("")}
+              </div>
+            </div>
+          </article>`);
+        card.addEventListener("click", () => pickSpace(s.id));
+        grid.appendChild(card);
+      });
+    }
+
+    async function pickSpace(spaceId) {
+      const s = byId(SPACES, spaceId);
+      pkg.spaceId = spaceId;
+      refreshPackage();
+      userSay(`Let's go with ${s.name}.`);
+      await bot(`Great choice. <strong>${s.name}</strong> seats up to ${s.capacity} and runs from ${usd(s.fromUSD)}.`);
+      await bot(`Now the fun part — <em>tell me what your wedding feels like</em>. A few words, a mood, a movie. I'll re-imagine the space.`);
+      setChips(VIBES.map(v => ({ label: v.label, value: v.id })), async pick => {
+        userSay(pick.label);
+        pkg.vibeId = pick.value;
+        await renderVibeImagined();
+      });
+      textHandler = async v => {
+        const lower = v.toLowerCase();
+        const match = VIBES.find(x => x.tags.some(t => lower.includes(t.toLowerCase())) || lower.includes(x.label.toLowerCase()))
+                   || VIBES[Math.floor(Math.random()*VIBES.length)];
+        pkg.vibeId = match.id;
+        await renderVibeImagined(v);
+      };
+      renderSpaceDetailCanvas(s);
+    }
+
+    function renderSpaceDetailCanvas(s) {
+      const hotel = byId(HOTELS, s.hotelId);
+      setCanvas(`
+        <div>
+          <button id="back-spaces" class="text-xs text-ink-muted hover:text-copper mb-3">← Back to spaces</button>
+          <div class="rounded-2xl overflow-hidden mb-6">
+            ${venueMockSVG({ palette: hotel.palette, label: s.name, aspect: "16/9" })}
+          </div>
+          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">${hotel.name}</p>
+          <h2 class="font-title text-5xl tracking-tight">${s.name}</h2>
+          <p class="text-ink-soft mt-2">${s.type} · up to ${s.capacity} guests · From ${usd(s.fromUSD)}</p>
+          <div class="flex flex-wrap gap-2 mt-4">
+            ${s.vibe.map(v=>`<span class="text-xs uppercase tracking-wider text-ink-soft px-3 py-1 bg-cream rounded-pill">${v}</span>`).join("")}
+          </div>
+          <p class="mt-6 text-ink-soft">Pick a vibe in the chat — I'll re-color this space to match what you have in mind.</p>
+        </div>
+      `);
+      document.getElementById("back-spaces").addEventListener("click", () => renderSpacesCanvas(hotel));
+    }
+
+    async function renderVibeImagined(freeText) {
+      const s = byId(SPACES, pkg.spaceId);
+      const hotel = byId(HOTELS, s.hotelId);
+      const vibe = byId(VIBES, pkg.vibeId);
+      refreshPackage();
+      await bot(`Imagining <strong>${s.name}</strong> in a <em>${vibe.label.toLowerCase()}</em> palette…`, { delay: 800 });
+      await new Promise(r => setTimeout(r, 500));
+
+      setCanvas(`
+        <div>
+          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 3 · Imagined design</p>
+          <h2 class="font-title text-4xl mb-4">${s.name}, in <em class="text-copper">${vibe.label.toLowerCase()}</em></h2>
+
+          <div class="grid sm:grid-cols-2 gap-4 mb-6">
+            <div>
+              <p class="text-[11px] uppercase tracking-widest text-ink-muted mb-2">Original</p>
+              <div class="rounded-2xl overflow-hidden">${venueMockSVG({ palette: hotel.palette, label: s.name, aspect: "4/3" })}</div>
+            </div>
+            <div>
+              <p class="text-[11px] uppercase tracking-widest text-ink-muted mb-2">Re-imagined</p>
+              <div class="rounded-2xl overflow-hidden ring-2 ring-copper">${venueMockSVG({ palette: hotel.palette, vibePalette: vibe.hex, label: vibe.label, aspect: "4/3" })}</div>
+            </div>
+          </div>
+
+          <div class="bg-canvas rounded-2xl p-5 mb-4">
+            <p class="text-[11px] uppercase tracking-widest text-ink-muted mb-2">Mood palette</p>
+            <div class="flex gap-2">
+              ${vibe.hex.map(h => `<div class="flex-1 h-12 rounded-lg" style="background:${h}" title="${h}"></div>`).join("")}
+            </div>
+            <p class="text-sm text-ink-soft mt-3">Tags · ${vibe.tags.map(t=>`<span class="text-ink">${t}</span>`).join(" · ")}</p>
+          </div>
+
+          <div class="flex gap-2">
+            <button id="see-brides" class="btn btn--primary btn--default">See real brides who picked this →</button>
+            <button id="try-another" class="btn btn--ghost btn--default">Try another vibe</button>
+          </div>
+        </div>
+      `);
+      document.getElementById("try-another").addEventListener("click", () => {
+        renderSpaceDetailCanvas(s);
+        bot(`Pick another vibe in the chat.`);
+        setChips(VIBES.map(v => ({ label: v.label, value: v.id })), async pick => {
+          userSay(pick.label);
+          pkg.vibeId = pick.value;
+          await renderVibeImagined();
+        });
+      });
+      document.getElementById("see-brides").addEventListener("click", showSocialProof);
+
+      clearChips();
+      setChips([
+        { label: "See social proof", action: "social" },
+        { label: "Skip to vendors",  action: "vendors" },
+      ], async pick => {
+        userSay(pick.label);
+        if (pick.action === "social") showSocialProof();
+        else showVendors();
+      });
+    }
+
+    async function showSocialProof() {
+      const s = byId(SPACES, pkg.spaceId);
+      const hotel = byId(HOTELS, s.hotelId);
+      const localBrides = bridesOf(hotel.id);
+      // If none for this exact hotel, show all
+      const list = localBrides.length ? localBrides : BRIDES.slice(0, 4);
+      await bot(`Here are couples who said yes to spaces in this brand. ${localBrides.length?`<strong>${localBrides.length}</strong> wed at ${hotel.name}.`:`No verified weddings at this exact property yet — here's a cross-section of recent ones.`}`);
+      setCanvas(`
+        <div>
+          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 4 · Social proof</p>
+          <h2 class="font-title text-4xl mb-1">Real brides, real bookings.</h2>
+          <p class="text-ink-soft mb-6">Verified by All In Weddings concierge.</p>
+          <div class="grid sm:grid-cols-2 gap-4" id="bride-grid"></div>
+          <div class="mt-8 flex justify-end">
+            <button id="to-vendors" class="btn btn--primary btn--default">Build your vendor team →</button>
+          </div>
+        </div>
+      `);
+      const grid = document.getElementById("bride-grid");
+      list.forEach(b => {
+        const h = byId(HOTELS, b.hotelId);
+        grid.appendChild($h(`
+          <article class="rounded-2xl overflow-hidden border border-border-subtle bg-paper">
+            <div class="h-36 relative" style="background:${paletteGradient(h.palette)}">
+              <div class="absolute inset-0 aiw-grain"></div>
+              <div class="absolute bottom-2 left-3 right-3">
+                <p class="text-[11px] uppercase tracking-widest text-paper/80">${b.season} · ${b.guests} guests</p>
+                <p class="font-title text-2xl text-paper">${b.name}</p>
+              </div>
+            </div>
+            <div class="p-4">
+              <p class="text-sm leading-relaxed">"${b.quote}"</p>
+              <p class="text-xs text-ink-muted mt-2">${h.name}</p>
+            </div>
+          </article>`));
+      });
+      document.getElementById("to-vendors").addEventListener("click", showVendors);
+      clearChips();
+      setChips([{ label: "Show vendors", action: "vendors" }], async () => {
+        userSay("Show me vendors.");
+        showVendors();
+      });
+    }
+
+    /* ============ VENDORS ============ */
+    async function showVendors() {
+      await bot(`Verified vendor marketplace — every one of these has worked at your venue's brand and is approved by All In Weddings concierge.`);
+      renderVendorsCanvas("hairmakeup");
+      clearChips();
+      setChips([
+        { label: "Done picking vendors → package", action: "package" },
+      ], async () => {
+        userSay("Build my package.");
+        showPackage();
+      });
+    }
+
+    function renderVendorsCanvas(activeCat) {
+      const cat = VENDOR_CATEGORIES.find(c => c.id === activeCat);
+      const list = vendorsOf(activeCat);
+      setCanvas(`
+        <div>
+          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 5 · Verified vendors</p>
+          <h2 class="font-title text-4xl mb-4">Build your team.</h2>
+
+          <div class="flex gap-2 mb-6 flex-wrap" id="vendor-tabs">
+            ${VENDOR_CATEGORIES.map(c => `
+              <button class="chip" data-cat="${c.id}" data-selected="${c.id===activeCat}">
+                <span class="text-copper">${c.icon}</span> ${c.label}
+                ${pkg.vendors[c.id] ? '<span class="ml-1 w-1.5 h-1.5 rounded-full bg-emerald-500"></span>':""}
+              </button>`).join("")}
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-4" id="vendor-grid"></div>
+        </div>
+      `);
+      document.querySelectorAll("#vendor-tabs [data-cat]").forEach(b => {
+        b.addEventListener("click", () => renderVendorsCanvas(b.dataset.cat));
+      });
+      const grid = document.getElementById("vendor-grid");
+      list.forEach(v => {
+        const selected = pkg.vendors[v.cat] === v.id;
+        const card = $h(`
+          <article class="rounded-2xl border ${selected?"border-ink ring-2 ring-ink":"border-border-subtle"} bg-paper p-5 flex flex-col">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-full grid place-items-center font-title text-xl text-paper"
+                   style="background:${paletteGradient(["#2A2A28","#B4814D","#E8DDD0"])}">${v.name[0]}</div>
+              <div>
+                <p class="font-semibold leading-tight">${v.name}</p>
+                <p class="text-xs text-ink-muted">${v.based}</p>
+              </div>
+              <p class="ml-auto text-sm font-semibold flex items-center gap-1">
+                <span class="text-copper">★</span> ${v.rating}
+                <span class="text-ink-muted text-xs font-normal">(${v.reviews})</span>
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-1 mb-3">
+              ${v.tags.map(t => `<span class="text-[11px] uppercase tracking-wider text-ink-soft px-2 py-1 bg-cream rounded-pill">${t}</span>`).join("")}
+            </div>
+            <p class="text-sm text-copper font-semibold mt-auto">From ${usd(v.fromUSD)}</p>
+            <button data-id="${v.id}" data-cat="${v.cat}"
+                    class="btn ${selected?"btn--ghost":"btn--primary"} btn--small mt-3 w-full">
+              ${selected?"Selected":"Add to package"}
+            </button>
+          </article>`);
+        card.querySelector("button").addEventListener("click", () => {
+          pkg.vendors[v.cat] = v.id;
+          refreshPackage();
+          userSay(`Adding ${v.name}.`);
+          bot(`${v.name} added — ${v.based}, ${v.rating}★. ${remainingVendorsHint()}`);
+          renderVendorsCanvas(v.cat);
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    function remainingVendorsHint() {
+      const missing = VENDOR_CATEGORIES.filter(c => !pkg.vendors[c.id]);
+      if (!missing.length) return `That's all four categories — tap "Build my package" when you're ready.`;
+      return `Still to pick: ${missing.map(m => m.label).join(", ")}.`;
+    }
+
+    /* ============ PACKAGE / HOLD / DEPOSIT ============ */
+    async function showPackage() {
+      const s = byId(SPACES, pkg.spaceId);
+      const hotel = byId(HOTELS, s.hotelId);
+      const vibe  = byId(VIBES,  pkg.vibeId);
+      const b = priceBreakdown();
+
+      await bot(`Here's the full picture. Numbers are pre-tax, all-in for the wedding weekend.`);
+      setCanvas(`
+        <div>
+          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 6 · Your package</p>
+          <h2 class="font-title text-5xl tracking-tight mb-1">${pkg.guests || ""} guests, ${pkg.date || "a date soon"}.</h2>
+          <p class="text-ink-soft mb-6">${hotel.name} · ${s.name} ${vibe?`· <em>${vibe.label}</em>`:""}</p>
+
+          <div class="rounded-2xl overflow-hidden border border-border-subtle bg-paper">
+            <div class="h-44 relative" style="background:${paletteGradient(hotel.palette)}">
+              <div class="absolute inset-0 aiw-grain"></div>
+              <div class="absolute inset-0 p-5 flex flex-col justify-between">
+                <p class="text-xs uppercase tracking-[0.22em] text-paper/80">Your wedding weekend</p>
+                <p class="font-title text-3xl text-paper">${hotel.city}, ${hotel.country}</p>
+              </div>
+            </div>
+
+            <div class="p-6 space-y-3">
+              <div class="flex justify-between"><span class="text-ink-soft">${s.name} (${s.type})</span><span class="font-semibold">${usd(b.space)}</span></div>
+              ${Object.entries(pkg.vendors).map(([cat,id]) => {
+                const v = byId(VENDORS, id); const c = VENDOR_CATEGORIES.find(c=>c.id===cat);
+                return `<div class="flex justify-between"><span class="text-ink-soft">${c.label} — ${v.name}</span><span>${usd(v.fromUSD)}</span></div>`;
+              }).join("")}
+              <div class="flex justify-between">
+                <span class="text-ink-soft">Room block · ${pkg.roomBlock.rooms} rooms × ${pkg.roomBlock.nights} nights</span>
+                <span>${usd(b.rooms)}</span>
+              </div>
+              <div class="flex justify-between"><span class="text-ink-soft">AIW design services</span><span>${usd(b.design)}</span></div>
+              <div class="border-t border-border-subtle pt-4 flex items-baseline justify-between">
+                <span class="text-sm uppercase tracking-widest text-ink-muted">Estimated total</span>
+                <span class="font-title text-5xl">${usd(b.total)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 flex gap-3 flex-wrap">
+            <button id="hold-btn" class="btn btn--secondary btn--default">Hold this for 24 hours →</button>
+            <button id="edit-btn" class="btn btn--ghost btn--default">Edit vendors</button>
+          </div>
+          <p class="text-xs text-ink-muted mt-3">No card required to hold. We'll save your full configuration for 24 hours.</p>
+        </div>
+      `);
+      document.getElementById("hold-btn").addEventListener("click", holdState);
+      document.getElementById("edit-btn").addEventListener("click", showVendors);
+      clearChips();
+      setChips([
+        { label: "Hold for 24h", action: "hold" },
+        { label: "$500 — save the date now", action: "deposit" },
+      ], async pick => {
+        userSay(pick.label);
+        if (pick.action === "hold") holdState();
+        else openDepositModal();
+      });
+    }
+
+    async function holdState() {
+      const saved = saveState({ ...pkg });
+      pkg.heldUntil = saved.expiresAt;
+      const lookers = 100 + Math.floor(Math.random()*43);
+      await bot(`Held. Your full package is locked at this price for the next 24 hours — no card needed.`);
+      await bot(`Heads up: <strong>${lookers} other couples</strong> are looking at this date right now.`);
+      renderHoldCanvas(lookers);
+    }
+
+    function renderHoldCanvas(lookers) {
+      const s = byId(SPACES, pkg.spaceId);
+      const hotel = byId(HOTELS, s.hotelId);
+      setCanvas(`
+        <div>
+          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 7 · 24-hour hold</p>
+          <h2 class="font-title text-5xl tracking-tight mb-2">Your weekend, on ice.</h2>
+          <p class="text-ink-soft mb-6">${hotel.name} · ${s.name}</p>
+
+          <div class="grid md:grid-cols-2 gap-4 mb-6">
+            <div class="rounded-2xl bg-ink text-paper p-6 relative overflow-hidden">
+              <div class="absolute inset-0 opacity-30" style="background:${paletteGradient(hotel.palette)}"></div>
+              <div class="relative">
+                <p class="text-xs uppercase tracking-[0.22em] text-paper/70">Hold expires in</p>
+                <p id="countdown" class="font-title text-6xl tracking-tight mt-1">23:59:59</p>
+                <p class="text-paper/70 text-sm mt-3">After this, pricing resets to live rates and your dates re-open to other couples.</p>
+              </div>
+            </div>
+
+            <div class="rounded-2xl bg-paper border border-border-subtle p-6">
+              <div class="flex items-center gap-3 mb-3">
+                <span class="pulse-dot"></span>
+                <p class="text-xs uppercase tracking-[0.18em] text-ink-muted">Demand on this date</p>
+              </div>
+              <p class="font-title text-6xl">${lookers}</p>
+              <p class="text-sm text-ink-soft mt-1">other couples looking at this exact weekend right now.</p>
+              <p class="text-xs text-ink-muted mt-4 leading-relaxed">
+                Locking with a $500 refundable deposit guarantees your dates, pricing, and vendor team — and removes this date from circulation.
+              </p>
+            </div>
+          </div>
+
+          <button id="open-deposit" class="btn btn--secondary btn--default w-full">
+            Save the date · place $500 refundable deposit
+          </button>
+        </div>
+      `);
+      document.getElementById("open-deposit").addEventListener("click", openDepositModal);
+      tickCountdown();
+    }
+
+    function tickCountdown() {
+      const el = document.getElementById("countdown");
+      if (!el || !pkg.heldUntil) return;
+      const t = timeUntil(pkg.heldUntil);
+      el.textContent = t.pretty;
+      if (t.h===0 && t.m===0 && t.s===0) return;
+      requestAnimationFrame(() => setTimeout(tickCountdown, 1000));
+    }
+
+    function openDepositModal() {
+      const modal = document.getElementById("deposit-modal");
+      const summary = document.getElementById("deposit-summary");
+      const s = byId(SPACES, pkg.spaceId);
+      const hotel = byId(HOTELS, s.hotelId);
+      const b = priceBreakdown();
+      summary.innerHTML = `
+        <div class="flex justify-between"><span class="text-ink-soft">${hotel.name}</span><span>${hotel.city}</span></div>
+        <div class="flex justify-between"><span class="text-ink-soft">${s.name}</span><span>${pkg.guests||""} guests</span></div>
+        <div class="flex justify-between"><span class="text-ink-soft">Date</span><span>${pkg.date||"—"}</span></div>
+        <div class="flex justify-between border-t border-border-subtle pt-2 mt-2"><span class="text-ink-soft">Estimated total</span><span class="font-semibold">${usd(b.total)}</span></div>
+        <div class="flex justify-between"><span class="text-ink-soft">Today's hold</span><span class="font-semibold text-copper">$500</span></div>
+      `;
+      modal.classList.remove("hidden");
+    }
+
+    document.getElementById("deposit-cancel").addEventListener("click",
+      () => document.getElementById("deposit-modal").classList.add("hidden"));
+    document.getElementById("deposit-confirm").addEventListener("click", confirmDeposit);
+
+    async function confirmDeposit() {
+      document.getElementById("deposit-modal").classList.add("hidden");
+      pkg.deposited = true;
+      saveState({ ...pkg });
+      await bot(`<strong>It's official.</strong> $500 placed. Your concierge will reach out within 24 hours to introduce themselves and schedule your kickoff call.`);
+      const s = byId(SPACES, pkg.spaceId);
+      const hotel = byId(HOTELS, s.hotelId);
+      setCanvas(`
+        <div class="h-full grid place-items-center text-center p-10">
+          <div>
+            <div class="w-20 h-20 mx-auto rounded-full bg-copper grid place-items-center mb-6">
+              <svg viewBox="0 0 24 24" class="w-10 h-10 text-paper" fill="none">
+                <path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <p class="text-xs uppercase tracking-[0.22em] text-ink-muted mb-2">Step 8 · Saved</p>
+            <h2 class="font-title text-6xl tracking-tight italic">Forever &amp; always.</h2>
+            <p class="text-ink-soft mt-3 max-w-md mx-auto">
+              ${hotel.name} · ${s.name} · ${pkg.date} · ${pkg.guests} guests.
+              We'll be in touch within 24 hours.
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3 justify-center">
+              <a href="./index.html" class="btn btn--ghost btn--default">Back to home</a>
+              <button id="reset-flow" class="btn btn--primary btn--default">Plan another wedding</button>
+            </div>
+          </div>
+        </div>
+      `);
+      document.getElementById("reset-flow").addEventListener("click", () => { clearState(); start(); });
+    }
+
+    /* ============ RESET ============ */
+    document.getElementById("reset-btn").addEventListener("click", () => { clearState(); start(); });
+
+    /* ============ KICKOFF ============ */
+    const restored = loadState();
+    if (restored?.state?.spaceId) {
+      Object.assign(pkg, restored.state, { heldUntil: restored.expiresAt });
+      bubble("bot", `Welcome back. I held your wedding for the past ${Math.round((Date.now()-restored.savedAt)/60000)} minutes — let's keep going.`);
+      refreshPackage();
+      if (pkg.deposited) confirmDeposit();
+      else if (pkg.heldUntil) renderHoldCanvas(100 + Math.floor(Math.random()*43));
+      else showPackage();
+    } else {
+      start();
+    }
+  </script>
+</body>
+</html>
