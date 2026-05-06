@@ -218,6 +218,104 @@ export const VIBES = [
     hex: ["#1F2A2A","#5A8A8B","#B4814D","#E8DDD0"] },
 ];
 
+/**
+ * Featured properties — image carousel on the landing “family of brands” strip.
+ * Stock photos (Unsplash) for prototype only; replace with brand-approved assets in production.
+ */
+export const FAMILY_BRAND_CAROUSEL = [
+  {
+    id: "hr-cancun",
+    hotelId: "hr-cancun",
+    brand: "Hard Rock Hotels (All-Inclusive)",
+    property: "Cancún",
+    image:
+      "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1600&q=80",
+    imageAlt: "Turquoise ocean and palm-lined beach at a tropical resort",
+  },
+  {
+    id: "hr-riviera-maya",
+    hotelId: "hr-riviera-maya",
+    brand: "Hard Rock Hotels (All-Inclusive)",
+    property: "Riviera Maya",
+    image:
+      "https://images.unsplash.com/photo-1473181488820-c0a0c1000686?auto=format&fit=crop&w=1600&q=80",
+    imageAlt: "Palm trees and calm sea along a white sand beach",
+  },
+  {
+    id: "hr-vallarta",
+    hotelId: "hr-vallarta",
+    brand: "Hard Rock Hotels (All-Inclusive)",
+    property: "Puerto Vallarta",
+    image:
+      "https://images.unsplash.com/photo-1437719410842-8595cd883c13?auto=format&fit=crop&w=1600&q=80",
+    imageAlt: "Coastal cliffs and blue water at sunset",
+  },
+  {
+    id: "hr-los-cabos",
+    hotelId: "hr-los-cabos",
+    brand: "Hard Rock Hotels (All-Inclusive)",
+    property: "Los Cabos",
+    image:
+      "https://images.unsplash.com/photo-1519046905714-bb461046afae?auto=format&fit=crop&w=1600&q=80",
+    imageAlt: "Desert coastline meeting the sea",
+  },
+  {
+    id: "hr-punta-cana",
+    hotelId: "hr-punta-cana",
+    brand: "Hard Rock Hotels (All-Inclusive)",
+    property: "Punta Cana",
+    image:
+      "https://images.unsplash.com/photo-1559827260-dc66ccc52d2a?auto=format&fit=crop&w=1600&q=80",
+    imageAlt: "Aerial view of turquoise Caribbean water and beach",
+  },
+  {
+    id: "nobu-los-cabos",
+    hotelId: "nobu-los-cabos",
+    brand: "Nobu Hotel",
+    property: "Los Cabos",
+    image:
+      "https://images.unsplash.com/photo-1566073771259-2a04524b2bcb?auto=format&fit=crop&w=1600&q=80",
+    imageAlt: "Minimalist resort pool overlooking the ocean",
+  },
+  {
+    id: "nobu-miami",
+    hotelId: "nobu-miami",
+    brand: "Nobu Hotel",
+    property: "Miami Beach",
+    image:
+      "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=1600&q=80",
+    imageAlt: "Modern high-rise hotels along a bright coastline",
+  },
+  {
+    id: "unico-riviera-maya",
+    hotelId: "unico-riviera-maya",
+    brand: "UNICO 20°87° Hotel",
+    property: "Riviera Maya",
+    badge: "Adults-only",
+    image:
+      "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1600&q=80",
+    imageAlt: "Luxury infinity pool at a boutique resort",
+  },
+  {
+    id: "eden-roc-miami",
+    hotelId: null,
+    brand: "Eden Roc",
+    property: "Miami Beach",
+    image:
+      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1600&q=80",
+    imageAlt: "Palm trees and classic resort architecture by the ocean",
+  },
+  {
+    id: "ava-cancun",
+    hotelId: "ava-cancun",
+    brand: "AVA Resort",
+    property: "Cancún",
+    image:
+      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1600&q=80",
+    imageAlt: "Resort pool deck with ocean view",
+  },
+];
+
 /* Lookup helpers */
 export const byId    = (list, id) => list.find(x => x.id === id);
 export const spacesOf= (hotelId)  => SPACES.filter(s => s.hotelId === hotelId);

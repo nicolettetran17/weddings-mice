@@ -2,229 +2,413 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>All In Weddings — Destination weddings, designed with you</title>
   <meta name="description" content="Hard Rock, UNICO 20°87°, Nobu, and AVA — fourteen destination wedding properties, one AI-powered planner." />
 
   <link rel="icon" href="../rcd-design-system/assets/logos/aiw-circle-black.png" />
 
-  <!-- Design system tokens (fonts + colors + radii + shadows) -->
   <link rel="stylesheet" href="../rcd-design-system/tokens.css" />
   <link rel="stylesheet" href="./_theme.css" />
-
-  <!-- Tailwind v4 in the browser -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
   <style type="text/tailwindcss">
-    /* ---- Map design-system tokens into Tailwind ---- */
+    /* Figma RCD · node 125:16028 "Home" — responsive layout + new brand */
     @theme {
       --color-ink:            #2A2A28;
       --color-ink-soft:       #5A554D;
-      --color-ink-muted:      #948D80;
+      --color-ink-muted:      #6B7568;
       --color-paper:          #FFFFFF;
-      --color-canvas:         #F5EFE6;
-      --color-cream:          #E8DDD0;
-      --color-cream-soft:     #F0E8DC;
-      --color-copper:         #B4814D;
-      --color-copper-hover:   #9A6E40;
-      --color-copper-active:  #805B33;
-      --color-copper-soft:    #E8D5BD;
-      --color-disabled-bg:    #E5E0D8;
-      --color-disabled-fg:    #B8B0A6;
-      --color-border-strong:  #2A2A28;
-      --color-border-default: #C9C2B6;
-      --color-border-subtle:  #E5E0D8;
+      --color-sage-bg:        #D8E4D6;
+      --color-sage-bg-deep:   #C4D4C1;
+      --color-sage-nav:       #F6FAF5;
+      --color-sage-border:    #A8B9A3;
+      --color-sage-ink:       #2F382E;
+      --color-sage-ink-soft:  #4A5548;
+      --color-sage-deep:      #3D4A3A;
+      --color-canvas:         #EDF3EC;
+      --color-cream:          #E8F0E6;
+      --color-cream-soft:     #F2F7F1;
+      --color-copper:         #8B6A42;
+      --color-copper-hover:   #735632;
+      --color-copper-active:  #5C4528;
+      --color-copper-soft:    #D4C4A8;
+      --color-disabled-bg:    #D5DED3;
+      --color-disabled-fg:    #8A9387;
+      --color-border-strong:  #3D4A3A;
+      --color-border-default: #C5D1C2;
+      --color-border-subtle:  #B8C9B4;
       --font-sans:            "Poppins","Inter",system-ui,sans-serif;
       --font-title:           "Isabella Grand","Cormorant Garamond",serif;
       --font-title-plain:     "Isabella Grand Plain","Cormorant Garamond",serif;
       --radius-pill:          9999px;
     }
 
-    /* ---- Button recipe (mirrors design system) ---- */
     @layer components {
+      /* ---- Button (matches rcd-design-system/index.html) ---- */
       .btn {
-        @apply inline-flex items-center justify-center gap-2 font-sans font-semibold leading-none whitespace-nowrap
-               rounded-pill cursor-pointer transition-colors duration-200
+        @apply inline-flex items-center justify-center gap-2
+               font-sans font-semibold leading-none whitespace-nowrap
+               rounded-pill select-none cursor-pointer
+               transition-colors duration-200
                focus:outline-none focus-visible:ring-[3px] focus-visible:ring-offset-2
                focus-visible:ring-offset-canvas focus-visible:ring-ink;
       }
       .btn--default { @apply h-11 px-6 text-base; }
       .btn--small   { @apply h-9  px-[18px] text-sm; }
-      .btn--primary   { @apply bg-ink text-paper hover:bg-ink-soft; }
-      .btn--secondary { @apply bg-copper text-paper hover:bg-copper-hover; }
-      .btn--ghost     { @apply bg-transparent text-ink border border-ink hover:bg-cream; }
-      .btn--invert    { @apply bg-paper text-ink hover:bg-cream; }
+      .btn--icon    { @apply h-11 w-11 p-0 text-base; }
+      .btn--icon-sm { @apply h-9  w-9  p-0 text-sm; }
+      .btn--primary {
+        @apply bg-ink text-paper hover:bg-ink-soft active:bg-black;
+      }
+      .btn--secondary {
+        @apply bg-copper text-paper hover:bg-copper-hover active:bg-copper-active;
+      }
+      .btn--ghost {
+        @apply border border-ink bg-transparent text-ink
+               hover:bg-cream active:bg-cream-soft;
+      }
+      .btn--invert {
+        @apply bg-paper text-ink hover:bg-cream;
+      }
+      .btn--block {
+        @apply w-full max-w-none justify-center;
+      }
+      .btn[disabled],
+      .btn.is-disabled {
+        @apply pointer-events-none;
+      }
+      .btn--primary[disabled], .btn--primary.is-disabled,
+      .btn--secondary[disabled], .btn--secondary.is-disabled {
+        @apply bg-disabled-bg text-disabled-fg;
+      }
+      .btn--ghost[disabled], .btn--ghost.is-disabled {
+        @apply border-border-subtle bg-transparent text-disabled-fg;
+      }
+
+      /* ---- Form: field + input (matches design system) ---- */
+      .field {
+        @apply flex w-full min-h-11 items-center justify-between gap-3 rounded-pill
+               border border-border-default bg-paper px-4 py-2 font-sans text-ink shadow-sm
+               text-left transition-[border-color,box-shadow,colors] duration-200
+               hover:border-ink/20;
+      }
+      a.field {
+        @apply cursor-pointer no-underline;
+      }
+      button.field {
+        @apply cursor-pointer appearance-none bg-paper text-left;
+      }
+      a.field:focus-visible,
+      button.field:focus-visible {
+        @apply outline-none ring-[3px] ring-offset-2 ring-ink ring-offset-paper;
+      }
+      .field__value {
+        @apply min-w-0 flex-1 truncate font-title text-2xl leading-none text-ink;
+      }
+      .field__trail {
+        @apply shrink-0 text-ink-muted;
+      }
+      .input {
+        @apply box-border h-11 min-h-11 w-full rounded-pill border border-border-default bg-paper
+               px-4 font-sans text-base font-normal leading-normal text-ink shadow-sm
+               placeholder:text-ink-muted
+               transition-[border-color,box-shadow] duration-200
+               hover:border-ink/15
+               focus:border-ink focus:outline-none focus:ring-[3px] focus:ring-ink/25
+               focus:ring-offset-2 focus:ring-offset-canvas;
+      }
+      .input:disabled {
+        @apply cursor-not-allowed border-border-subtle bg-disabled-bg text-disabled-fg;
+      }
+    }
+
+    .landing-sage-bg {
+      background-color: var(--color-sage-bg);
+      background-image:
+        radial-gradient(900px 600px at 10% 0%, rgba(255,255,255,0.5), transparent 55%),
+        linear-gradient(180deg, var(--color-sage-bg) 0%, var(--color-sage-bg-deep) 100%);
+    }
+    #hero-mock-bg :where(svg) {
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    /* Family brands — property image carousel */
+    .property-carousel-track {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(74, 85, 72, 0.45) transparent;
+    }
+    .property-carousel-track::-webkit-scrollbar {
+      height: 8px;
+    }
+    .property-carousel-track::-webkit-scrollbar-thumb {
+      background: rgba(74, 85, 72, 0.35);
+      border-radius: 9999px;
     }
   </style>
 </head>
 
-<body class="min-h-screen bg-canvas text-ink font-sans antialiased">
+<body class="min-h-dvh landing-sage-bg text-sage-ink font-sans antialiased pb-[env(safe-area-inset-bottom)]">
 
-  <div id="nav-mount"></div>
+  <!-- Site header — full width; content capped at max-w-7xl -->
+  <header class="sticky top-0 z-50 border-b border-sage-border/70 bg-sage-nav/95 backdrop-blur-md supports-[backdrop-filter]:bg-sage-nav/80">
+    <div class="mx-auto flex h-20 max-w-7xl items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:px-10">
+      <button type="button" class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sage-deep hover:bg-sage-bg active:bg-sage-bg md:hidden" aria-label="Open menu">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden="true">
+          <path d="M0 1h18M0 6h18M0 11h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <a href="./index.html" class="min-w-0 shrink pt-0.5" aria-label="All In Weddings — home">
+        <img src="../rcd-design-system/assets/logos/aiw-horizontal-green.png" alt="All In Weddings" class="h-7 w-auto max-w-[160px] object-contain object-left sm:h-8 sm:max-w-[200px]"/>
+      </a>
+      <span class="sr-only">ALL IN WEDDINGS</span>
+      <nav class="ml-auto hidden items-center gap-6 text-sm font-semibold text-sage-ink-soft md:flex" aria-label="Primary">
+        <a href="#portfolio" class="transition hover:text-copper">Portfolio</a>
+        <a href="#how" class="transition hover:text-copper">How it works</a>
+        <a href="#stories" class="transition hover:text-copper">Stories</a>
+        <a href="./plan.html" class="btn btn--primary btn--small">Start planning</a>
+      </nav>
+      <button type="button" class="ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-sage-border/80 bg-gradient-to-br from-cream to-sage-bg shadow-inner ring-1 ring-paper/60 md:ml-0" aria-label="Account">
+        <span class="font-title text-lg leading-none text-sage-deep">N</span>
+      </button>
+    </div>
+  </header>
 
-  <!-- ============ HERO ============ -->
-  <section class="relative aiw-hero-bg aiw-grain text-paper overflow-hidden">
-    <div class="relative max-w-7xl mx-auto px-6 lg:px-10 pt-24 pb-32 grid lg:grid-cols-12 gap-10 items-center">
-      <div class="lg:col-span-7">
-        <p class="text-xs uppercase tracking-[0.28em] text-copper-soft mb-6">
-          One Planner · 14 Destinations · 4 Iconic Brands
+  <!-- Hero + form — responsive: stacked on small screens, two columns on lg+ -->
+  <section class="relative bg-sage-bg">
+    <div class="mx-auto max-w-7xl px-4 pb-12 pt-2 sm:px-6 sm:pb-14 lg:px-10 lg:pb-20 lg:pt-6">
+      <div class="lg:grid lg:grid-cols-12 lg:items-stretch lg:gap-10 xl:gap-14">
+        <!-- Hero visual -->
+        <div class="relative -mx-4 min-h-[min(52vh,440px)] overflow-hidden sm:mx-0 lg:col-span-7 lg:min-h-[min(56vh,560px)] lg:rounded-3xl">
+          <div class="absolute inset-0 min-h-full w-full scale-[1.06]" id="hero-mock-bg" aria-hidden="true"></div>
+          <div class="absolute inset-0 bg-gradient-to-b from-sage-deep/30 via-transparent to-sage-deep/70"></div>
+          <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-sage-deep/85 to-transparent"></div>
+          <h1 class="absolute bottom-[min(26%,6.5rem)] left-5 right-5 font-title text-[2.35rem] leading-[1.08] tracking-tight text-paper drop-shadow-md sm:left-8 sm:right-8 sm:text-4xl lg:bottom-auto lg:left-10 lg:right-auto lg:top-1/2 lg:max-w-lg lg:-translate-y-1/2 lg:text-5xl xl:text-6xl">
+            Imagine yourself here
+          </h1>
+        </div>
+
+        <!-- Input card -->
+        <div class="relative z-10 -mt-7 sm:-mt-8 lg:col-span-5 lg:mt-0 lg:flex lg:items-center">
+          <div class="w-full rounded-t-[28px] bg-paper px-6 pb-9 pt-9 shadow-[0_-16px_48px_rgba(47,56,46,0.14)] ring-1 ring-sage-border/40 sm:rounded-b-2xl sm:shadow-lg lg:rounded-2xl lg:shadow-xl lg:ring-sage-border/50">
+            <p class="mb-5 text-center font-sans text-[11px] font-medium uppercase tracking-[0.28em] text-sage-ink-soft lg:text-left">
+              i want to get married…
+            </p>
+            <div class="mx-auto max-w-lg space-y-3 sm:space-y-4 lg:mx-0">
+              <a href="./plan.html" class="field group">
+                <span class="field__value">Summer 2027</span>
+                <span class="field__trail" aria-hidden="true">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none">
+                    <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </span>
+              </a>
+              <a href="./plan.html" class="field group">
+                <span class="field__value">in Cancun</span>
+                <span class="field__trail w-5" aria-hidden="true"></span>
+              </a>
+              <a href="./plan.html" class="btn btn--primary btn--default btn--block mt-5 text-xs uppercase tracking-[0.2em] sm:mt-6">Build my wedding</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Below the fold -->
+  <div class="mx-auto w-full max-w-7xl px-4 pb-16 pt-10 sm:px-6 lg:px-10">
+
+    <section id="family-brands" class="border-y border-sage-border bg-paper/95 py-8 backdrop-blur-sm sm:rounded-2xl sm:border" aria-labelledby="family-brands-heading">
+      <div class="grid grid-cols-1 items-center gap-6 px-4 sm:grid-cols-2 sm:px-6 md:grid-cols-4 md:gap-8">
+        <p id="family-brands-heading" class="text-xs uppercase tracking-[0.18em] text-sage-ink-soft">
+          Plan across our family of brands
         </p>
-        <h1 class="font-title text-[64px] sm:text-[88px] leading-[1.02] tracking-tight">
-          Your wedding,<br/>
-          <em class="not-italic text-copper-soft">all in one place.</em>
-        </h1>
-        <p class="text-lg text-paper/80 max-w-xl mt-6 leading-relaxed">
-          Browse Hard Rock, UNICO 20°87°, Nobu, and AVA properties side by side.
-          Tell our planner what your wedding feels like — we'll show you the spaces,
-          the vendors, and the price, in minutes.
+        <img src="../rcd-design-system/assets/logos/aiw-horizontal-green.png" class="mx-auto hidden h-7 object-contain opacity-90 sm:block" alt="" />
+        <p class="font-title text-center text-2xl italic text-sage-deep sm:col-span-1 md:text-left">+ 13 destination properties</p>
+        <a href="#portfolio" class="text-center text-sm text-sage-ink-soft hover:text-copper sm:text-right">See all →</a>
+      </div>
+
+      <div class="mt-8 border-t border-sage-border/50 pt-8 sm:mt-10 sm:pt-10">
+        <div class="mb-4 flex flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <p class="text-sm font-semibold text-sage-deep sm:text-base">Featured destinations</p>
+          <div class="flex items-center gap-2" role="group" aria-label="Carousel controls">
+            <button type="button" id="property-carousel-prev" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-sage-border bg-paper text-sage-deep shadow-sm transition hover:border-sage-deep/30 hover:bg-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-deep focus-visible:ring-offset-2" aria-label="Previous properties">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="button" id="property-carousel-next" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-sage-border bg-paper text-sage-deep shadow-sm transition hover:border-sage-deep/30 hover:bg-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-deep focus-visible:ring-offset-2" aria-label="Next properties">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div
+          id="property-carousel-track"
+          class="property-carousel-track flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-2 sm:gap-5 sm:px-6"
+          tabindex="0"
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Property image gallery"
+        ></div>
+      </div>
+    </section>
+
+    <section id="portfolio" class="border-t border-sage-border/60 py-14 sm:py-20">
+      <div class="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="mb-2 text-xs uppercase tracking-[0.2em] text-sage-ink-soft">The portfolio</p>
+          <h2 class="max-w-2xl font-title text-3xl tracking-tight text-sage-deep sm:text-4xl lg:text-5xl">Four brands, one planner, fourteen unforgettable backdrops.</h2>
+        </div>
+        <p class="max-w-md text-sm text-sage-ink-soft sm:text-base">
+          Every property is fully verified, fully bookable, and fully integrated into our planner.
+          Pick a vibe, not a brand — we'll find the place that already speaks it.
         </p>
-        <div class="flex flex-wrap items-center gap-3 mt-8">
-          <a href="./plan.html" class="btn btn--secondary btn--default">
-            Start planning
-            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none">
-              <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
-          <a href="#portfolio" class="btn btn--invert btn--default">Explore properties</a>
+      </div>
+      <div id="brand-grid" class="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2"></div>
+    </section>
+
+    <section id="how" class="rounded-2xl border border-sage-border bg-paper/95 py-14 backdrop-blur-sm sm:py-20">
+      <div class="px-4 sm:px-8">
+        <p class="mb-2 text-xs uppercase tracking-[0.2em] text-sage-ink-soft">How it works</p>
+        <h2 class="mb-10 max-w-3xl font-title text-3xl tracking-tight text-sage-deep sm:mb-14 sm:text-4xl lg:text-5xl">From "where do we even start" to "save the date" in one conversation.</h2>
+
+        <ol class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+          <li class="rounded-2xl border border-border-subtle bg-canvas p-6 sm:p-7">
+            <p class="mb-3 font-mono text-xs font-semibold tracking-widest text-copper">STEP 01</p>
+            <h3 class="mb-3 font-title text-2xl sm:text-3xl">Browse venues + spaces</h3>
+            <p class="text-sm text-ink-soft sm:text-base">Filter 14 properties by region, capacity, and feel. Tap into spaces — beach, cenote, ballroom, rooftop, garden.</p>
+          </li>
+          <li class="rounded-2xl border border-border-subtle bg-canvas p-6 sm:p-7">
+            <p class="mb-3 font-mono text-xs font-semibold tracking-widest text-copper">STEP 02</p>
+            <h3 class="mb-3 font-title text-2xl sm:text-3xl">Imagine your design</h3>
+            <p class="text-sm text-ink-soft sm:text-base">Tell our AI what your wedding feels like in your own words. We'll re-color the space to match — and surface real brides who pulled it off.</p>
+          </li>
+          <li class="rounded-2xl border border-border-subtle bg-canvas p-6 sm:p-7">
+            <p class="mb-3 font-mono text-xs font-semibold tracking-widest text-copper">STEP 03</p>
+            <h3 class="mb-3 font-title text-2xl sm:text-3xl">Verified vendor marketplace</h3>
+            <p class="text-sm text-ink-soft sm:text-base">Hair & makeup, florists, DJs, bands — every one already approved at your venue. Real reviews, real lead times, real pricing.</p>
+          </li>
+          <li class="rounded-2xl border border-border-subtle bg-canvas p-6 sm:p-7">
+            <p class="mb-3 font-mono text-xs font-semibold tracking-widest text-copper">STEP 04</p>
+            <h3 class="mb-3 font-title text-2xl sm:text-3xl">Assemble the package</h3>
+            <p class="text-sm text-ink-soft sm:text-base">Spaces, vendors, room block, design services — bundled into one transparent total. No PDF email chains.</p>
+          </li>
+          <li class="rounded-2xl border border-border-subtle bg-canvas p-6 sm:p-7">
+            <p class="mb-3 font-mono text-xs font-semibold tracking-widest text-copper">STEP 05</p>
+            <h3 class="mb-3 font-title text-2xl sm:text-3xl">Hold for 24 hours</h3>
+            <p class="text-sm text-ink-soft sm:text-base">Save your dates and pricing for a full day, no card required. We'll show you who else is eyeing your weekend.</p>
+          </li>
+          <li class="rounded-2xl border border-border-subtle bg-canvas p-6 sm:p-7">
+            <p class="mb-3 font-mono text-xs font-semibold tracking-widest text-copper">STEP 06</p>
+            <h3 class="mb-3 font-title text-2xl sm:text-3xl">Save the date · $500</h3>
+            <p class="text-sm text-ink-soft sm:text-base">A fully-refundable deposit officially blocks your weekend. Concierge takes it from here.</p>
+          </li>
+        </ol>
+
+        <div class="mt-10 text-center sm:mt-12">
+          <a href="./plan.html" class="btn btn--primary btn--default">Start the conversation</a>
         </div>
+      </div>
+    </section>
 
-        <div class="mt-12 flex flex-wrap gap-x-10 gap-y-4 text-sm text-paper/70">
-          <span class="flex items-center gap-2"><span class="pulse-dot"></span> 100+ couples planning right now</span>
-          <span>4.9 ★ avg vendor rating</span>
-          <span>$500 fully-refundable date holds</span>
+    <section id="stories" class="border-t border-sage-border/60 py-14 sm:py-20">
+      <p class="mb-2 text-xs uppercase tracking-[0.2em] text-sage-ink-soft">Real brides, real bookings</p>
+      <h2 class="mb-10 max-w-3xl font-title text-3xl tracking-tight text-sage-deep sm:mb-12 sm:text-4xl lg:text-5xl">A few weddings already planned this way.</h2>
+      <div id="story-grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3"></div>
+    </section>
+
+    <section class="mt-10 rounded-2xl bg-ink px-6 py-14 text-paper sm:px-10 sm:py-20">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="font-title text-4xl italic tracking-tight sm:text-5xl lg:text-6xl">Forever &amp; always — let's start.</h2>
+        <p class="mt-4 text-sm text-paper/75 sm:text-base">
+          Tell our planner the date, the city, the feeling. We'll handle the rest in one conversation.
+        </p>
+        <div class="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
+          <a href="./plan.html" class="btn btn--secondary btn--default">Begin planning</a>
+          <a href="#portfolio" class="btn btn--invert btn--default">See properties</a>
         </div>
       </div>
-
-      <div class="lg:col-span-5">
-        <!-- Hero "card stack" — three lockup cards alluding to product -->
-        <div class="relative h-[460px]">
-          <div class="absolute inset-0 rotate-[-4deg] translate-y-6 -translate-x-2 rounded-3xl overflow-hidden shadow-2xl"
-               id="hero-card-1"></div>
-          <div class="absolute inset-0 rotate-[3deg] translate-y-2 translate-x-2 rounded-3xl overflow-hidden shadow-2xl"
-               id="hero-card-2"></div>
-          <div class="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl border-4 border-paper/20"
-               id="hero-card-3"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ TRUST STRIP ============ -->
-  <section class="border-y border-border-subtle bg-paper">
-    <div class="max-w-7xl mx-auto px-6 lg:px-10 py-8 grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
-      <p class="text-xs uppercase tracking-[0.18em] text-ink-muted col-span-2 md:col-span-1">
-        Plan across our family of brands
-      </p>
-      <img src="../rcd-design-system/assets/logos/aiw-horizontal-gray.png" class="h-7 object-contain mx-auto opacity-70 hidden md:block" alt="" />
-      <p class="font-title italic text-2xl text-ink-soft text-center">+ 13 destination properties</p>
-      <a href="#portfolio" class="text-sm text-ink-soft hover:text-copper text-right">See all →</a>
-    </div>
-  </section>
-
-  <!-- ============ PORTFOLIO ============ -->
-  <section id="portfolio" class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
-    <div class="flex items-end justify-between flex-wrap gap-6 mb-10">
-      <div>
-        <p class="text-xs uppercase tracking-[0.2em] text-ink-muted mb-2">The portfolio</p>
-        <h2 class="font-title text-5xl tracking-tight max-w-2xl">Four brands, one planner, fourteen unforgettable backdrops.</h2>
-      </div>
-      <p class="max-w-md text-ink-soft">
-        Every property is fully verified, fully bookable, and fully integrated into our planner.
-        Pick a vibe, not a brand — we'll find the place that already speaks it.
-      </p>
-    </div>
-
-    <div id="brand-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-  </section>
-
-  <!-- ============ HOW IT WORKS ============ -->
-  <section id="how" class="bg-paper border-y border-border-subtle">
-    <div class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
-      <p class="text-xs uppercase tracking-[0.2em] text-ink-muted mb-2">How it works</p>
-      <h2 class="font-title text-5xl tracking-tight max-w-3xl mb-14">From "where do we even start" to "save the date" in one conversation.</h2>
-
-      <ol class="grid md:grid-cols-3 gap-6">
-        <li class="bg-canvas rounded-2xl p-7 border border-border-subtle">
-          <p class="text-copper font-mono text-xs tracking-widest mb-3">STEP 01</p>
-          <h3 class="font-title text-3xl mb-3">Browse venues + spaces</h3>
-          <p class="text-ink-soft">Filter 14 properties by region, capacity, and feel. Tap into spaces — beach, cenote, ballroom, rooftop, garden.</p>
-        </li>
-        <li class="bg-canvas rounded-2xl p-7 border border-border-subtle">
-          <p class="text-copper font-mono text-xs tracking-widest mb-3">STEP 02</p>
-          <h3 class="font-title text-3xl mb-3">Imagine your design</h3>
-          <p class="text-ink-soft">Tell our AI what your wedding feels like in your own words. We'll re-color the space to match — and surface real brides who pulled it off.</p>
-        </li>
-        <li class="bg-canvas rounded-2xl p-7 border border-border-subtle">
-          <p class="text-copper font-mono text-xs tracking-widest mb-3">STEP 03</p>
-          <h3 class="font-title text-3xl mb-3">Verified vendor marketplace</h3>
-          <p class="text-ink-soft">Hair & makeup, florists, DJs, bands — every one already approved at your venue. Real reviews, real lead times, real pricing.</p>
-        </li>
-        <li class="bg-canvas rounded-2xl p-7 border border-border-subtle">
-          <p class="text-copper font-mono text-xs tracking-widest mb-3">STEP 04</p>
-          <h3 class="font-title text-3xl mb-3">Assemble the package</h3>
-          <p class="text-ink-soft">Spaces, vendors, room block, design services — bundled into one transparent total. No PDF email chains.</p>
-        </li>
-        <li class="bg-canvas rounded-2xl p-7 border border-border-subtle">
-          <p class="text-copper font-mono text-xs tracking-widest mb-3">STEP 05</p>
-          <h3 class="font-title text-3xl mb-3">Hold for 24 hours</h3>
-          <p class="text-ink-soft">Save your dates and pricing for a full day, no card required. We'll show you who else is eyeing your weekend.</p>
-        </li>
-        <li class="bg-canvas rounded-2xl p-7 border border-border-subtle">
-          <p class="text-copper font-mono text-xs tracking-widest mb-3">STEP 06</p>
-          <h3 class="font-title text-3xl mb-3">Save the date · $500</h3>
-          <p class="text-ink-soft">A fully-refundable deposit officially blocks your weekend. Concierge takes it from here.</p>
-        </li>
-      </ol>
-
-      <div class="mt-12 text-center">
-        <a href="./plan.html" class="btn btn--primary btn--default">Start the conversation</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ STORIES ============ -->
-  <section id="stories" class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
-    <p class="text-xs uppercase tracking-[0.2em] text-ink-muted mb-2">Real brides, real bookings</p>
-    <h2 class="font-title text-5xl tracking-tight max-w-3xl mb-12">A few weddings already planned this way.</h2>
-
-    <div id="story-grid" class="grid md:grid-cols-3 gap-6"></div>
-  </section>
-
-  <!-- ============ FINAL CTA ============ -->
-  <section class="bg-ink text-paper">
-    <div class="max-w-5xl mx-auto px-6 lg:px-10 py-20 text-center">
-      <h2 class="font-title text-6xl tracking-tight italic">Forever &amp; always — let's start.</h2>
-      <p class="text-paper/70 mt-4 max-w-xl mx-auto">
-        Tell our planner the date, the city, the feeling. We'll handle the rest in one conversation.
-      </p>
-      <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <a href="./plan.html" class="btn btn--secondary btn--default">Begin planning</a>
-        <a href="#portfolio" class="btn btn--invert btn--default">See properties</a>
-      </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <div id="footer-mount"></div>
 
-  <!-- ===== Render ===== -->
   <script type="module">
-    import { HOTELS, BRANDS, BRIDES, byId } from "./_data.js";
-    import { renderNav, renderFooter, paletteGradient, venueMockSVG, $h } from "./_app.js";
+    import { HOTELS, BRANDS, BRIDES, FAMILY_BRAND_CAROUSEL, byId } from "./_data.js";
+    import { renderFooter, paletteGradient, venueMockSVG, $h } from "./_app.js";
 
-    document.getElementById("nav-mount").innerHTML    = renderNav({ active: "home" });
     document.getElementById("footer-mount").innerHTML = renderFooter();
 
-    /* Hero card stack — three different hotel palettes layered */
-    const heroPicks = [
-      byId(HOTELS, "unico-riviera-maya"),
-      byId(HOTELS, "nobu-los-cabos"),
-      byId(HOTELS, "ava-cancun"),
-    ];
-    document.getElementById("hero-card-1").innerHTML = venueMockSVG({ palette: heroPicks[0].palette, label: heroPicks[0].name });
-    document.getElementById("hero-card-2").innerHTML = venueMockSVG({ palette: heroPicks[1].palette, label: heroPicks[1].name });
-    document.getElementById("hero-card-3").innerHTML = venueMockSVG({ palette: heroPicks[2].palette, label: heroPicks[2].name });
+    const heroHotel = byId(HOTELS, "unico-riviera-maya");
+    document.getElementById("hero-mock-bg").innerHTML = venueMockSVG({
+      palette: heroHotel.palette,
+      label: "",
+      aspect: "3/4",
+    });
 
-    /* Brand grid */
+    const carouselTrack = document.getElementById("property-carousel-track");
+    FAMILY_BRAND_CAROUSEL.forEach((slide, i) => {
+      const href = slide.hotelId ? "./plan.html" : "./plan.html";
+      const badge = slide.badge
+        ? `<span class="mt-2 inline-block rounded-pill border border-paper/40 bg-paper/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-paper">${slide.badge}</span>`
+        : "";
+      carouselTrack.appendChild($h(`
+        <article class="property-slide snap-center shrink-0 w-[min(88vw,380px)] sm:w-[min(42vw,440px)] lg:w-[min(32vw,520px)] overflow-hidden rounded-2xl border border-sage-border/60 bg-sage-bg shadow-md ring-1 ring-black/5">
+          <a href="${href}" class="group block no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-deep focus-visible:ring-offset-2 focus-visible:ring-offset-paper">
+            <div class="relative aspect-[4/3] overflow-hidden">
+              <img
+                src="${slide.image}"
+                alt="${slide.imageAlt}"
+                width="800"
+                height="600"
+                class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                loading="${i < 2 ? "eager" : "lazy"}"
+                decoding="async"
+              />
+              <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-sage-deep/90 via-sage-deep/25 to-transparent"></div>
+              <div class="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-paper/85 sm:text-xs">${slide.brand}</p>
+                <p class="mt-1 font-title text-2xl leading-tight text-paper sm:text-3xl">${slide.property}</p>
+                ${badge}
+              </div>
+            </div>
+          </a>
+        </article>`));
+    });
+
+    const slides = () => [...carouselTrack.querySelectorAll(".property-slide")];
+    let slideIndex = 0;
+    function scrollCarouselTo(index) {
+      const list = slides();
+      if (!list.length) return;
+      slideIndex = ((index % list.length) + list.length) % list.length;
+      list[slideIndex].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+    document.getElementById("property-carousel-prev").addEventListener("click", () => scrollCarouselTo(slideIndex - 1));
+    document.getElementById("property-carousel-next").addEventListener("click", () => scrollCarouselTo(slideIndex + 1));
+
+    carouselTrack.addEventListener("scroll", () => {
+      const list = slides();
+      if (!list.length) return;
+      const trackRect = carouselTrack.getBoundingClientRect();
+      const mid = trackRect.left + trackRect.width / 2;
+      let best = 0;
+      let bestDist = Infinity;
+      list.forEach((el, j) => {
+        const r = el.getBoundingClientRect();
+        const c = r.left + r.width / 2;
+        const d = Math.abs(c - mid);
+        if (d < bestDist) {
+          bestDist = d;
+          best = j;
+        }
+      });
+      slideIndex = best;
+    }, { passive: true });
+
     const brandGrid = document.getElementById("brand-grid");
     BRANDS.forEach(brand => {
       const hotels = HOTELS.filter(h => h.brand === brand.id);
@@ -232,49 +416,48 @@
       const live = hotels.filter(h => !h.upcoming);
 
       brandGrid.appendChild($h(`
-        <article class="bg-paper rounded-2xl border border-border-subtle overflow-hidden hover:shadow-lg transition-shadow">
-          <div class="relative h-44 overflow-hidden" style="background:${paletteGradient([brand.accent, "#2A2A28", "#E8DDD0"])}">
+        <article class="overflow-hidden rounded-2xl border border-border-subtle bg-paper shadow-sm transition-shadow hover:shadow-lg">
+          <div class="relative h-40 overflow-hidden sm:h-44" style="background:${paletteGradient([brand.accent, "#2A2A28", "#E8DDD0"])}">
             <div class="absolute inset-0 aiw-grain"></div>
-            <div class="absolute inset-0 p-6 flex flex-col justify-between">
-              <p class="text-xs uppercase tracking-[0.22em] text-paper/80">${brand.short}</p>
-              <h3 class="font-title text-4xl text-paper leading-tight">${brand.name}</h3>
+            <div class="absolute inset-0 flex flex-col justify-between p-5 sm:p-6">
+              <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-paper/80 sm:text-xs">${brand.short}</p>
+              <h3 class="font-title text-3xl leading-tight text-paper sm:text-4xl">${brand.name}</h3>
             </div>
           </div>
-          <div class="p-6">
-            <p class="text-ink-soft mb-5">${brand.tagline}</p>
+          <div class="p-5 sm:p-6">
+            <p class="mb-4 text-sm text-ink-soft sm:text-base">${brand.tagline}</p>
             <ul class="space-y-2 text-sm">
               ${live.map(h => `
-                <li class="flex justify-between border-b border-border-subtle py-1.5">
-                  <span>${h.name}</span>
-                  <span class="text-ink-muted">${h.city}, ${h.country}</span>
+                <li class="flex flex-col gap-0.5 border-b border-border-subtle py-2 sm:flex-row sm:justify-between sm:gap-2">
+                  <span class="leading-snug">${h.name}</span>
+                  <span class="shrink-0 text-ink-muted">${h.city}, ${h.country}</span>
                 </li>`).join("")}
               ${upcoming.map(h => `
-                <li class="flex justify-between border-b border-border-subtle py-1.5 text-ink-muted">
-                  <span>${h.name} <span class="ml-1 text-[10px] uppercase tracking-widest text-copper">opening soon</span></span>
-                  <span>${h.city}, ${h.country}</span>
+                <li class="flex flex-col gap-0.5 border-b border-border-subtle py-2 text-ink-muted sm:flex-row sm:justify-between">
+                  <span>${h.name} <span class="ml-1 text-[10px] font-semibold uppercase tracking-widest text-copper">opening soon</span></span>
+                  <span class="shrink-0">${h.city}, ${h.country}</span>
                 </li>`).join("")}
             </ul>
-            <p class="text-xs text-ink-muted mt-5">${live.length} properties live · ${upcoming.length} opening</p>
+            <p class="mt-4 text-xs text-ink-muted">${live.length} properties live · ${upcoming.length} opening</p>
           </div>
         </article>`));
     });
 
-    /* Story grid (social proof) */
     const stories = document.getElementById("story-grid");
     BRIDES.slice(0, 3).forEach(b => {
       const hotel = byId(HOTELS, b.hotelId);
       stories.appendChild($h(`
-        <article class="bg-paper rounded-2xl border border-border-subtle overflow-hidden">
-          <div class="h-56 relative" style="background:${paletteGradient(hotel.palette)}">
+        <article class="overflow-hidden rounded-2xl border border-border-subtle bg-paper">
+          <div class="relative h-48 sm:h-56" style="background:${paletteGradient(hotel.palette)}">
             <div class="absolute inset-0 aiw-grain"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-5">
-              <p class="text-xs uppercase tracking-[0.18em] text-paper/80">${b.season} · ${b.guests} guests</p>
-              <p class="font-title text-3xl text-paper">${b.name}</p>
+            <div class="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+              <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-paper/80 sm:text-xs">${b.season} · ${b.guests} guests</p>
+              <p class="font-title text-2xl text-paper sm:text-3xl">${b.name}</p>
             </div>
           </div>
-          <div class="p-6">
-            <p class="text-ink leading-relaxed">"${b.quote}"</p>
-            <p class="mt-4 text-sm text-ink-muted">${hotel.name}</p>
+          <div class="p-5 sm:p-6">
+            <p class="text-sm leading-relaxed text-ink sm:text-base">"${b.quote}"</p>
+            <p class="mt-3 text-xs text-ink-muted sm:text-sm">${hotel.name}</p>
           </div>
         </article>`));
     });

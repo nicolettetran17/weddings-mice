@@ -103,7 +103,28 @@ export const $h = html => {
 };
 
 /* ---- Shared site chrome (top nav) ---- */
-export function renderNav({ active = "home" } = {}) {
+export function renderNav({ active = "home", landing = false, variant = "default" } = {}) {
+  if (landing) {
+    /* Landing uses the Figma V2 mobile home header inline in index.html (frame 125:16028). */
+    return "";
+  }
+  /* RCD · node 125:16457 — TopAppBar for planner (warm shell, centered wordmark). */
+  if (variant === "rcd" && active === "plan") {
+    return `
+  <nav class="sticky top-0 z-30 border-b border-[rgba(207,197,187,0.35)] bg-[rgba(252,249,248,0.88)] backdrop-blur-md supports-[backdrop-filter]:bg-[rgba(252,249,248,0.78)]">
+    <div class="relative mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
+      <a href="./index.html" class="flex h-11 w-11 items-center justify-center rounded-full text-[#4c463f] transition hover:bg-[#e9e1d8]/80" aria-label="Menu — home">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden="true">
+          <path d="M0 1h18M0 6h18M0 11h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </a>
+      <p class="pointer-events-none absolute left-1/2 -translate-x-1/2 font-sans text-sm font-medium uppercase tracking-[0.3em] text-[#1b1c1c]">All In Weddings</p>
+      <a href="./index.html" class="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-[#f0eded] shadow-[0_0_0_1px_rgba(207,197,187,0.35)] ring-1 ring-white/60" aria-label="Your profile">
+        <span class="grid h-full w-full place-items-center font-title text-lg leading-none text-[#4c463f]">N</span>
+      </a>
+    </div>
+  </nav>`;
+  }
   return `
   <nav class="sticky top-0 z-30 bg-canvas/80 backdrop-blur border-b border-border-subtle">
     <div class="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
