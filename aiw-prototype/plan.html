@@ -658,12 +658,146 @@
       "All of the above",
     ];
 
+    /* ============ BOOK MODE — calculation experience for "I'm ready to book" ============ */
+    const BOOK_CHAPTERS = [
+      { label: "Step 1 of 6 — your essentials", pct: 16 },
+      { label: "Step 2 of 6 — choose a package", pct: 33 },
+      { label: "Step 3 of 6 — choose your menu", pct: 50 },
+      { label: "Step 4 of 6 — decor & add-ons", pct: 66 },
+      { label: "Step 5 of 6 — pick your space", pct: 83 },
+      { label: "Step 6 of 6 — sign & deposit", pct: 100 },
+    ];
+
+    const BOOK_PACKAGES = [
+      {
+        id: "essentials",
+        name: "All-In Essentials",
+        badge: "Streamlined",
+        tagline: "The graceful, no-fuss wedding day. Concierge runs logistics — you just show up.",
+        basePerGuest: 295,
+        baseFee: 4800,
+        inclusions: [
+          "Dedicated AIW concierge",
+          "Ceremony setup with seasonal florals",
+          "Plated 3-course dinner",
+          "Open bar (4 hours)",
+          "DJ + standard light package",
+          "Standard tablescape",
+        ],
+      },
+      {
+        id: "signature",
+        name: "All-In Signature",
+        badge: "Most popular",
+        tagline: "Editorial design, longer reception, and an extra night of welcome.",
+        basePerGuest: 480,
+        baseFee: 7800,
+        inclusions: [
+          "Concierge + day-of coordinator",
+          "Ceremony archway + aisle florals",
+          "Cocktail hour with passed canapés",
+          "Plated 4-course dinner",
+          "Premium open bar (5 hours)",
+          "DJ with full lighting + uplights",
+          "Upgraded tablescape (linens, china, candles)",
+          "Welcome reception (separate evening)",
+        ],
+      },
+      {
+        id: "iconic",
+        name: "All-In Iconic",
+        badge: "Hands-off",
+        tagline: "Editorial-grade weekend with full creative production and a 3-day arc.",
+        basePerGuest: 880,
+        baseFee: 16500,
+        inclusions: [
+          "Senior concierge + full-time planner",
+          "Custom ceremony build (florals, drape, lighting)",
+          "Cocktail hour with raw bar",
+          "5-course tasting dinner",
+          "Top-shelf open bar (6 hours)",
+          "Live band + DJ handoff",
+          "Bespoke tablescape with custom paper goods",
+          "Welcome dinner + farewell brunch",
+          "Photo + film team",
+        ],
+      },
+    ];
+
+    const BOOK_MENUS = [
+      { id: "tropical-coastal",  name: "Tropical Coastal",            description: "Ceviche bar · grilled snapper · coconut tres leches.",                  perGuestUpgrade: 0   },
+      { id: "mexican-heritage",  name: "Mexican Heritage",            description: "Cochinita pibil · mole negro · churro tasting station.",                perGuestUpgrade: 35  },
+      { id: "modern-plated",     name: "Modern Plated",               description: "Beet tartare · charred wagyu · 64% Valrhona ganache.",                  perGuestUpgrade: 75  },
+      { id: "signature-tasting", name: "Signature Tasting (chef-led)",description: "Custom 7-course menu designed with the property's executive chef.",     perGuestUpgrade: 145 },
+    ];
+
+    const BOOK_ADDONS = [
+      { id: "arch-florals",     label: "Statement floral archway",            price: 4200 },
+      { id: "hanging-florals",  label: "Hanging florals over reception",      price: 5800 },
+      { id: "lounge-vignette",  label: "Sunset lounge vignette",              price: 2400 },
+      { id: "cocktail-tower",   label: "Champagne tower & cocktail bar",      price: 3200 },
+      { id: "string-lights",    label: "Bistro & string lights overhead",     price: 1850 },
+      { id: "sparkler-sendoff", label: "Sparkler send-off + photographer",    price:  950 },
+      { id: "late-night",       label: "Late-night taco cart",                price: 1700 },
+      { id: "live-painter",     label: "Live painter (signature artist)",     price: 3500 },
+      { id: "fireworks",        label: "Beachfront fireworks finale",         price: 6500 },
+    ];
+
+    const BOOK_DATE_CHIPS = [
+      "Spring 2026 (Mar–May)",
+      "Summer 2026 (Jun–Aug)",
+      "Fall 2026 (Sep–Nov)",
+      "Winter 2026/27",
+      "Spring 2027",
+      "Summer 2027",
+      "Fall 2027",
+      "2028 or later",
+    ];
+
+    let bookChapterIdx = 0;
+
     function mapRegionFromText(v) {
       const lower = v.toLowerCase();
       if (lower.includes("pacific") || lower.includes("cabo") || lower.includes("vallarta") || lower.includes("nayarit")) return "pacific";
       if (lower.includes("miami") || lower.includes("orlando") || lower.includes("stateside") || lower.includes("atlantic")) return "atlantic";
       if (lower.includes("carib") || lower.includes("cancun") || lower.includes("yucat") || lower.includes("punta")) return "caribbean";
       return null;
+    }
+
+    /** From home hero: `?journey=dreaming` vs `?journey=book` — shapes opening tone only. */
+    function plannerJourney() {
+      const j = new URLSearchParams(window.location.search).get("journey");
+      if (j === "book") return "book";
+      if (j === "dreaming") return "dreaming";
+      return null;
+    }
+
+    const HERO_WHEN_LABEL = {
+      "spring-2026": "Spring 2026",
+      "summer-2026": "Summer 2026",
+      "fall-2026": "Fall 2026",
+      "winter-2026-27": "Winter 2026–27",
+      "spring-2027": "Spring 2027",
+      "summer-2027": "Summer 2027",
+      "fall-2027": "Fall 2027",
+      "winter-2027-28": "Winter 2027–28",
+      "spring-2028": "Spring 2028",
+      "summer-2028": "Summer 2028",
+    };
+    const HERO_WHERE_LABEL = {
+      cancun: "Cancun",
+      "punta-cana": "Punta Cana",
+      "los-cabos": "Los Cabos",
+    };
+
+    function heroPrefillClause() {
+      const p = new URLSearchParams(window.location.search);
+      const when = HERO_WHEN_LABEL[p.get("when")];
+      const where = HERO_WHERE_LABEL[p.get("where")];
+      if (!when && !where) return "";
+      const place = where ? ` in ${where}` : "";
+      const timing = when || "your timing";
+      return ` You left me <strong>${timing}</strong>${place} from home — we'll carry that forward.`;
     }
 
     async function start() {
@@ -680,13 +814,26 @@
       pkg.vendors = {};
       pkg.heldUntil = null;
       pkg.deposited = false;
+      pkg.bookPackageId = null;
+      pkg.bookMenuId = null;
+      pkg.bookAddonIds = [];
+      pkg.bookContract = null;
       chapterIdx = 0;
       textHandler = null;
       refreshPackage();
       buildChapterDots();
       enterChapter(0);
 
-      await bot(`Welcome — I'm your <strong>Wedding Atelier</strong>. Before we dive into the details, I want to hear about you first. <strong>Congratulations on your engagement!</strong> When you close your eyes and picture your wedding day, what's the <em>very first feeling</em> that comes to mind?`);
+      const journey = plannerJourney();
+      const tail = heroPrefillClause();
+      const welcomeDefault =
+        `Welcome — I'm your <strong>Wedding Atelier</strong>. Before we dive into the details, I want to hear about you first. <strong>Congratulations on your engagement!</strong> When you close your eyes and picture your wedding day, what's the <em>very first feeling</em> that comes to mind?${tail}`;
+      const welcomeDreaming =
+        `Welcome — I'm your <strong>Wedding Atelier</strong>. You're still in the dreaming phase, and that's exactly where the best weddings start — no pressure to lock a date until the vision feels right. <strong>Congratulations on this chapter.</strong> When you picture the day, what's the <em>very first feeling</em> that comes to mind?${tail}`;
+      const welcomeBook =
+        `Welcome — I'm your <strong>Wedding Atelier</strong>. You're ready to book — we'll move with purpose toward real dates and holds, while still grounding everything in how the day <em>feels</em>. <strong>Congratulations on your engagement!</strong> Close your eyes for a second: what's the <strong>very first feeling</strong> that defines this wedding for you?${tail}`;
+
+      await bot(journey === "book" ? welcomeBook : journey === "dreaming" ? welcomeDreaming : welcomeDefault);
       setChips(
         [
           { label: "Magical and dreamy" },
@@ -1521,15 +1668,578 @@
         </div>
       `);
       const resetFlow = document.getElementById("reset-flow");
-      if (resetFlow) resetFlow.addEventListener("click", () => { clearState(); start().catch(e => console.error(e)); });
+      if (resetFlow) resetFlow.addEventListener("click", () => {
+        clearState();
+        const fn = plannerJourney() === "book" ? startBookFlow : start;
+        fn().catch(e => console.error("plan: reset flow failed", e));
+      });
+    }
+
+    /* ============ BOOK FLOW — calculator experience for ?journey=book ============ */
+    function buildBookChapterDots() {
+      const el = chapterDotsEl();
+      if (!el) return;
+      el.innerHTML = "";
+      for (let j = 0; j < BOOK_CHAPTERS.length; j++) {
+        const d = document.createElement("div");
+        d.className = "h-[3px] flex-1 rounded-full bg-black/10 transition-colors duration-300";
+        d.dataset.bookChapterDot = String(j);
+        el.appendChild(d);
+      }
+    }
+
+    function enterBookChapter(k) {
+      bookChapterIdx = Math.min(Math.max(k, 0), BOOK_CHAPTERS.length - 1);
+      const ch = BOOK_CHAPTERS[bookChapterIdx];
+      const L = chapterLabelEl(), P = chapterPctEl(), F = chapterFillEl(), dots = chapterDotsEl();
+      if (L) L.textContent = ch.label;
+      if (P) P.textContent = `${ch.pct}%`;
+      if (F) F.style.width = `${ch.pct}%`;
+      if (dots) {
+        [...dots.children].forEach((d, j) => {
+          d.className =
+            "h-[3px] flex-1 rounded-full transition-colors duration-300 " +
+            (j < bookChapterIdx ? "bg-[#D4537E]" : j === bookChapterIdx ? "bg-[#ED93B1]" : "bg-black/10");
+        });
+      }
+    }
+
+    const bookPackage  = () => BOOK_PACKAGES.find(p => p.id === pkg.bookPackageId) || null;
+    const bookMenu     = () => BOOK_MENUS.find(m => m.id === pkg.bookMenuId) || null;
+    const bookAddons   = () => BOOK_ADDONS.filter(a => (pkg.bookAddonIds || []).includes(a.id));
+
+    function bookPriceBreakdown() {
+      const p = bookPackage();
+      const m = bookMenu();
+      const guests = Math.max(pkg.guests || 0, 1);
+      const space = pkg.spaceId ? byId(SPACES, pkg.spaceId) : null;
+      const pkgFee = p ? (p.basePerGuest * guests + p.baseFee) : 0;
+      const menuUp = m && p ? (m.perGuestUpgrade * guests) : 0;
+      const addonsTotal = bookAddons().reduce((s, a) => s + a.price, 0);
+      const venue  = space ? space.fromUSD : 0;
+      const subtotal = pkgFee + menuUp + addonsTotal + venue;
+      return { pkgFee, menuUp, addons: addonsTotal, venue, subtotal };
+    }
+
+    function renderBookCalculator(extraSubline = "") {
+      const b = bookPriceBreakdown();
+      const p = bookPackage();
+      const m = bookMenu();
+      const space = pkg.spaceId ? byId(SPACES, pkg.spaceId) : null;
+      const guests = pkg.guests || "—";
+      const date   = pkg.date || "Date TBD";
+      const lines = [];
+      if (p) lines.push(`<div class="flex justify-between"><span class="text-ink-soft">${p.name} · ${guests} guests</span><span>${usd(b.pkgFee)}</span></div>`);
+      if (m && m.perGuestUpgrade > 0) lines.push(`<div class="flex justify-between"><span class="text-ink-soft">${m.name} (upgrade)</span><span>${usd(b.menuUp)}</span></div>`);
+      if (m && m.perGuestUpgrade === 0) lines.push(`<div class="flex justify-between"><span class="text-ink-soft">${m.name}</span><span class="text-ink-muted">included</span></div>`);
+      bookAddons().forEach(a => {
+        lines.push(`<div class="flex justify-between"><span class="text-ink-soft">${a.label}</span><span>${usd(a.price)}</span></div>`);
+      });
+      if (space) lines.push(`<div class="flex justify-between"><span class="text-ink-soft">${space.name} (room rental)</span><span>${usd(b.venue)}</span></div>`);
+
+      return `
+        <div class="rounded-2xl border border-copper/45 bg-paper p-5 mb-6 shadow-sm">
+          <div class="flex items-center justify-between mb-1">
+            <p class="text-[10px] uppercase tracking-[0.22em] text-copper font-semibold">Running estimate</p>
+            <p class="text-[11px] text-ink-muted">${guests} guests · ${escapeHtml(date)}</p>
+          </div>
+          <p class="font-title text-4xl tracking-tight text-ink">${usd(b.subtotal)}</p>
+          ${extraSubline ? `<p class="text-xs text-ink-muted mt-1">${extraSubline}</p>` : ""}
+          <div class="mt-3 space-y-1 text-sm">
+            ${lines.length ? lines.join("") : `<p class="text-ink-muted">Pick a package to start the calculator.</p>`}
+          </div>
+          ${b.subtotal ? `
+            <div class="border-t border-border-subtle mt-3 pt-3 flex items-baseline justify-between">
+              <span class="text-xs uppercase tracking-widest text-ink-muted">Refundable hold today</span>
+              <span class="font-semibold text-copper">$500</span>
+            </div>` : ""}
+        </div>
+      `;
+    }
+
+    async function startBookFlow() {
+      if (!chatEl) {
+        console.error("plan: #chat missing — book flow cannot start.");
+        return;
+      }
+      chatEl.innerHTML = "";
+      clearChips();
+      Object.assign(pkg, {
+        date: null, region: null, guests: null, vibeId: null,
+        hotelId: null, spaceId: null,
+        feeling: null, coverLabel: null, budgetBand: null, paletteLabel: null,
+        venuePreference: null, ceremonyChoice: null, receptionFlow: null,
+        vendorPriorities: null, guestsLabel: null,
+        vendors: {}, heldUntil: null, deposited: false,
+        bookPackageId: null, bookMenuId: null, bookAddonIds: [], bookContract: null,
+      });
+      refreshPackage();
+      buildBookChapterDots();
+      enterBookChapter(0);
+      textHandler = null;
+
+      const search = new URLSearchParams(window.location.search);
+      const wKey = search.get("when");
+      const cKey = search.get("where");
+      if (wKey && HERO_WHEN_LABEL[wKey]) pkg.date = HERO_WHEN_LABEL[wKey];
+      if (cKey === "cancun" || cKey === "punta-cana") pkg.region = "caribbean";
+      else if (cKey === "los-cabos") pkg.region = "pacific";
+
+      setCanvas(`
+        <div class="h-full grid place-items-center text-center p-10">
+          <div>
+            <p class="text-xs uppercase tracking-[0.22em] text-copper mb-2 font-semibold">Booking experience</p>
+            <h2 class="font-title text-5xl tracking-tight">Six steps to a saved date.</h2>
+            <p class="text-ink-soft mt-3 max-w-md mx-auto">Pick a package, lock the menu, dress the room, choose the space — we'll calculate as we go and end with a $500 refundable hold.</p>
+          </div>
+        </div>
+      `);
+
+      const carry = pkg.date && pkg.region
+        ? ` I picked up <strong>${escapeHtml(pkg.date)}</strong> from home — confirm in chat and we're rolling.`
+        : "";
+      await bot(`Welcome to the <strong>book lane</strong>. Six steps · one running total · a refundable $500 hold at the end.${carry}`);
+      await pause(420);
+      await askBookGuests();
+    }
+
+    async function askBookGuests() {
+      clearChips();
+      textHandler = null;
+      await bot(`First — <strong>how many guests</strong>? This drives the per-guest math everywhere else.`);
+      setChips(GUEST_CHIPS.map(g => ({ label: g.label })), async pick => {
+        userSay(pick.label);
+        const row = GUEST_CHIPS.find(x => x.label === pick.label);
+        pkg.guests = row ? row.guests : 100;
+        pkg.guestsLabel = pick.label;
+        await askBookDate();
+      });
+      textHandler = async v => {
+        const t = v.trim();
+        if (!t) return;
+        const n = parseInt(t.replace(/\D/g, ""), 10);
+        pkg.guests = Number.isFinite(n) && n > 0 ? n : 100;
+        pkg.guestsLabel = t;
+        userSay(t);
+        await askBookDate();
+      };
+    }
+
+    /** Live-demand nudge: fires whenever a date selection lands so the bride feels the urgency. */
+    async function bookDateNudge(label) {
+      if (!label) return;
+      // Anchor on 500, with subtle variation so it feels live across selections.
+      const count = 480 + Math.floor(Math.random() * 41); // 480–520
+      const html = `
+        <div class="flex items-center gap-2.5">
+          <span class="pulse-dot shrink-0" aria-hidden="true"></span>
+          <span><strong>${count}</strong> other brides are looking at <strong>${escapeHtml(label)}</strong> right now.</span>
+        </div>
+      `;
+      await bot(html, { delay: 460 });
+    }
+
+    async function askBookDate() {
+      clearChips();
+      textHandler = null;
+      await pause(280);
+      if (pkg.date) {
+        await bot(`Locked: <strong>${pkg.guests}</strong> guests on <strong>${escapeHtml(pkg.date)}</strong>. Keep that timing?`);
+        setChips([
+          { label: `Yes — ${pkg.date}`, action: "keep" },
+          { label: "Change timing", action: "change" },
+        ], async pick => {
+          userSay(pick.label);
+          if (pick.action === "keep") {
+            await bookDateNudge(pkg.date);
+            return askBookRegion();
+          }
+          pkg.date = null;
+          return askBookDateAgain();
+        });
+        return;
+      }
+      await askBookDateAgain();
+    }
+
+    async function askBookDateAgain() {
+      clearChips();
+      textHandler = null;
+      await bot(`When are you steering toward? Season is fine — we don't need an exact Saturday yet.`);
+      setChips(BOOK_DATE_CHIPS.map(label => ({ label })), async pick => {
+        userSay(pick.label);
+        pkg.date = pick.label;
+        await bookDateNudge(pkg.date);
+        await askBookRegion();
+      });
+      textHandler = async v => {
+        const t = v.trim();
+        if (!t) return;
+        userSay(t);
+        pkg.date = t;
+        await bookDateNudge(pkg.date);
+        await askBookRegion();
+      };
+    }
+
+    async function askBookRegion() {
+      clearChips();
+      textHandler = null;
+      await pause(280);
+      if (pkg.region) {
+        const label = (REGION_CHIPS.find(r => r.value === pkg.region)?.label || pkg.region).split(" — ")[0];
+        await bot(`And destination — <strong>${escapeHtml(label)}</strong>. Keep that?`);
+        setChips([
+          { label: "Keep destination", action: "keep" },
+          { label: "Pick a different region", action: "change" },
+        ], async pick => {
+          userSay(pick.label);
+          if (pick.action === "keep") return enterBookPackageStep();
+          pkg.region = null;
+          return askBookRegionAgain();
+        });
+        return;
+      }
+      await askBookRegionAgain();
+    }
+
+    async function askBookRegionAgain() {
+      clearChips();
+      textHandler = null;
+      await bot(`Where are we celebrating?`);
+      setChips(REGION_CHIPS.slice(0, 3), async pick => {
+        userSay(pick.label);
+        pkg.region = pick.value;
+        await enterBookPackageStep();
+      });
+    }
+
+    async function enterBookPackageStep() {
+      clearChips();
+      textHandler = null;
+      await pause(320);
+      enterBookChapter(1);
+      await bot(`Beautiful — essentials are locked. Let's <strong>pick a package</strong>. Three tiers, transparent math.`);
+      renderBookPackagesCanvas();
+    }
+
+    function renderBookPackagesCanvas() {
+      const calc = renderBookCalculator(pkg.bookPackageId ? "" : "Pick a package to start the calculator.");
+      const guests = Math.max(pkg.guests || 0, 1);
+      const cards = BOOK_PACKAGES.map(p => {
+        const total = p.basePerGuest * guests + p.baseFee;
+        const selected = pkg.bookPackageId === p.id;
+        return `
+          <article class="rounded-2xl border ${selected ? "border-copper ring-2 ring-copper" : "border-border-subtle"} bg-paper p-6 cursor-pointer hover:shadow-lg transition" data-pkg="${p.id}">
+            <div class="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <p class="text-[10px] uppercase tracking-[0.22em] text-copper font-semibold">${p.badge}</p>
+                <h3 class="font-title text-3xl tracking-tight mt-1">${p.name}</h3>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-ink-muted">All-in for ${guests} guests</p>
+                <p class="font-title text-3xl tracking-tight">${usd(total)}</p>
+                <p class="text-[11px] text-ink-muted">${usd(p.basePerGuest)}/guest + ${usd(p.baseFee)} base</p>
+              </div>
+            </div>
+            <p class="text-sm text-ink-soft mb-3">${p.tagline}</p>
+            <ul class="text-sm space-y-1 text-ink-soft">
+              ${p.inclusions.map(x => `<li class="flex gap-2"><span class="text-copper">✓</span><span>${x}</span></li>`).join("")}
+            </ul>
+            <button type="button" class="mt-4 btn ${selected ? "btn--ghost" : "btn--primary"} btn--small">${selected ? "Selected" : "Select package"}</button>
+          </article>
+        `;
+      }).join("");
+      setCanvas(`
+        <div>
+          ${calc}
+          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 2 · Pick a package</p>
+          <h2 class="font-title text-4xl mb-4">Three tiers. One transparent total.</h2>
+          <div class="grid lg:grid-cols-3 gap-4">${cards}</div>
+        </div>
+      `);
+      document.querySelectorAll("[data-pkg]").forEach(el => {
+        el.addEventListener("click", () => pickBookPackage(el.dataset.pkg));
+      });
+    }
+
+    async function pickBookPackage(id) {
+      const p = BOOK_PACKAGES.find(x => x.id === id);
+      if (!p) return;
+      pkg.bookPackageId = id;
+      userSay(`I'll go with ${p.name}.`);
+      await bot(`<strong>${p.name}</strong> — locked. Calculator now reflects ${pkg.guests || ""} guests at ${usd(p.basePerGuest)}/guest plus the ${usd(p.baseFee)} base.`);
+      renderBookPackagesCanvas();
+      await pause(420);
+      await enterBookMenuStep();
+    }
+
+    async function enterBookMenuStep() {
+      clearChips();
+      textHandler = null;
+      enterBookChapter(2);
+      await bot(`Step 3 — <strong>menu</strong>. Pick the table you'd actually want to eat at.`);
+      renderBookMenusCanvas();
+    }
+
+    function renderBookMenusCanvas() {
+      const calc = renderBookCalculator();
+      const cards = BOOK_MENUS.map(m => {
+        const selected = pkg.bookMenuId === m.id;
+        const upgrade = m.perGuestUpgrade ? `+${usd(m.perGuestUpgrade)}/guest` : "Included";
+        return `
+          <article class="rounded-2xl border ${selected ? "border-copper ring-2 ring-copper" : "border-border-subtle"} bg-paper p-5 cursor-pointer hover:shadow-lg transition" data-menu="${m.id}">
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <h3 class="font-title text-2xl">${m.name}</h3>
+              <span class="text-xs uppercase tracking-widest text-copper font-semibold whitespace-nowrap">${upgrade}</span>
+            </div>
+            <p class="text-sm text-ink-soft">${m.description}</p>
+            <button type="button" class="mt-4 btn ${selected ? "btn--ghost" : "btn--primary"} btn--small">${selected ? "Selected" : "Choose"}</button>
+          </article>
+        `;
+      }).join("");
+      setCanvas(`
+        <div>
+          ${calc}
+          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 3 · Choose your menu</p>
+          <h2 class="font-title text-4xl mb-4">What's on the table?</h2>
+          <div class="grid sm:grid-cols-2 gap-4">${cards}</div>
+        </div>
+      `);
+      document.querySelectorAll("[data-menu]").forEach(el => {
+        el.addEventListener("click", () => pickBookMenu(el.dataset.menu));
+      });
+    }
+
+    async function pickBookMenu(id) {
+      const m = BOOK_MENUS.find(x => x.id === id);
+      if (!m) return;
+      pkg.bookMenuId = id;
+      userSay(`Menu: ${m.name}.`);
+      if (m.perGuestUpgrade > 0) {
+        await bot(`<strong>${m.name}</strong> — added at ${usd(m.perGuestUpgrade)}/guest.`);
+      } else {
+        await bot(`<strong>${m.name}</strong> — included with your package.`);
+      }
+      renderBookMenusCanvas();
+      await pause(380);
+      await enterBookAddonsStep();
+    }
+
+    async function enterBookAddonsStep() {
+      clearChips();
+      textHandler = null;
+      enterBookChapter(3);
+      await bot(`Step 4 — <strong>decor & extras</strong>. Toggle anything you want; numbers update live.`);
+      renderBookAddonsCanvas();
+    }
+
+    function renderBookAddonsCanvas() {
+      const calc = renderBookCalculator();
+      const items = BOOK_ADDONS.map(a => {
+        const selected = (pkg.bookAddonIds || []).includes(a.id);
+        return `
+          <button type="button" data-addon="${a.id}"
+            class="text-left rounded-2xl border ${selected ? "border-copper ring-2 ring-copper bg-cream-soft" : "border-border-subtle bg-paper"} p-4 transition hover:shadow-md cursor-pointer">
+            <div class="flex items-center justify-between gap-3">
+              <span class="font-semibold leading-snug">${a.label}</span>
+              <span class="${selected ? "bg-copper text-paper" : "border border-border-default text-ink"} text-[11px] px-2.5 py-1 rounded-pill font-semibold">${selected ? "Added" : "+ Add"}</span>
+            </div>
+            <p class="text-xs text-ink-muted mt-1">${usd(a.price)}</p>
+          </button>
+        `;
+      }).join("");
+      const count = (pkg.bookAddonIds || []).length;
+      setCanvas(`
+        <div>
+          ${calc}
+          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 4 · Decor & extras</p>
+          <h2 class="font-title text-4xl mb-4">Dress the room.</h2>
+          <div class="grid sm:grid-cols-2 gap-3">${items}</div>
+          <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+            <p class="text-sm text-ink-muted">${count} add-on${count === 1 ? "" : "s"} selected</p>
+            <button id="addons-continue" type="button" class="btn btn--primary btn--default">Continue → choose space</button>
+          </div>
+        </div>
+      `);
+      document.querySelectorAll("[data-addon]").forEach(el => {
+        el.addEventListener("click", () => toggleBookAddon(el.dataset.addon));
+      });
+      const cont = document.getElementById("addons-continue");
+      if (cont) cont.addEventListener("click", () => enterBookSpaceStep());
+    }
+
+    function toggleBookAddon(id) {
+      const list = pkg.bookAddonIds || [];
+      pkg.bookAddonIds = list.includes(id) ? list.filter(x => x !== id) : [...list, id];
+      renderBookAddonsCanvas();
+    }
+
+    async function enterBookSpaceStep() {
+      clearChips();
+      textHandler = null;
+      await pause(280);
+      enterBookChapter(4);
+      await bot(`Step 5 — <strong>your space</strong>. Showing only spaces in your region that fit ${pkg.guests || ""} guests.`);
+      renderBookSpacesCanvas();
+    }
+
+    function renderBookSpacesCanvas() {
+      const calc = renderBookCalculator();
+      const guests = pkg.guests || 0;
+      const candidates = SPACES.filter(s => {
+        const hotel = byId(HOTELS, s.hotelId);
+        if (!hotel) return false;
+        if (pkg.region && hotel.region !== pkg.region) return false;
+        return s.capacity >= guests;
+      }).slice(0, 8);
+      const cards = candidates.map(s => {
+        const hotel = byId(HOTELS, s.hotelId);
+        const selected = pkg.spaceId === s.id;
+        return `
+          <article class="rounded-2xl border ${selected ? "border-copper ring-2 ring-copper" : "border-border-subtle"} bg-paper overflow-hidden cursor-pointer hover:shadow-md transition" data-space="${s.id}">
+            <div class="h-28">${venueMockSVG({ palette: hotel.palette, label: s.type, aspect: "16/7" })}</div>
+            <div class="p-4">
+              <div class="flex items-baseline justify-between gap-2">
+                <p class="font-semibold leading-snug">${s.name}</p>
+                <span class="text-[11px] uppercase tracking-wider text-ink-muted">${s.type}</span>
+              </div>
+              <p class="text-xs text-ink-muted mt-1">${hotel.name}</p>
+              <p class="text-xs text-ink-muted mt-0.5">Up to ${s.capacity} · From ${usd(s.fromUSD)}</p>
+            </div>
+          </article>
+        `;
+      }).join("") || `<p class="text-ink-muted col-span-full">No matching spaces — try a different region or guest count via Reset.</p>`;
+      setCanvas(`
+        <div>
+          ${calc}
+          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 5 · Pick your space</p>
+          <h2 class="font-title text-4xl mb-4">Where the day lives.</h2>
+          <div class="grid sm:grid-cols-2 gap-4">${cards}</div>
+        </div>
+      `);
+      document.querySelectorAll("[data-space]").forEach(el => {
+        el.addEventListener("click", () => pickBookSpace(el.dataset.space));
+      });
+    }
+
+    async function pickBookSpace(id) {
+      const s = byId(SPACES, id);
+      if (!s) return;
+      pkg.spaceId = id;
+      pkg.hotelId = s.hotelId;
+      refreshPackage();
+      const hotel = byId(HOTELS, s.hotelId);
+      userSay(`Space: ${s.name} at ${hotel.name}.`);
+      await bot(`<strong>${s.name}</strong> at ${hotel.name} — ${usd(s.fromUSD)} room rental added to the calculator.`);
+      renderBookSpacesCanvas();
+      await pause(420);
+      await enterBookContractStep();
+    }
+
+    async function enterBookContractStep() {
+      clearChips();
+      textHandler = null;
+      enterBookChapter(5);
+      await bot(`Step 6 — <strong>sign and save the date</strong>. Sign below, then place a refundable $500 hold.`);
+      renderBookContractCanvas();
+    }
+
+    function renderBookContractCanvas() {
+      const calc = renderBookCalculator();
+      const b = bookPriceBreakdown();
+      const p = bookPackage();
+      const m = bookMenu();
+      const space = pkg.spaceId ? byId(SPACES, pkg.spaceId) : null;
+      const hotel = pkg.hotelId ? byId(HOTELS, pkg.hotelId) : null;
+      const lines = [
+        p     ? `<div class="flex justify-between"><span class="text-ink-soft">${p.name}</span><span>${usd(b.pkgFee)}</span></div>` : "",
+        m     ? `<div class="flex justify-between"><span class="text-ink-soft">${m.name}${m.perGuestUpgrade ? " (upgrade)" : ""}</span><span>${m.perGuestUpgrade ? usd(b.menuUp) : "included"}</span></div>` : "",
+        bookAddons().map(a => `<div class="flex justify-between"><span class="text-ink-soft">${a.label}</span><span>${usd(a.price)}</span></div>`).join(""),
+        space ? `<div class="flex justify-between"><span class="text-ink-soft">${space.name}</span><span>${usd(b.venue)}</span></div>` : "",
+      ].join("");
+      setCanvas(`
+        <div>
+          ${calc}
+          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 6 · Sign &amp; save the date</p>
+          <h2 class="font-title text-4xl mb-4">Lock it in.</h2>
+          <div class="rounded-2xl border border-border-subtle bg-paper p-6 mb-6">
+            <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-2">Contract preview</p>
+            <p class="font-title text-2xl">${hotel ? hotel.name : "—"} · ${space ? space.name : "—"}</p>
+            <p class="text-ink-soft text-sm mt-1">${pkg.guests || "—"} guests · ${escapeHtml(pkg.date || "Date TBD")}</p>
+            <div class="mt-5 space-y-2 text-sm">${lines || `<p class="text-ink-muted">Pick a package, menu, and space to populate the contract.</p>`}</div>
+            <div class="border-t border-border-subtle mt-4 pt-4 flex items-baseline justify-between">
+              <span class="text-xs uppercase tracking-widest text-ink-muted">All-in estimate</span>
+              <span class="font-title text-4xl">${usd(b.subtotal)}</span>
+            </div>
+            <p class="text-xs text-ink-muted mt-3">Pricing locks at signature. The $500 deposit is fully refundable for 14 days.</p>
+          </div>
+
+          <form id="book-sign-form" class="rounded-2xl border border-border-subtle bg-paper p-6 space-y-4">
+            <label class="block text-xs uppercase tracking-[0.18em] text-ink-muted" for="book-signature">Type your full legal name to sign</label>
+            <input id="book-signature" class="input" placeholder="e.g. Maya Wallace" autocomplete="name" required />
+            <label class="flex items-start gap-3 text-sm text-ink-soft">
+              <input id="book-agree" type="checkbox" class="mt-1" required />
+              <span>I agree to the All In Weddings booking terms and authorize a refundable $500 hold to lock these dates, pricing, and inclusions.</span>
+            </label>
+            <button type="submit" id="book-sign-btn" class="btn btn--secondary btn--default btn--block">Sign &amp; place $500 deposit →</button>
+          </form>
+        </div>
+      `);
+      const form = document.getElementById("book-sign-form");
+      if (form) {
+        form.addEventListener("submit", e => {
+          e.preventDefault();
+          const sig = document.getElementById("book-signature").value.trim();
+          const agreed = document.getElementById("book-agree").checked;
+          if (!pkg.bookPackageId || !pkg.bookMenuId || !pkg.spaceId) {
+            const missing = !pkg.bookPackageId ? "a package" : !pkg.bookMenuId ? "a menu" : "a space";
+            void bot(`I still need <strong>${missing}</strong> before we can hold the date — scroll up in the canvas and tap a card.`);
+            return;
+          }
+          if (!sig || !agreed) {
+            void bot(`Type your name and agree to the terms — that's the last beat before we hold the date.`);
+            return;
+          }
+          pkg.bookContract = { name: sig, signed: true, ts: Date.now() };
+          userSay(`Signed: ${sig}.`);
+          void bot(`Beautifully done. Place the $500 hold and your weekend is officially yours.`);
+          openBookDepositModal();
+        });
+      }
+    }
+
+    function openBookDepositModal() {
+      const modal = document.getElementById("deposit-modal");
+      const summary = document.getElementById("deposit-summary");
+      const s = pkg.spaceId ? byId(SPACES, pkg.spaceId) : null;
+      const hotel = s ? byId(HOTELS, s.hotelId) : null;
+      const p = bookPackage();
+      if (!s || !hotel || !summary || !modal || !p) return;
+      const b = bookPriceBreakdown();
+      summary.innerHTML = `
+        <div class="flex justify-between"><span class="text-ink-soft">${hotel.name}</span><span>${hotel.city}</span></div>
+        <div class="flex justify-between"><span class="text-ink-soft">${s.name}</span><span>${pkg.guests || ""} guests</span></div>
+        <div class="flex justify-between"><span class="text-ink-soft">Date</span><span>${escapeHtml(pkg.date || "—")}</span></div>
+        <div class="flex justify-between"><span class="text-ink-soft">Package</span><span>${p.name}</span></div>
+        <div class="flex justify-between border-t border-border-subtle pt-2 mt-2"><span class="text-ink-soft">All-in estimate</span><span class="font-semibold">${usd(b.subtotal)}</span></div>
+        <div class="flex justify-between"><span class="text-ink-soft">Today's hold</span><span class="font-semibold text-copper">$500</span></div>
+      `;
+      modal.classList.remove("hidden");
     }
 
     /* ============ RESET ============ */
+    const restartFlow = () => {
+      clearState();
+      const fn = plannerJourney() === "book" ? startBookFlow : start;
+      fn().catch(e => console.error("plan: restart failed", e));
+    };
     const resetBtn = document.getElementById("reset-btn");
-    if (resetBtn) resetBtn.addEventListener("click", () => { clearState(); start().catch(e => console.error(e)); });
+    if (resetBtn) resetBtn.addEventListener("click", restartFlow);
 
     /* ============ KICKOFF ============ */
     const restored = loadState();
+    const journeyMode = plannerJourney();
     if (restored?.state?.spaceId) {
       try {
         Object.assign(pkg, restored.state, { heldUntil: restored.expiresAt });
@@ -1539,9 +2249,13 @@
         const hotel = s ? byId(HOTELS, s.hotelId) : null;
         if (!s || !hotel) {
           clearState();
-          start().catch(e => console.error(e));
+          (journeyMode === "book" ? startBookFlow : start)().catch(e => console.error(e));
         } else if (pkg.deposited) {
           void confirmDeposit();
+        } else if (pkg.bookPackageId) {
+          buildBookChapterDots();
+          enterBookChapter(5);
+          renderBookContractCanvas();
         } else if (pkg.heldUntil) {
           renderHoldCanvas(100 + Math.floor(Math.random() * 43));
         } else {
@@ -1550,10 +2264,10 @@
       } catch (e) {
         console.error("plan: restore failed", e);
         clearState();
-        start().catch(err => console.error(err));
+        (journeyMode === "book" ? startBookFlow : start)().catch(err => console.error(err));
       }
     } else {
-      start().catch(e => console.error("plan: start failed", e));
+      (journeyMode === "book" ? startBookFlow : start)().catch(e => console.error("plan: start failed", e));
     }
 
     if (typeof window !== "undefined" && window.location?.protocol === "file:") {
