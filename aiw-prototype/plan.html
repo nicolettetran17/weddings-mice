@@ -298,6 +298,20 @@
       }
     }
 
+    /* Seven-step cards in main chat column (not only in the drawer) */
+    .journey-timeline-host .how-timeline {
+      max-width: none;
+    }
+    .journey-timeline-host h2.font-title {
+      font-size: clamp(1.35rem, 4.2vw, 1.9rem);
+      line-height: 1.15;
+    }
+    @media (min-width: 640px) {
+      .journey-timeline-host h2.font-title {
+        font-size: clamp(1.5rem, 3vw, 2.15rem);
+      }
+    }
+
     /* Save my date — swipe hold + confetti (hero / urgency Figma 290:392) */
     .aiw-save-hero {
       position: relative;
@@ -653,7 +667,7 @@
   <div id="nav-mount"></div>
 
   <main id="planner-main" class="relative flex min-h-0 flex-1 flex-col">
-    <!-- Full-viewport conversation; journey canvas opens in overlay (Dribbble-style immersive chat) -->
+    <!-- Full-viewport conversation; seven-step journey cards live above the thread; drawer holds venues / mood tiles / quote tools -->
     <section class="chat-shell chat-shell--immersive flex min-h-0 flex-1 flex-col overflow-hidden">
         <header class="chat-shell-header flex shrink-0 items-center gap-3 px-4 py-3 sm:px-6 sm:py-4">
           <div class="chat-assistant-avatar" aria-hidden="true">
@@ -664,14 +678,14 @@
             </svg>
           </div>
           <div class="min-w-0">
-            <p class="chat-assistant-name">Atelier</p>
-            <p class="chat-assistant-tag">Wedding Atelier · All In Weddings</p>
+            <p class="chat-assistant-name">Allie</p>
+            <p class="chat-assistant-tag">Your wedding planner · All In Weddings</p>
           </div>
-          <button type="button" id="canvas-drawer-open" class="ml-auto inline-flex items-center gap-2 rounded-full border border-[rgba(207,197,187,0.55)] bg-paper/90 px-3 py-1.5 font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-ink shadow-sm transition hover:border-[rgba(180,129,77,0.45)] hover:text-[color:var(--color-tan-500)]" aria-controls="canvas-drawer" aria-expanded="false" title="Open your journey board">
+          <button type="button" id="canvas-drawer-open" class="ml-auto inline-flex items-center gap-2 rounded-full border border-[rgba(207,197,187,0.55)] bg-paper/90 px-3 py-1.5 font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-ink shadow-sm transition hover:border-[rgba(180,129,77,0.45)] hover:text-[color:var(--color-tan-500)]" aria-controls="canvas-drawer" aria-expanded="false" title="Open planning board (venues, mood tiles, quote)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M4 5h16M4 12h10M4 19h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
             </svg>
-            Journey
+            Board
           </button>
           <button id="reset-btn" type="button" class="shrink-0 text-xs font-medium uppercase tracking-[0.12em] text-[var(--color-ink-muted)] transition hover:text-[var(--color-ink)]">Reset</button>
         </header>
@@ -704,7 +718,10 @@
           <div id="chapter-dots" class="mt-2 flex gap-1"></div>
         </div>
 
-        <div id="chat" class="chat-thread chat-thread--immersive thin-scroll mx-auto min-h-0 w-full max-w-2xl flex-1 space-y-7 overflow-y-auto px-4 py-6 sm:space-y-8 sm:px-6 sm:py-8"></div>
+        <div id="chat-scroll-region" class="chat-main-scroll thin-scroll mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col overflow-y-auto">
+          <aside id="journey-timeline-host" class="journey-timeline-host shrink-0 border-b border-[rgba(228,226,225,0.45)] px-4 pb-4 pt-4 sm:px-6 sm:pb-5 sm:pt-5" aria-label="Your journey — seven planning steps"></aside>
+          <div id="chat" class="chat-thread chat-thread--immersive mx-auto min-h-0 w-full flex-1 space-y-7 px-4 py-6 sm:space-y-8 sm:px-6 sm:py-8"></div>
+        </div>
 
         <div id="chips" class="chat-chips-row mx-auto flex w-full max-w-2xl flex-wrap justify-center gap-2 border-t border-[rgba(207,197,187,0.22)] bg-transparent px-4 py-3 sm:px-6 sm:justify-start"></div>
 
@@ -726,8 +743,8 @@
       <div id="canvas-drawer-backdrop" class="aiw-canvas-drawer__backdrop" tabindex="-1" aria-hidden="true"></div>
       <section id="canvas-drawer-panel" class="aiw-canvas-drawer__panel flex flex-col" role="dialog" aria-modal="true" aria-labelledby="canvas-drawer-title">
         <header class="flex shrink-0 items-center justify-between gap-3 border-b border-[rgba(207,197,187,0.35)] bg-paper px-4 py-3 sm:px-5">
-          <p id="canvas-drawer-title" class="font-sans text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-muted">Your journey</p>
-          <button type="button" id="canvas-drawer-close" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[rgba(207,197,187,0.45)] bg-[rgba(252,249,248,0.9)] text-ink transition hover:bg-cream" aria-label="Close journey board">
+          <p id="canvas-drawer-title" class="font-sans text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-muted">Planning board</p>
+          <button type="button" id="canvas-drawer-close" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[rgba(207,197,187,0.45)] bg-[rgba(252,249,248,0.9)] text-ink transition hover:bg-cream" aria-label="Close planning board">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             </svg>
@@ -851,6 +868,8 @@
     ];
 
     let chapterIdx = 0;
+    /** When true, region + guests ran before venues; date/budget run after venue list (skip second region ask). */
+    let logisticsVenuesShownEarly = false;
     const chapterLabelEl = () => document.getElementById("chapter-label");
     const chapterPctEl = () => document.getElementById("chapter-pct");
     const chapterFillEl = () => document.getElementById("chapter-fill");
@@ -916,17 +935,20 @@
 
     /* ============ CHAT PRIMITIVES ============ */
     const chatEl  = document.getElementById("chat");
+    const chatScrollRegionEl = document.getElementById("chat-scroll-region");
+    const journeyTimelineHostEl = document.getElementById("journey-timeline-host");
     const chipsEl = document.getElementById("chips");
     const formEl  = document.getElementById("input-form");
     const inputEl = document.getElementById("text-input");
     const canvasEl = document.getElementById("canvas");
 
     function scroll() {
-      if (!chatEl) return;
+      const region = chatScrollRegionEl || chatEl;
+      if (!region) return;
       try {
-        chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: "smooth" });
+        region.scrollTo({ top: region.scrollHeight, behavior: "smooth" });
       } catch {
-        chatEl.scrollTop = chatEl.scrollHeight;
+        region.scrollTop = region.scrollHeight;
       }
     }
 
@@ -935,7 +957,7 @@
         <div class="chat-assistant-avatar" aria-hidden="true">
           <svg width="14" height="12" viewBox="0 0 14 12" fill="none"><path d="M7 10.2S1.8 6.5 1.8 3.4C1.8 2 3.1 1 4.6 1c1 0 1.9.5 2.4 1.2.5-.7 1.4-1.2 2.4-1.2 1.5 0 2.8 1 2.8 2.4 0 3.1-5.2 6.8-5.2 6.8Z" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round"/></svg>
         </div>
-        <span class="chat-assistant-name">Atelier</span>
+        <span class="chat-assistant-name">Allie</span>
       </div>`;
 
     function bubble(side, content) {
@@ -1208,13 +1230,15 @@
       return ` You left me <strong>${timing}</strong>${place} from home — we'll carry that forward.`;
     }
 
-    /* ============ START — opens with the seven-step timeline canvas ============ */
+    /* ============ START — seven-step journey cards render above the chat thread ============ */
     async function start() {
       if (!chatEl) {
         console.error("plan: #chat missing — cannot start conversation UI.");
         return;
       }
       chatEl.innerHTML = "";
+      if (canvasEl) canvasEl.innerHTML = "";
+      setCanvasDrawerOpen(false);
       clearChips();
       setStatusBanner(null);
       Object.assign(pkg, {
@@ -1226,6 +1250,7 @@
         heldUntil: null, deposited: false,
       });
       chapterIdx = 0;
+      logisticsVenuesShownEarly = false;
       textHandler = null;
       refreshPackage();
       buildChapterDots();
@@ -1244,11 +1269,11 @@
       const journey = plannerJourney();
       const tail = heroPrefillClause();
       const welcomeBook =
-        `Welcome — I'm <strong>Atelier</strong>, your Wedding Atelier. You're ready to book — we'll move with purpose through seven steps and end on a refundable $500 hold. <strong>Congratulations on your engagement.</strong>${tail}`;
+        `Welcome — I'm <strong>Allie</strong>, your wedding planner at All In Weddings. You're ready to book — we'll move with purpose through seven steps and end on a refundable $500 hold. <strong>Congratulations on your engagement.</strong>${tail}`;
       const welcomeDreaming =
-        `Welcome — I'm <strong>Atelier</strong>, your Wedding Atelier. Still dreaming, and that's exactly where the best weddings start. We'll walk through seven steps together — no commitment until it feels right. <strong>Congratulations on this chapter.</strong>${tail}`;
+        `Welcome — I'm <strong>Allie</strong>, your wedding planner at All In Weddings. Still dreaming, and that's exactly where the best weddings start. We'll walk through seven steps together — no commitment until it feels right. <strong>Congratulations on this chapter.</strong>${tail}`;
       const welcomeDefault =
-        `Welcome — I'm <strong>Atelier</strong>, your Wedding Atelier. <strong>Congratulations on your engagement.</strong> Seven steps, one running total, a refundable $500 hold at the end. The arc on the right ticks off as we go.${tail}`;
+        `Welcome — I'm <strong>Allie</strong>, your wedding planner at All In Weddings. <strong>Congratulations on your engagement.</strong> Seven steps, one running total, a refundable $500 hold at the end. <strong>Your journey</strong> — the strip above our thread — lights up as we go.${tail}`;
 
       await bot(journey === "book" ? welcomeBook : journey === "dreaming" ? welcomeDreaming : welcomeDefault);
       await pause(620);
@@ -1273,6 +1298,7 @@
         return;
       }
       chatEl.innerHTML = "";
+      if (canvasEl) canvasEl.innerHTML = "";
       clearChips();
       setStatusBanner(null);
       textHandler = null;
@@ -1301,13 +1327,14 @@
       animateTimelineProgress();
       renderTimelineCanvas();
       await bot(
-        `You're looking at <strong>${escapeHtml(space.name)}</strong> at <strong>${escapeHtml(hotel.name)}</strong> — the same space behind <strong>${escapeHtml(bride.name)}</strong>'s story on the homepage. Explore the dossier on the right; use <strong>Reset</strong> anytime to begin your own seven-step plan, or <strong>Choose this space</strong> to continue from here.`,
+        `You're looking at <strong>${escapeHtml(space.name)}</strong> at <strong>${escapeHtml(hotel.name)}</strong> — the same space behind <strong>${escapeHtml(bride.name)}</strong>'s story on the homepage. Open <strong>Board</strong> for the full dossier; use <strong>Reset</strong> anytime to begin your own seven-step plan, or <strong>Choose this space</strong> to continue from here.`,
       );
       await pause(420);
       renderSpaceDetailCanvas(space);
+      setCanvasDrawerOpen(true);
     }
 
-    /* ============ Opening canvas — animated 7-step timeline ============ */
+    /* ============ Seven-step journey cards (main chat) + same list drives progress line ============ */
     function renderTimelineCanvas() {
       const stepsHtml = CHAPTERS.map((ch, idx) => `
         <li class="how-step" data-step-key="${ch.key}" data-step-idx="${idx}" style="--how-step-index:${idx}">
@@ -1325,14 +1352,21 @@
         </li>
       `).join("");
 
-      setCanvas(`
-        <div class="px-1 sm:px-2">
-          <p class="aiw-eyebrow">Your seven steps</p>
+      const block = `
+        <div class="px-0 sm:px-0">
+          <p id="journey-timeline-heading" class="aiw-eyebrow">Your journey · seven steps</p>
           <h2 class="font-title text-4xl tracking-tight text-ink mt-1 sm:text-5xl">From mood to saved date — together.</h2>
-          <p class="text-ink-soft mt-2 mb-7 max-w-md">The arc lights up as we move. Tell me how the day <em>feels</em> first; everything else follows.</p>
-          <ol class="how-timeline" id="planner-timeline" aria-label="Seven planning steps">${stepsHtml}</ol>
+          <p class="text-ink-soft mt-2 mb-6 max-w-md text-sm sm:text-[15px]">Each card below is a chapter — the line fills in as we go. Tell me how the day <em>feels</em> first; everything else follows.</p>
+          <ol class="how-timeline" id="planner-timeline" aria-labelledby="journey-timeline-heading">${stepsHtml}</ol>
         </div>
-      `);
+      `;
+
+      const host = journeyTimelineHostEl || document.getElementById("journey-timeline-host");
+      if (host) {
+        host.innerHTML = block;
+      } else {
+        setCanvas(block);
+      }
       animateTimelineProgress();
     }
 
@@ -1379,19 +1413,66 @@
       };
     }
 
+    function renderMoodboardMagazineCanvas() {
+      const tiles = MAGAZINE_COVERS.map(c => {
+        const v = VIBES.find(x => x.id === c.value);
+        const img = v?.image || "";
+        const safeLabel = escapeHtml(c.label);
+        return `
+          <button type="button" class="group relative flex min-h-[140px] flex-col overflow-hidden rounded-lg border border-[color:var(--color-border-default)] bg-paper text-left shadow-sm transition hover:border-copper/50 hover:shadow-md sm:min-h-[160px]"
+            data-moodboard-pick="${escapeHtml(c.value)}"
+            data-moodboard-label="${escapeHtml(c.label)}">
+            <span class="relative block aspect-[16/10] w-full overflow-hidden bg-canvas">
+              <img src="${escapeHtml(img)}" alt="" class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.04]" loading="lazy" decoding="async" referrerpolicy="no-referrer-when-downgrade"/>
+              <span class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent"></span>
+            </span>
+            <span class="relative z-[1] px-3 py-2.5 font-sans text-[12px] font-semibold leading-snug text-ink sm:text-[13px]">${safeLabel}</span>
+          </button>`;
+      }).join("");
+
+      setCanvas(`
+        <div class="moodboard-vibes-root px-4 py-4 sm:px-5 sm:py-5">
+          <p class="aiw-eyebrow aiw-eyebrow--tan mb-1">Visual moodboard</p>
+          <h3 class="font-title text-xl leading-tight text-ink sm:text-2xl">Which cover story fits?</h3>
+          <p class="mt-1 max-w-xl text-sm text-ink-soft">Tap a look — or use the chips in chat. Same vibes, now with a visual anchor.</p>
+          <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">${tiles}</div>
+        </div>
+      `);
+
+      setCanvasDrawerOpen(true);
+      document.getElementById("canvas")?.querySelectorAll("[data-moodboard-pick]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const value = btn.getAttribute("data-moodboard-pick");
+          const label = btn.getAttribute("data-moodboard-label") || "";
+          if (!value) return;
+          pkg.vibeId = value;
+          pkg.coverLabel = label;
+          userSay(label);
+          clearChips();
+          textHandler = null;
+          renderTimelineCanvas();
+          setCanvasDrawerOpen(false);
+          await afterMagazineCover();
+        });
+      });
+    }
+
     async function afterFeeling() {
       clearChips();
       textHandler = null;
       await pause(360);
       await bot(feelingFollowup(pkg.feeling));
       await pause(420);
-      await bot(`If a magazine photographed your wedding, which cover would it land on?`);
+      await bot(`If a magazine photographed your wedding, which cover would it land on? <strong>Open the Board</strong> for full-size visual mood tiles — or use the chips below. Your seven-step outline stays pinned above our thread.`);
+      renderMoodboardMagazineCanvas();
       setChips(
         MAGAZINE_COVERS,
         async pick => {
           userSay(pick.label);
           pkg.vibeId = pick.value;
           pkg.coverLabel = pick.label;
+          renderTimelineCanvas();
+          setCanvasDrawerOpen(false);
           await afterMagazineCover();
         }
       );
@@ -1403,6 +1484,8 @@
         pkg.vibeId = match?.id || "soft-romantic";
         pkg.coverLabel = t;
         userSay(t);
+        renderTimelineCanvas();
+        setCanvasDrawerOpen(false);
         await afterMagazineCover();
       };
     }
@@ -1411,6 +1494,7 @@
       clearChips();
       textHandler = null;
       await pause(360);
+      renderTimelineCanvas();
       const cover = escapeHtml(pkg.coverLabel || "That direction");
       await bot(`${cover} — clear vision. Last beat for the moodboard: which <strong>palette</strong> feels most like you when you picture florals and tablescape?`);
       setChips(
@@ -1443,13 +1527,13 @@
     async function beginLogistics() {
       enterChapter(1);
       animateTimelineProgress();
-      await bot(`Step 2 — <strong>logistics</strong>. How many guests? This drives venue scale and the per-guest math.`);
+      await bot(`Step 2 — <strong>logistics</strong>. How many guests? This drives venue scale and the per-guest math — then we'll match properties to your moodboard before locking timing and budget.`);
       setChips(GUEST_CHIPS.map(g => ({ label: g.label })), async pick => {
         userSay(pick.label);
         const row = GUEST_CHIPS.find(x => x.label === pick.label);
         pkg.guests = row ? row.guests : 100;
         pkg.guestsLabel = pick.label;
-        await askLogisticsDate();
+        await askLogisticsRegion();
       });
       textHandler = async v => {
         const t = v.trim();
@@ -1458,7 +1542,7 @@
         pkg.guests = Number.isFinite(n) && n > 0 ? n : 100;
         pkg.guestsLabel = t;
         userSay(t);
-        await askLogisticsDate();
+        await askLogisticsRegion();
       };
     }
 
@@ -1475,7 +1559,7 @@
           userSay(pick.label);
           if (pick.action === "keep") {
             await dateNudge(pkg.date);
-            return askLogisticsRegion();
+            return logisticsVenuesShownEarly ? askLogisticsBudget() : askLogisticsRegion();
           }
           pkg.date = null;
           return askLogisticsDateAgain();
@@ -1493,7 +1577,8 @@
         userSay(pick.label);
         pkg.date = pick.label;
         await dateNudge(pkg.date);
-        await askLogisticsRegion();
+        if (logisticsVenuesShownEarly) await askLogisticsBudget();
+        else await askLogisticsRegion();
       });
       textHandler = async v => {
         const t = v.trim();
@@ -1501,7 +1586,8 @@
         userSay(t);
         pkg.date = t;
         await dateNudge(pkg.date);
-        await askLogisticsRegion();
+        if (logisticsVenuesShownEarly) await askLogisticsBudget();
+        else await askLogisticsRegion();
       };
     }
 
@@ -1530,7 +1616,7 @@
           { label: "Pick a different region", action: "change" },
         ], async pick => {
           userSay(pick.label);
-          if (pick.action === "keep") return askLogisticsBudget();
+          if (pick.action === "keep") return afterRegionEarlyVenues();
           pkg.region = null;
           return askLogisticsRegionAgain();
         });
@@ -1546,15 +1632,26 @@
       setChips(REGION_CHIPS, async pick => {
         userSay(pick.label);
         pkg.region = pick.value;
-        await askLogisticsBudget();
+        await afterRegionEarlyVenues();
       });
       textHandler = async v => {
         const t = v.trim();
         if (!t) return;
         userSay(t);
         pkg.region = mapRegionFromText(t);
-        await askLogisticsBudget();
+        await afterRegionEarlyVenues();
       };
+    }
+
+    async function afterRegionEarlyVenues() {
+      clearChips();
+      textHandler = null;
+      await pause(280);
+      logisticsVenuesShownEarly = true;
+      await beginVenueSelection();
+      await pause(320);
+      await bot(`Now let's pin <strong>timing and budget</strong> — that sharpens the matches in <strong>Board</strong>.`);
+      await askLogisticsDate();
     }
 
     async function askLogisticsBudget() {
@@ -1583,6 +1680,14 @@
       const band = escapeHtml(pkg.budgetBand || "That range");
       await bot(`${band} — solid foundation. ${allocationNarrativeHtml()}`);
       await pause(420);
+      if (logisticsVenuesShownEarly) {
+        const filtered = HOTELS.filter(h => !pkg.region || h.region === pkg.region);
+        const ranked = filtered.sort((a, b) => (a.upcoming ? 1 : 0) - (b.upcoming ? 1 : 0));
+        renderVenuesCanvas(ranked);
+        attachVenueListingHandlers(ranked);
+        setCanvasDrawerOpen(true);
+        return;
+      }
       await beginVenueSelection();
     }
 
@@ -1657,9 +1762,13 @@
       textHandler = null;
       const filtered = HOTELS.filter(h => !pkg.region || h.region === pkg.region);
       const ranked = filtered.sort((a, b) => (a.upcoming ? 1 : 0) - (b.upcoming ? 1 : 0));
-      await bot(`Step 3 — <strong>venue selection</strong>. Pulling properties that fit your moodboard, region, and ${pkg.guests || ""} guests…`);
+      const earlyVenueHint =
+        logisticsVenuesShownEarly && !pkg.budgetBand
+          ? " First pass leans on moodboard + region + guest count — we'll sharpen with timing and budget right after."
+          : "";
+      await bot(`Step 3 — <strong>venue selection</strong>. Pulling properties that fit your moodboard, region, and ${pkg.guests || ""} guests…${earlyVenueHint}`);
       await showVenueMatchingInterstitial(ranked);
-      await bot(`<strong>${ranked.length}</strong> matches. Tap a card on the right to step inside.`);
+      await bot(`<strong>${ranked.length}</strong> matches — opening <strong>Board</strong> with your list. Tap a property card to step inside.`);
       // Surface a warm-yellow status banner when matches feel constrained — Figma node 316:16.
       if (pkg.date && ranked.length <= 3) {
         const altCount = Math.max(0, ranked.length - 1);
@@ -1670,6 +1779,7 @@
       }
       renderVenuesCanvas(ranked);
       attachVenueListingHandlers(ranked);
+      setCanvasDrawerOpen(true);
     }
 
     function attachVenueListingHandlers(ranked) {
@@ -1678,7 +1788,7 @@
         const lower = v.toLowerCase();
         const hit = ranked.find(h => lower.includes(h.city.toLowerCase()) || lower.includes(h.name.toLowerCase().split(" ")[0]));
         if (hit) openVenueDetail(hit.id);
-        else await bot(`I didn't quite catch a property name — try tapping a card on the right, or type the resort name you have in mind.`);
+        else await bot(`I didn't quite catch a property name — open <strong>Board</strong> and tap a card, or type the resort name you have in mind.`);
       };
     }
 
@@ -1937,6 +2047,7 @@
       const h = byId(HOTELS, hotelId);
       if (!h) return;
       renderHotelDetailCanvas(h);
+      setCanvasDrawerOpen(true);
     }
 
     function renderHotelDetailCanvas(h) {
@@ -2156,6 +2267,7 @@
       const s = byId(SPACES, spaceId);
       if (!s) return;
       renderSpaceDetailCanvas(s);
+      setCanvasDrawerOpen(true);
     }
 
     /** Space alt card — same Figma 323:2 / 323:25 pattern */
@@ -3609,7 +3721,7 @@
     } else if (restored?.state?.spaceId) {
       try {
         Object.assign(pkg, restored.state, { heldUntil: restored.expiresAt });
-        bubble("bot", `Welcome back — it's Atelier. I held your configuration for the past ${Math.round((Date.now()-restored.savedAt)/60000)} minutes. Let's pick up exactly here.`);
+        bubble("bot", `Welcome back — it's Allie. I held your configuration for the past ${Math.round((Date.now()-restored.savedAt)/60000)} minutes. Let's pick up exactly here.`);
         refreshPackage();
         const s = byId(SPACES, pkg.spaceId);
         const hotel = s ? byId(HOTELS, s.hotelId) : null;

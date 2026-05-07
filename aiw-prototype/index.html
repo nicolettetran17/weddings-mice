@@ -137,13 +137,14 @@
         radial-gradient(900px 600px at 10% 0%, rgba(255,255,255,0.5), transparent 55%),
         linear-gradient(180deg, var(--color-sage-bg) 0%, var(--color-sage-bg-deep) 100%);
     }
+    /* Horizontal center, vertical anchor at top (crop favors upper frame) */
     #hero-photo {
       display: block;
       width: 100%;
       height: 100%;
       min-height: 100%;
       object-fit: cover;
-      object-position: center 35%;
+      object-position: 50% 0%;
     }
 
     /* Full-bleed hero — form overlaid on photo (no white card) */
@@ -157,38 +158,33 @@
       position: absolute;
       inset: 0;
       transform: scale(1.04);
-      transform-origin: center;
-    }
-    .hero-fullbleed__scrim {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        180deg,
-        rgba(20, 18, 16, 0.25) 0%,
-        rgba(20, 18, 16, 0.15) 35%,
-        rgba(12, 11, 10, 0.55) 70%,
-        rgba(8, 7, 6, 0.82) 100%
-      );
-      pointer-events: none;
+      transform-origin: center top;
     }
     .hero-form-on-image .field {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.32);
-      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      /* Near-opaque “paper” chip so labels/icons stay readable on any hero photo */
+      background: rgba(252, 249, 248, 0.94);
+      border-color: rgba(27, 28, 28, 0.22);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.85) inset,
+        0 2px 12px rgba(27, 28, 28, 0.08);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
     .hero-form-on-image .field:hover {
-      border-color: rgba(255, 255, 255, 0.48);
+      border-color: rgba(27, 28, 28, 0.34);
+      background: rgba(255, 255, 255, 0.98);
     }
     .hero-form-on-image .field--select:focus-within {
-      border-color: rgba(255, 255, 255, 0.55);
+      border-color: rgba(180, 129, 77, 0.75);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 0 0 3px rgba(180, 129, 77, 0.22);
     }
     .hero-form-on-image .field__trail {
-      color: rgba(255, 255, 255, 0.65);
+      color: #4a4540;
     }
     .hero-form-on-image .field--select select {
-      color: #fff;
+      color: #1b1c1c;
     }
     .hero-form-on-image .field--select select option {
       color: #1b1c1c;
@@ -211,21 +207,22 @@
       color: rgba(255, 255, 255, 0.38);
     }
     .hero-date-nudge--on-photo {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.28);
-      color: rgba(255, 255, 255, 0.92);
+      background: rgba(252, 249, 248, 0.94);
+      border-color: rgba(27, 28, 28, 0.18);
+      color: #2a2826;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 2px 10px rgba(27, 28, 28, 0.06);
     }
     .hero-date-nudge--on-photo strong {
-      color: #fff;
+      color: #1b1c1c;
     }
     .hero-date-nudge--on-photo .hero-date-nudge__dot {
-      background: #fff;
-      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45);
+      background: #b4814d;
+      box-shadow: 0 0 0 0 rgba(180, 129, 77, 0.45);
     }
     @keyframes hero-date-nudge-pulse-on-photo {
-      0%   { box-shadow: 0 0 0 0   rgba(255, 255, 255, 0.45); }
-      70%  { box-shadow: 0 0 0 9px rgba(255, 255, 255, 0); }
-      100% { box-shadow: 0 0 0 0   rgba(255, 255, 255, 0); }
+      0%   { box-shadow: 0 0 0 0   rgba(180, 129, 77, 0.45); }
+      70%  { box-shadow: 0 0 0 9px rgba(180, 129, 77, 0); }
+      100% { box-shadow: 0 0 0 0   rgba(180, 129, 77, 0); }
     }
     .hero-date-nudge--on-photo .hero-date-nudge__dot {
       animation-name: hero-date-nudge-pulse-on-photo;
@@ -250,6 +247,74 @@
       flex-shrink: 0;
       padding-right: 2.5rem;
     }
+    /* Portfolio — property carousel */
+    .portfolio-carousel {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      padding: 0.25rem 0 0.75rem;
+      margin: 0 -0.25rem;
+      scrollbar-color: rgba(180, 170, 158, 0.7) transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+    .portfolio-carousel::-webkit-scrollbar {
+      height: 6px;
+    }
+    .portfolio-carousel::-webkit-scrollbar-thumb {
+      background: rgba(180, 170, 158, 0.75);
+      border-radius: 999px;
+    }
+    .portfolio-carousel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .portfolio-carousel {
+        scroll-behavior: auto;
+      }
+    }
+    .portfolio-carousel:focus {
+      outline: none;
+    }
+    .portfolio-carousel:focus-visible {
+      outline: 2px solid var(--color-copper, #8b6a42);
+      outline-offset: 4px;
+    }
+    .portfolio-slide {
+      flex: 0 0 min(100%, calc(100vw - 3rem));
+      max-width: 52rem;
+      scroll-snap-align: center;
+    }
+    @media (min-width: 768px) {
+      .portfolio-slide {
+        flex: 0 0 min(88%, 48rem);
+      }
+    }
+    .portfolio-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(207, 197, 187, 0.55);
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--color-ink, #2a2a28);
+      box-shadow: 0 2px 12px rgba(42, 40, 38, 0.08);
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    }
+    .portfolio-nav-btn:hover {
+      background: #fff;
+      border-color: rgba(139, 106, 66, 0.45);
+    }
+    .portfolio-nav-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .hero-marquee__track {
         animation: none;
@@ -350,26 +415,27 @@
     <div class="hero-fullbleed__media" aria-hidden="true">
       <img
         id="hero-photo"
-        src="./assets/hero-beach-wedding.png"
+        src="./assets/hero-nobu-los-cabos-wedding.png"
         alt=""
-        width="677"
-        height="1024"
+        width="1024"
+        height="683"
         fetchpriority="high"
         decoding="async"
       />
     </div>
-    <div class="hero-fullbleed__scrim" aria-hidden="true"></div>
 
-    <div class="relative z-10 flex min-h-[calc(100dvh-5rem)] flex-col justify-end">
-      <div class="mx-auto w-full max-w-lg px-6 pb-6 pt-24 sm:max-w-xl sm:pb-8 sm:pt-28 lg:max-w-2xl">
-        <h1 class="font-title text-[2.25rem] leading-[1.06] tracking-[-0.02em] text-paper drop-shadow-[0_2px_24px_rgba(0,0,0,0.35)] sm:text-4xl lg:text-5xl">
+    <div class="relative z-10 flex min-h-[calc(100dvh-5rem)] flex-col justify-between">
+      <div class="mx-auto w-full max-w-[min(100%,56rem)] px-6 pt-20 sm:px-8 sm:pt-24 lg:max-w-7xl lg:pt-28">
+        <h1
+          class="font-title tracking-[-0.03em] text-paper drop-shadow-[0_4px_40px_rgba(0,0,0,0.42)] [font-size:clamp(2.75rem,11vw,4.5rem)] [line-height:1.02] sm:[font-size:clamp(3.25rem,9vw,4.5rem)] lg:[font-size:clamp(4.5rem,7.5vw,6rem)]"
+        >
           Imagine yourself here
         </h1>
-        <p class="mt-2 font-sans text-xs font-semibold uppercase tracking-[0.1em] text-white/70">
-          Destination weddings · Fourteen verified properties
-        </p>
+      </div>
 
-        <p class="mb-5 mt-10 text-center font-sans text-[11px] font-semibold uppercase tracking-[0.22em] text-white/75 sm:text-left">
+      <div class="mt-auto w-full">
+      <div class="mx-auto w-full max-w-lg px-6 pb-6 sm:max-w-xl sm:pb-8 lg:max-w-2xl">
+        <p class="mb-5 text-center font-sans text-[11px] font-semibold uppercase tracking-[0.22em] text-white/75 sm:text-left">
           i want to get married…
         </p>
         <form class="hero-form-on-image space-y-3" method="get" action="./plan.html">
@@ -475,6 +541,7 @@
           </div>
         </div>
       </div>
+      </div>
     </div>
   </section>
 
@@ -575,13 +642,38 @@
           Pick a vibe, not a brand — we'll find the place that already speaks it.
         </p>
       </div>
-      <div id="brand-grid" class="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2"></div>
+
+      <div class="portfolio-spectrum mx-auto mb-8 max-w-3xl px-1">
+        <p class="mb-3 text-center text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-muted">Investment spectrum</p>
+        <div class="flex items-stretch gap-2 sm:gap-4">
+          <span class="flex max-w-[6.5rem] items-center text-end text-[10px] font-bold uppercase leading-snug tracking-wide text-ink sm:max-w-[8rem] sm:text-xs">Hard Rock Hotels</span>
+          <div class="relative flex min-h-[2.75rem] flex-1 items-center">
+            <div class="h-1.5 w-full rounded-full bg-gradient-to-r from-[#8C2A2A] via-[#c76f2a] to-[#B4814D]" aria-hidden="true"></div>
+            <span class="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-center px-2">
+              <span class="border border-[color:var(--color-rcd-rule)] bg-paper px-2.5 py-1 text-[9px] font-semibold uppercase leading-tight tracking-[0.12em] text-ink shadow-sm sm:text-[10px] sm:tracking-[0.14em]">Affordable to Luxury</span>
+            </span>
+          </div>
+          <span class="flex max-w-[6.5rem] items-center text-start text-[10px] font-bold uppercase leading-snug tracking-wide text-ink sm:max-w-[8rem] sm:text-xs">UNICO 20°87°</span>
+        </div>
+        <p class="mt-2 text-center text-[11px] leading-snug text-ink-muted">Plus Nobu &amp; AVA — same planner, every price point.</p>
+      </div>
+
+      <div class="relative">
+        <button type="button" id="portfolio-carousel-prev" class="portfolio-nav-btn absolute left-0 top-1/2 z-20 hidden -translate-x-1 sm:-translate-x-2 sm:flex" aria-controls="portfolio-carousel" aria-label="Previous property">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" id="portfolio-carousel-next" class="portfolio-nav-btn absolute right-0 top-1/2 z-20 hidden translate-x-1 sm:translate-x-2 sm:flex" aria-controls="portfolio-carousel" aria-label="Next property">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div id="portfolio-carousel" class="portfolio-carousel" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Featured properties"></div>
+        <div id="portfolio-carousel-dots" class="mt-4 flex flex-wrap items-center justify-center gap-2"></div>
+      </div>
     </section>
 
     <section id="stories" class="border-t border-[color:var(--color-rcd-rule)] py-14 sm:py-20">
       <p class="mb-2 text-xs uppercase tracking-[0.2em] text-ink-muted">Real brides, real bookings</p>
       <h2 class="mb-10 max-w-3xl font-title text-3xl tracking-tight text-ink sm:mb-12 sm:text-4xl lg:text-5xl">A few weddings already planned this way.</h2>
-      <div id="story-grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3"></div>
+      <div id="story-grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"></div>
     </section>
 
     <section class="mt-10 border border-[color:var(--color-rcd-rule)] bg-ink px-6 py-14 text-paper sm:px-10 sm:py-20">
@@ -601,64 +693,155 @@
   <div id="footer-mount"></div>
 
   <script type="module">
-    import { HOTELS, BRANDS, BRIDES, byId, hotelCardImageUrl } from "./_data.js";
-    import { renderFooter, paletteGradient, $h } from "./_app.js";
+    import { HOTELS, BRANDS, BRIDES, byId, hotelCardImageUrl, storyCardImageUrl } from "./_data.js";
+    import { renderFooter, $h, usd } from "./_app.js";
 
     document.getElementById("footer-mount").innerHTML = renderFooter();
 
-    const brandGrid = document.getElementById("brand-grid");
-    BRANDS.forEach(brand => {
-      const hotels = HOTELS.filter(h => h.brand === brand.id);
-      const upcoming = hotels.filter(h => h.upcoming);
-      const live = hotels.filter(h => !h.upcoming);
+    function escHtml(s) {
+      return String(s).replace(/[<>&"']/g, ch => ({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;","'":"&#39;"}[ch]));
+    }
 
-      brandGrid.appendChild($h(`
-        <article class="overflow-hidden border border-[color:var(--color-rcd-rule)] bg-paper shadow-sm transition-shadow hover:shadow-md">
-          <div class="relative h-40 overflow-hidden sm:h-44" style="background:${paletteGradient([brand.accent, "#2A2A28", "#E8DDD0"])}">
-            <div class="absolute inset-0 aiw-grain"></div>
-            <div class="absolute inset-0 flex flex-col justify-between p-5 sm:p-6">
-              <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-paper/80 sm:text-xs">${brand.short}</p>
-              <h3 class="font-title text-3xl leading-tight text-paper sm:text-4xl">${brand.name}</h3>
+    const portfolioCarousel = document.getElementById("portfolio-carousel");
+    const portfolioPrev = document.getElementById("portfolio-carousel-prev");
+    const portfolioNext = document.getElementById("portfolio-carousel-next");
+    const portfolioDots = document.getElementById("portfolio-carousel-dots");
+
+    if (portfolioCarousel) {
+      const carouselHotels = [...HOTELS].sort((a, b) => {
+        if (!!a.upcoming !== !!b.upcoming) return a.upcoming ? 1 : -1;
+        return (a.fromUSD || 0) - (b.fromUSD || 0);
+      });
+
+      function planWhereParam(hotel) {
+        if (hotel.region === "pacific") return "los-cabos";
+        if (hotel.region === "atlantic") return "cancun";
+        if (hotel.country === "Dominican Republic" || /punta cana/i.test(hotel.city || "")) return "punta-cana";
+        return "cancun";
+      }
+
+      carouselHotels.forEach((h, idx) => {
+        const brand = BRANDS.find(b => b.id === h.brand);
+        const brandName = brand ? brand.name : h.brand;
+        const img = hotelCardImageUrl(h.id);
+        const upcoming = !!h.upcoming;
+        const href = `./plan.html?journey=dreaming&where=${encodeURIComponent(planWhereParam(h))}`;
+        portfolioCarousel.appendChild($h(`
+          <article class="portfolio-slide group relative aspect-[4/3] overflow-hidden border border-[color:var(--color-rcd-rule)] bg-ink shadow-md sm:aspect-[21/10] sm:max-h-[min(52vh,440px)]">
+            <img src="${img}" alt="" class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" width="640" height="360" loading="${idx < 2 ? "eager" : "lazy"}" decoding="async" referrerpolicy="no-referrer-when-downgrade"/>
+            <div class="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black/88 via-black/35 to-transparent"></div>
+            <div class="pointer-events-none absolute inset-x-0 bottom-0 z-[2] p-5 sm:p-7">
+              <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/75">${escHtml(brandName)}</p>
+              <h3 class="font-title mt-1 max-w-[20ch] text-2xl leading-tight text-paper sm:text-3xl lg:text-4xl">${escHtml(h.name)}</h3>
+              <p class="mt-1 text-sm text-white/80">${escHtml(h.city)}, ${escHtml(h.country)}</p>
+              <div class="mt-3 flex flex-wrap items-center gap-2">
+                <span class="text-xs font-semibold text-white">From ${usd(h.fromUSD)}</span>
+                ${upcoming ? `<span class="rounded-sm border border-white/35 bg-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white/90">Opening soon</span>` : ""}
+              </div>
             </div>
-          </div>
-          <div class="p-5 sm:p-6">
-            <p class="mb-4 text-sm text-ink-soft sm:text-base">${brand.tagline}</p>
-            <ul class="space-y-2 text-sm">
-              ${live.map(h => `
-                <li class="flex flex-col gap-0.5 border-b border-border-subtle py-2 sm:flex-row sm:justify-between sm:gap-2">
-                  <span class="leading-snug">${h.name}</span>
-                  <span class="shrink-0 text-ink-muted">${h.city}, ${h.country}</span>
-                </li>`).join("")}
-              ${upcoming.map(h => `
-                <li class="flex flex-col gap-0.5 border-b border-border-subtle py-2 text-ink-muted sm:flex-row sm:justify-between">
-                  <span>${h.name} <span class="ml-1 text-[10px] font-semibold uppercase tracking-widest text-copper">opening soon</span></span>
-                  <span class="shrink-0">${h.city}, ${h.country}</span>
-                </li>`).join("")}
-            </ul>
-            <p class="mt-4 text-xs text-ink-muted">${live.length} properties live · ${upcoming.length} opening</p>
-          </div>
-        </article>`));
-    });
+            <a href="${href}" class="absolute inset-0 z-10 block outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-copper" aria-label="Start planning at ${escHtml(h.name)}">
+              <span class="sr-only">${escHtml(h.name)} — ${escHtml(h.city)}, ${escHtml(h.country)}. Est. from ${usd(h.fromUSD)}.</span>
+            </a>
+          </article>`));
+      });
+
+      const slides = () => Array.from(portfolioCarousel.querySelectorAll(".portfolio-slide"));
+
+      function updatePortfolioNav() {
+        const el = portfolioCarousel;
+        const max = el.scrollWidth - el.clientWidth - 2;
+        if (portfolioPrev) portfolioPrev.disabled = el.scrollLeft <= 2;
+        if (portfolioNext) portfolioNext.disabled = el.scrollLeft >= max;
+      }
+
+      function scrollPortfolioBy(dir) {
+        const el = portfolioCarousel;
+        const w = slides()[0]?.getBoundingClientRect().width || el.clientWidth;
+        const gap = 16;
+        el.scrollBy({ left: dir * (w + gap), behavior: prefersReducedMotion() ? "auto" : "smooth" });
+      }
+
+      function prefersReducedMotion() {
+        return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      }
+
+      function goToPortfolioSlide(i) {
+        const list = slides();
+        const target = list[Math.max(0, Math.min(i, list.length - 1))];
+        if (target) target.scrollIntoView({ inline: "center", block: "nearest", behavior: prefersReducedMotion() ? "auto" : "smooth" });
+      }
+
+      portfolioPrev?.addEventListener("click", () => scrollPortfolioBy(-1));
+      portfolioNext?.addEventListener("click", () => scrollPortfolioBy(1));
+      portfolioCarousel.addEventListener("scroll", () => {
+        updatePortfolioNav();
+        const list = slides();
+        if (!list.length || !portfolioDots) return;
+        const root = portfolioCarousel.getBoundingClientRect();
+        const mid = root.left + root.width / 2;
+        let best = 0;
+        let bestD = Infinity;
+        list.forEach((s, i) => {
+          const r = s.getBoundingClientRect();
+          const c = r.left + r.width / 2;
+          const d = Math.abs(c - mid);
+          if (d < bestD) {
+            bestD = d;
+            best = i;
+          }
+        });
+        portfolioDots.querySelectorAll("button").forEach((btn, i) => {
+          const on = i === best;
+          btn.setAttribute("aria-current", on ? "true" : "false");
+          btn.classList.toggle("bg-ink", on);
+          btn.classList.toggle("bg-[color:var(--color-rcd-rule)]", !on);
+        });
+      });
+
+        if (portfolioDots) {
+        slides().forEach((_, i) => {
+          const on = i === 0;
+          const b = $h(`<button type="button" class="h-2 w-2 rounded-full transition-colors sm:h-2.5 sm:w-2.5 ${on ? "bg-ink" : "bg-[color:var(--color-rcd-rule)]"}" aria-label="Show property ${i + 1}" aria-current="${on ? "true" : "false"}"></button>`);
+          b?.addEventListener("click", () => goToPortfolioSlide(i));
+          portfolioDots.appendChild(b);
+        });
+      }
+
+      portfolioCarousel.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") { e.preventDefault(); scrollPortfolioBy(-1); }
+        if (e.key === "ArrowRight") { e.preventDefault(); scrollPortfolioBy(1); }
+      });
+
+      updatePortfolioNav();
+      portfolioCarousel.dispatchEvent(new Event("scroll"));
+      window.addEventListener("resize", () => updatePortfolioNav(), { passive: true });
+    }
 
     const stories = document.getElementById("story-grid");
-    BRIDES.slice(0, 3).forEach(b => {
+    BRIDES.slice(0, 4).forEach(b => {
       const hotel = byId(HOTELS, b.hotelId);
       const dossierHref = `./plan.html?story=${encodeURIComponent(b.slug)}`;
+      const tileImg = storyCardImageUrl(b, hotel.id);
+      const photoCred =
+        b.photoCredit && b.photoCreditHref
+          ? `<p class="mt-2 text-[10px] leading-snug text-ink-muted"><a href="${escHtml(b.photoCreditHref)}" class="underline decoration-ink-muted/40 underline-offset-2 transition hover:text-ink" target="_blank" rel="noopener noreferrer">Photos · ${escHtml(b.photoCredit)}</a></p>`
+          : "";
       stories.appendChild($h(`
         <a href="${dossierHref}" class="group block overflow-hidden border border-[color:var(--color-rcd-rule)] bg-paper shadow-sm outline-none ring-offset-2 transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:ring-copper" aria-label="View ${b.name} — ${hotel.name} space dossier in planner">
           <article class="text-left">
             <div class="relative h-48 sm:h-56">
-              <img src="${hotelCardImageUrl(hotel.id)}" alt="" class="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" loading="lazy" decoding="async" referrerpolicy="no-referrer-when-downgrade" />
+              <img src="${tileImg}" alt="" class="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" loading="lazy" decoding="async" referrerpolicy="no-referrer-when-downgrade" />
               <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-black/15 to-transparent"></div>
               <div class="absolute inset-0 aiw-grain opacity-45 mix-blend-overlay"></div>
               <div class="absolute inset-x-0 bottom-0 p-4 sm:p-5">
-                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-paper/80 sm:text-xs">${b.season} · ${b.guests} guests</p>
-                <p class="font-title text-2xl text-paper sm:text-3xl">${b.name}</p>
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-paper/80 sm:text-xs">${escHtml(b.season)} · ${b.guests} guests</p>
+                <p class="font-title text-2xl text-paper sm:text-3xl">${escHtml(b.name)}</p>
               </div>
             </div>
             <div class="p-5 sm:p-6">
-              <p class="text-sm leading-relaxed text-ink sm:text-base">"${b.quote}"</p>
-              <p class="mt-3 text-xs text-ink-muted sm:text-sm">${hotel.name}</p>
+              <p class="text-sm leading-relaxed text-ink sm:text-base">"${escHtml(b.quote)}"</p>
+              <p class="mt-3 text-xs text-ink-muted sm:text-sm">${escHtml(hotel.name)}</p>
+              ${photoCred}
               <p class="mt-4 text-sm font-medium text-copper">View space dossier →</p>
             </div>
           </article>

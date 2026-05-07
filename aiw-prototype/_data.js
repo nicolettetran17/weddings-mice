@@ -122,6 +122,11 @@ export function hotelCardImageUrl(hotelId) {
   return LVC_HOTEL_CARD_IMAGES[hotelId] || LVC_HOTEL_CARD_IMAGES._default;
 }
 
+/** Homepage “Real brides” tile image — falls back to hotel stock when unset. */
+export function storyCardImageUrl(bride, hotelId) {
+  return bride.storyCardPhoto || hotelCardImageUrl(hotelId);
+}
+
 /* ---------- Spaces (a few per hotel — most relevant) ---------- */
 export const SPACES = [
   /* Hard Rock Punta Cana */
@@ -207,13 +212,43 @@ export const VENDORS = [
 ];
 
 /* ---------- Social proof / past brides ---------- */
+/** Ceremony / detail photos: Katie Byrd Photography — Nobu Los Cabos (Bri + Kris Obaseki). License for production use is separate from this prototype. */
+const KATIE_BYRD_NOBU_POST =
+  "https://katiebyrdphotography.com/nobu-hotel-los-cabos-wedding-bri-kris-obaseki/";
+const KATIE_BYRD_NOBU_IMG = (n) =>
+  `https://katiebyrdphotography.com/wp-content/uploads/2023/04/Nobu-Hotel-Los-Cabos-Luxury-Destination-Wedding${n}-1024x683.jpg`;
+
 export const BRIDES = [
+  { slug: "bri-kris-nobu-ceremony", name: "Bri & Kris", hotelId: "nobu-los-cabos", spaceId: "no-lc-stone",
+    quote: "A floral arch on the beach at Nobu — the destination wedding we kept replaying in our heads until it was real.",
+    season: "Los Cabos", guests: 120,
+    storyCardPhoto: KATIE_BYRD_NOBU_IMG(59),
+    photoCredit: "Katie Byrd Photography",
+    photoCreditHref: KATIE_BYRD_NOBU_POST },
+  { slug: "bri-kris-nobu-celebration", name: "Bri & Kris", hotelId: "nobu-los-cabos", spaceId: "no-lc-stone",
+    quote: "From welcome party to fireworks — every frame still feels like a magazine spread.",
+    season: "Los Cabos", guests: 120,
+    storyCardPhoto: KATIE_BYRD_NOBU_IMG(30),
+    photoCredit: "Katie Byrd Photography",
+    photoCreditHref: KATIE_BYRD_NOBU_POST },
+  { slug: "bri-kris-nobu-details", name: "Bri & Kris", hotelId: "nobu-los-cabos", spaceId: "no-lc-pool",
+    quote: "Quiet luxury that isn’t boring — stone, light, and the Sea of Cortez doing half the decorating for us.",
+    season: "Los Cabos", guests: 120,
+    storyCardPhoto: KATIE_BYRD_NOBU_IMG(41),
+    photoCredit: "Katie Byrd Photography",
+    photoCreditHref: KATIE_BYRD_NOBU_POST },
+  /** Imagery from Shaadi Destinations — South Asian weddings at Nobu Los Cabos (prototype; secure rights for production). */
+  { slug: "meghana-neil-nobu-shaadi", name: "Meghana & Neil", hotelId: "nobu-los-cabos", spaceId: "no-lc-stone",
+    quote: "Terraces, ocean light, and room for every tradition — Nobu felt built for our baraat and our ballroom moment in one weekend.",
+    season: "Los Cabos", guests: 180,
+    storyCardPhoto:
+      "https://images.squarespace-cdn.com/content/v1/6627d116ba2358384fb2b475/57d7f2bb-c9c7-4ad0-bd69-28bf476a164c/Nobu+Los+Cabos+South+Asian+Indian+Weddings+8+-+Web.jpg?format=1500w",
+    photoCredit: "Shaadi Destinations",
+    photoCreditHref:
+      "https://www.shaadidestinations.com/nobu-hotel-los-cabos-south-asian-indian-wedding" },
   { slug: "aria-marcus", name: "Aria & Marcus", hotelId: "unico-riviera-maya", spaceId: "u-rm-cenote",
     quote: "We told the chatbot 'mystic boho cathedral' and it spit back our exact wedding. We cried. We booked.",
     season: "March 2026", guests: 78 },
-  { slug: "priya-daniel", name: "Priya & Daniel", hotelId: "nobu-los-cabos", spaceId: "no-lc-stone",
-    quote: "We wanted quiet. Not boring — quiet. Nobu was the only place that understood the difference.",
-    season: "May 2026", guests: 92 },
   { slug: "jenna-tomas", name: "Jenna & Tomás", hotelId: "hr-punta-cana", spaceId: "hr-pc-sky",
     quote: "Sky Terrace at sunset. 220 of our loudest friends. Hard Rock did NOT come to play around.",
     season: "Jan 2026", guests: 220 },
@@ -231,17 +266,23 @@ export const BRIDES = [
 /* ---------- Vibe presets (chips for the chatbot) ---------- */
 export const VIBES = [
   { id: "boho-jungle",     label: "Boho jungle",          tags: ["Boho","Earthy","Lantern-lit"],
-    hex: ["#3F4A2A","#B4814D","#E8DDD0","#5A554D"] },
+    hex: ["#3F4A2A","#B4814D","#E8DDD0","#5A554D"],
+    image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80" },
   { id: "minimalist-stone",label: "Minimalist + stone",   tags: ["Minimalist","Wabi-sabi","Sculptural"],
-    hex: ["#2A2A28","#948D80","#E8DDD0","#C9C2B6"] },
+    hex: ["#2A2A28","#948D80","#E8DDD0","#C9C2B6"],
+    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80" },
   { id: "cinematic-noir",  label: "Cinematic noir",       tags: ["Black-tie","Cinematic","Glam"],
-    hex: ["#0F0F0E","#2A2A28","#5A554D","#B4814D"] },
+    hex: ["#0F0F0E","#2A2A28","#5A554D","#B4814D"],
+    image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=80" },
   { id: "tropical-sunset", label: "Tropical sunset",      tags: ["Tropical","Sunset","Coastal"],
-    hex: ["#C66A2E","#E2A87A","#F0E8DC","#5A8A8B"] },
+    hex: ["#C66A2E","#E2A87A","#F0E8DC","#5A8A8B"],
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80" },
   { id: "soft-romantic",   label: "Soft & romantic",      tags: ["Soft","Intimate","Coastal"],
-    hex: ["#F5EFE6","#E8DDD0","#D9C7A6","#B4814D"] },
+    hex: ["#F5EFE6","#E8DDD0","#D9C7A6","#B4814D"],
+    image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=1200&q=80" },
   { id: "mystic-cenote",   label: "Mystic cenote",        tags: ["Mystic","Earthy","Boho"],
-    hex: ["#1F2A2A","#5A8A8B","#B4814D","#E8DDD0"] },
+    hex: ["#1F2A2A","#5A8A8B","#B4814D","#E8DDD0"],
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200&q=80" },
 ];
 
 /**
