@@ -2,6 +2,24 @@
    are loaded via ../rcd-design-system/tokens.css; this file adds a few
    site-only styles that don't belong in the design system itself. */
 
+/* ==========================================================
+   Figma-aligned token aliases — RCD file FAF8ZGTyNyYOXtDSNU4ovB
+   (node 316:2 "Alternative Handling"). Surface the sage / tan /
+   warm-warning palette the design system uses for the planner
+   chat experience without leaving the existing token graph.
+   ========================================================== */
+:root {
+  --color-sage-100:             #ebeee7;
+  --color-sage-600:             #646f53;
+  --color-tan-100:              #f3e6d3;
+  --color-tan-500:              #ca9151;   /* alias of --color-copper for chat surfaces */
+  --color-warm-warning-surface: #fdf1dc;
+  --color-warm-warning-text:    #c47f12;
+  --color-warm-warning-deep:    #b55106;
+  --color-surface-page:         #f8f8f6;
+  --color-surface-subtle:       #edece8;
+}
+
 /* ---- Hero "imagery" — generated SVG-style gradients keyed by hotel ---- */
 .aiw-hero-bg {
   background:
@@ -34,15 +52,389 @@
   opacity: 0.35;
 }
 
+/* ==========================================================
+   AIW components — Figma node 316:2 (Alternative Handling)
+   Compose with the RCD tokens above. These map 1:1 to the
+   layers in the design (status banner, context bar, AIW card,
+   01/02 alt card, notify card, pills, eyebrow, display).
+   ========================================================== */
+
+/* Eyebrow — sage SemiBold uppercase 12/16 tracking 0.8 */
+.aiw-eyebrow {
+  font-family: var(--font-sans, "Poppins", sans-serif);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.067em;
+  text-transform: uppercase;
+  color: var(--color-sage-600);
+}
+.aiw-eyebrow--tan { color: var(--color-tan-500); }
+.aiw-eyebrow--ink { color: var(--color-ink); }
+
+/* Display headlines — Isabella Grand → Playfair fallback chain */
+.aiw-display-md {
+  font-family: var(--font-title, serif);
+  font-size: 22px;
+  line-height: 24px;
+  letter-spacing: -0.018em;
+  color: var(--color-ink);
+}
+.aiw-display-lg {
+  font-family: var(--font-title, serif);
+  font-size: 26px;
+  line-height: 27px;
+  letter-spacing: -0.027em;
+  color: var(--color-ink);
+}
+.aiw-display-price {
+  font-family: var(--font-title, serif);
+  font-size: 20px;
+  line-height: 21px;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+.aiw-display-price--lg {
+  font-size: 28px;
+  line-height: 30px;
+  letter-spacing: -0.025em;
+}
+.aiw-tan-period { color: var(--color-tan-500); }
+
+/* Status banner — warm yellow */
+.aiw-status-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--color-warm-warning-surface);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--color-warm-warning-text);
+}
+.aiw-status-banner svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-warm-warning-text);
+}
+.aiw-status-banner strong { font-weight: 600; }
+.aiw-status-banner em {
+  font-style: normal;
+  color: var(--color-warm-warning-deep);
+}
+
+/* Context bar — small contextual breadcrumb above the chat thread */
+.aiw-context-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--color-surface-subtle);
+  border-top: 1px solid var(--color-border-default);
+  border-bottom: 1px solid var(--color-border-default);
+  font-family: "Inter", var(--font-sans);
+  font-size: 12px;
+  color: var(--color-ink);
+  line-height: 1;
+}
+.aiw-context-bar > .sep { color: var(--color-ink-muted); }
+.aiw-context-bar .meta { color: var(--color-ink); }
+
+/* Section label wrap — generous bottom space */
+.aiw-section-label {
+  padding: 20px 4px 10px;
+}
+
+/* AIW card — sage-subtle bg, rounded-lg, 16px gutters */
+.aiw-card {
+  background: var(--color-surface-subtle);
+  border-radius: var(--radius-lg, 6px);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.aiw-card--page {
+  background: var(--color-surface-page);
+  border: 1px solid var(--color-border-subtle);
+}
+
+/* Pills */
+.aiw-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-family: "Inter", var(--font-sans);
+  font-size: 12px;
+  line-height: 1;
+  background: var(--color-paper);
+  border: 1px solid var(--color-border-default);
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+.aiw-pill--inverse {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  border-color: transparent;
+}
+.aiw-pill--sage {
+  background: var(--color-sage-100);
+  color: var(--color-sage-600);
+  border: none;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.067em;
+  padding: 4px 10px;
+}
+
+/* Available overlay badge (sits on top of card image) */
+.aiw-avail-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.93);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.067em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+/* Tan rule — small 18px decorative line below eyebrow */
+.aiw-mini-rule {
+  height: 1px;
+  width: 18px;
+  background: var(--color-tan-500);
+  opacity: 0.4;
+  margin: 8px 0;
+  border: 0;
+}
+
+/* Numeric marker "01"/"02" */
+.aiw-marker {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.067em;
+  color: var(--color-tan-500);
+  text-transform: uppercase;
+}
+
+/* "Select this date →" / "Explore X →" tan link button */
+.aiw-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-tan-500);
+  background: transparent;
+  border: 0;
+  padding: 6px 0;
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+.aiw-link-btn:hover {
+  color: var(--color-copper-hover, #9A6E40);
+  transform: translateX(1px);
+}
+.aiw-link-btn--sm { font-size: 12px; }
+
+/* Notify card */
+.aiw-notify-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-sage-100);
+  border-radius: var(--radius-lg, 6px);
+  padding: 12px 12px 12px 14px;
+}
+.aiw-notify-card .bell-box {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-md, 4px);
+  background: var(--color-paper);
+  display: grid; place-items: center;
+  flex-shrink: 0;
+  color: var(--color-tan-500);
+}
+.aiw-notify-card .copy { flex: 1; min-width: 0; }
+.aiw-notify-card .copy p { margin: 0; line-height: 1.3; }
+.aiw-notify-card .copy p:first-child {
+  font-family: "Inter", var(--font-sans);
+  font-size: 12px;
+  color: var(--color-ink);
+}
+.aiw-notify-card .copy p:last-child {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-sage-600);
+}
+.aiw-notify-card .notify-btn {
+  background: var(--color-paper);
+  border: 1px solid var(--color-border-default);
+  border-radius: 9999px;
+  padding: 6px 12px;
+  font-family: "Inter", var(--font-sans);
+  font-size: 12px;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.aiw-notify-card .notify-btn:hover {
+  background: var(--color-cream-soft);
+  border-color: var(--color-ink);
+}
+
+/* Price meta block (label above + price below) */
+.aiw-price-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.aiw-price-meta .label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-sage-600);
+}
+
+/* Meta list (12px Inter, ink-primary) */
+.aiw-meta-list {
+  font-family: "Inter", var(--font-sans);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-ink);
+}
+.aiw-meta-list p { margin: 0 0 4px; }
+
 /* ---- Chat thread — RCD Figma node 125:16457 "Vibe" ---- */
 .chat-shell {
-  background: #fcf9f8;
+  background: var(--color-surface-page);
   border: 1px solid rgba(207, 197, 187, 0.35);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+/* Full-viewport immersive conversation (inspired by conversational UI patterns) */
+.chat-shell--immersive {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(255, 252, 248, 0.95) 0%, transparent 55%),
+    linear-gradient(180deg, #faf7f4 0%, #f3ebe4 38%, #fcf9f8 100%);
+}
+.chat-thread--immersive {
+  scrollbar-color: rgba(166, 155, 143, 0.35) transparent;
+}
+.chat-input-bar--immersive {
+  border-top-color: rgba(207, 197, 187, 0.18);
+  background: linear-gradient(180deg, transparent, rgba(252, 249, 248, 0.92) 28%, rgba(252, 249, 248, 0.98));
+  padding-top: 0.75rem;
+}
+.chat-input-wrap--immersive {
+  min-height: 48px;
+  padding: 4px 6px;
+  border-radius: 9999px;
+  box-shadow: 0 8px 32px rgba(42, 40, 38, 0.06), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+.chat-input-wrap--immersive .chat-input-field {
+  font-size: 15px;
+  line-height: 22px;
+  padding: 10px 14px;
+}
+@media (min-width: 640px) {
+  .chat-bubble--bot,
+  .chat-bubble--user {
+    font-size: 17px;
+    line-height: 1.55;
+  }
+}
+
+body.aiw-canvas-drawer-open {
+  overflow: hidden;
+}
+
+/* Journey board overlay — desktop: right rail; mobile: bottom sheet */
+.aiw-canvas-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.aiw-canvas-drawer.is-open {
+  pointer-events: auto;
+  opacity: 1;
+}
+.aiw-canvas-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: rgba(27, 28, 28, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.aiw-canvas-drawer.is-open .aiw-canvas-drawer__backdrop {
+  opacity: 1;
+}
+.aiw-canvas-drawer__panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-height: min(88dvh, 920px);
+  border-top-left-radius: 1.15rem;
+  border-top-right-radius: 1.15rem;
+  box-shadow: 0 -12px 48px rgba(42, 40, 38, 0.12);
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  outline: none;
+}
+.aiw-canvas-drawer.is-open .aiw-canvas-drawer__panel {
+  transform: translateY(0);
+}
+@media (min-width: 1024px) {
+  .aiw-canvas-drawer {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: stretch;
+  }
+  .aiw-canvas-drawer__panel {
+    width: min(100vw - 1.5rem, 640px);
+    max-height: none;
+    height: 100%;
+    border-radius: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    box-shadow: -16px 0 48px rgba(42, 40, 38, 0.1);
+    transform: translateX(100%);
+  }
+  .aiw-canvas-drawer.is-open .aiw-canvas-drawer__panel {
+    transform: translateX(0);
+  }
 }
 .chat-shell-header {
   border-bottom: 1px solid rgba(228, 226, 225, 0.45);
   background: rgba(252, 249, 248, 0.92);
+}
+.chat-shell--immersive .chat-shell-header {
+  background: rgba(252, 249, 248, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .chat-thread {
   scrollbar-color: rgba(166, 155, 143, 0.45) transparent;
@@ -50,71 +442,79 @@
 .chat-turn--bot {
   max-width: 42rem;
 }
+
+/* Bot avatar — tan/copper circle with diamond mark, per Figma "Avatar-Allie Ai" 174:11152 */
 .chat-assistant-meta {
   display: flex;
-  align-items: flex-end;
-  gap: 0.75rem;
-  padding-bottom: 0.5rem;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 6px;
 }
 .chat-assistant-avatar {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 9999px;
-  background: #e9e1d8;
+  background: var(--color-tan-500);
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  color: rgba(76, 70, 63, 0.75);
+  color: var(--color-paper);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
 }
 .chat-assistant-name {
-  font-family: "Poppins", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #4c463f;
-  line-height: 1;
+  color: var(--color-ink);
+  line-height: 1.1;
 }
+.chat-assistant-tag {
+  display: block;
+  margin-top: 2px;
+  font-family: "Inter", var(--font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-ink-muted);
+  line-height: 1.3;
+}
+
+/* Bubble corners follow Figma 331:24476 — square TL, rounded TR/BR/BL */
 .chat-bubble {
   max-width: 36rem;
-  padding: 1.45rem 1.85rem 1.6rem 1.55rem;
+  padding: 1.25rem 1.5rem;
   border-radius: 16px;
-  font-family: "Poppins", system-ui, sans-serif;
-  font-size: 18px;
-  font-weight: 300;
-  line-height: 1.6;
-  box-shadow: 0 2px 5px rgba(102, 93, 82, 0.05);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 .chat-bubble--bot {
-  background: #f0eded;
-  color: #1b1c1c;
-  border: 1px solid rgba(228, 226, 225, 0.55);
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 16px;
+  background: var(--color-surface-subtle);
+  color: var(--color-ink);
+  border-top-left-radius: 0;
   border-top-right-radius: 16px;
   border-bottom-right-radius: 16px;
-}
-.chat-bubble--bot strong {
-  font-weight: 600;
-  color: #1b1c1c;
-}
-.chat-bubble--bot em {
-  font-style: italic;
-}
-.chat-bubble--user {
-  background: #ffffff;
-  color: #1b1c1c;
-  border: 1px solid #cfc5bb;
-  border-bottom-right-radius: 0;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
   border-bottom-left-radius: 16px;
-  font-weight: 400;
+}
+.chat-bubble--bot strong { font-weight: 600; }
+.chat-bubble--bot em { font-style: italic; }
+.chat-bubble--user {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  border: 1px solid var(--color-border-default);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 16px;
+  border-bottom-left-radius: 16px;
   font-size: 16px;
-  box-shadow: 0 1px 3px rgba(102, 93, 82, 0.04);
 }
 .chat-typing {
-  min-height: 2.75rem;
+  min-height: 2.5rem;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -136,78 +536,86 @@
   30%           { transform: translateY(-3px); opacity: 1; }
 }
 
-/* Planner input + quick replies — RCD */
+/* Input area — rounded-pill wrap + circular tan send button (Figma 170:10898) */
 .chat-input-bar {
   border-top: 1px solid rgba(207, 197, 187, 0.28);
-  background: #fcf9f8;
+  background: var(--color-surface-page);
 }
 .chat-input-wrap {
   position: relative;
   display: flex;
-  align-items: stretch;
-  background: #fff;
-  border: 1px solid #cfc5bb;
-  border-radius: 2px;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-paper);
+  border: 1px solid var(--color-border-default);
+  border-radius: 9999px;
+  padding: 3px 5px;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
 }
 .chat-input-field {
   flex: 1 1 auto;
   min-width: 0;
   border: 0;
   background: transparent;
-  padding: 1rem 3rem 1.05rem 0.5rem;
-  font-family: "Poppins", system-ui, sans-serif;
-  font-size: 16px;
-  font-weight: 300;
-  color: #1b1c1c;
+  padding: 8px 12px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--color-ink);
   outline: none;
 }
 .chat-input-field::placeholder {
-  color: rgba(76, 70, 63, 0.5);
+  color: var(--color-ink-muted);
 }
 .chat-send-btn {
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
+  position: static;
+  flex-shrink: 0;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: #4c463f;
+  border-radius: 9999px;
+  background: var(--color-tan-500);
+  color: var(--color-paper);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 .chat-send-btn:hover {
-  background: rgba(233, 225, 216, 0.55);
-  color: #1b1c1c;
+  background: var(--color-copper-hover, #9A6E40);
+  transform: translateX(1px);
 }
+
+/* Quick-reply chips — sage-100 tone, dark inverse on selection */
 .chat-chip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 9px 17px;
+  padding: 8px 14px;
   border-radius: 9999px;
-  border: 1px solid #cfc5bb;
-  background: #fff;
-  font-family: "Poppins", system-ui, sans-serif;
-  font-size: 14px;
+  border: 1px solid var(--color-border-default);
+  background: var(--color-paper);
+  font-family: var(--font-sans);
+  font-size: 13px;
   font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: none;
-  color: #4c463f;
+  letter-spacing: 0.02em;
+  color: var(--color-ink);
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 .chat-chip:hover {
-  border-color: rgba(76, 70, 63, 0.45);
-  background: rgba(252, 249, 248, 0.9);
+  background: var(--color-sage-100);
+  border-color: rgba(100, 111, 83, 0.4);
 }
 .chat-chip:focus-visible {
-  outline: 2px solid #4c463f;
+  outline: 2px solid var(--color-ink);
   outline-offset: 2px;
+}
+.chat-chip[data-selected="true"] {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  border-color: var(--color-ink);
 }
 
 /* Pulse for "100 brides looking" urgency badge */

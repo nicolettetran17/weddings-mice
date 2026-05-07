@@ -111,8 +111,8 @@ export function renderNav({ active = "home", landing = false, variant = "default
   /* RCD · node 125:16457 — TopAppBar for planner (warm shell, centered wordmark). */
   if (variant === "rcd" && active === "plan") {
     return `
-  <nav class="sticky top-0 z-30 border-b border-[rgba(207,197,187,0.35)] bg-[rgba(252,249,248,0.88)] backdrop-blur-md supports-[backdrop-filter]:bg-[rgba(252,249,248,0.78)]">
-    <div class="relative mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
+  <nav class="sticky top-0 z-30 shrink-0 border-b border-[rgba(207,197,187,0.35)] bg-[rgba(252,249,248,0.88)] backdrop-blur-md supports-[backdrop-filter]:bg-[rgba(252,249,248,0.78)]">
+    <div class="relative mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10">
       <a href="./index.html" class="flex h-11 w-11 items-center justify-center rounded-full text-[#4c463f] transition hover:bg-[#e9e1d8]/80" aria-label="Menu — home">
         <svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden="true">
           <path d="M0 1h18M0 6h18M0 11h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>

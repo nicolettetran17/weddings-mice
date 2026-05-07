@@ -96,6 +96,32 @@ export const HOTELS = [
     blurb: "Adults-only with three mile beach. Sculptural architecture and 13 venues to compose across." },
 ];
 
+/**
+ * Resort photography from Legendary Vacation Club
+ * https://www.legendaryvacationclub.com/our-destinations.htm
+ * (MediumWidth CDN assets under /files/6900/)
+ */
+export const LVC_HOTEL_CARD_IMAGES = {
+  _default: "https://www.legendaryvacationclub.com/files/6900/23497530_ImageMediumWidth.jpg",
+  "ava-cancun": "https://www.legendaryvacationclub.com/files/6900/23498808_ImageMediumWidth.jpg",
+  "hr-punta-cana": "https://www.legendaryvacationclub.com/files/6900/23489678_ImageMediumWidth.jpg",
+  "hr-cancun": "https://www.legendaryvacationclub.com/files/6900/23489642_ImageMediumWidth.jpg",
+  "hr-riviera-maya": "https://www.legendaryvacationclub.com/files/6900/24339985_ImageMediumWidth.jpg",
+  "hr-vallarta": "https://www.legendaryvacationclub.com/files/6900/23497530_ImageMediumWidth.jpg",
+  "hr-los-cabos": "https://www.legendaryvacationclub.com/files/6900/24339963_ImageMediumWidth.jpg",
+  "unico-riviera-maya": "https://www.legendaryvacationclub.com/files/6900/24339931_ImageMediumWidth.jpg",
+  "unico-nayarit": "https://www.legendaryvacationclub.com/files/6900/23711708_ImageMediumWidth.jpg",
+  "nobu-los-cabos": "https://www.legendaryvacationclub.com/files/6900/23711735_ImageMediumWidth.jpg",
+  "nobu-miami": "https://www.legendaryvacationclub.com/files/6900/23711762_ImageMediumWidth.jpg",
+  "nobu-tulum": "https://www.legendaryvacationclub.com/files/6900/23711735_ImageMediumWidth.jpg",
+  "nobu-punta-cana": "https://www.legendaryvacationclub.com/files/6900/23489678_ImageMediumWidth.jpg",
+  "nobu-orlando": "https://www.legendaryvacationclub.com/files/6900/23711735_ImageMediumWidth.jpg",
+};
+
+export function hotelCardImageUrl(hotelId) {
+  return LVC_HOTEL_CARD_IMAGES[hotelId] || LVC_HOTEL_CARD_IMAGES._default;
+}
+
 /* ---------- Spaces (a few per hotel — most relevant) ---------- */
 export const SPACES = [
   /* Hard Rock Punta Cana */
@@ -182,22 +208,22 @@ export const VENDORS = [
 
 /* ---------- Social proof / past brides ---------- */
 export const BRIDES = [
-  { name: "Aria & Marcus",  hotelId: "unico-riviera-maya", spaceId: "u-rm-cenote",
+  { slug: "aria-marcus", name: "Aria & Marcus", hotelId: "unico-riviera-maya", spaceId: "u-rm-cenote",
     quote: "We told the chatbot 'mystic boho cathedral' and it spit back our exact wedding. We cried. We booked.",
     season: "March 2026", guests: 78 },
-  { name: "Priya & Daniel", hotelId: "nobu-los-cabos",     spaceId: "no-lc-stone",
+  { slug: "priya-daniel", name: "Priya & Daniel", hotelId: "nobu-los-cabos", spaceId: "no-lc-stone",
     quote: "We wanted quiet. Not boring — quiet. Nobu was the only place that understood the difference.",
     season: "May 2026", guests: 92 },
-  { name: "Jenna & Tomás",  hotelId: "hr-punta-cana",      spaceId: "hr-pc-sky",
+  { slug: "jenna-tomas", name: "Jenna & Tomás", hotelId: "hr-punta-cana", spaceId: "hr-pc-sky",
     quote: "Sky Terrace at sunset. 220 of our loudest friends. Hard Rock did NOT come to play around.",
     season: "Jan 2026", guests: 220 },
-  { name: "Sofía & Will",   hotelId: "ava-cancun",         spaceId: "av-cn-mile",
+  { slug: "sofia-will", name: "Sofía & Will", hotelId: "ava-cancun", spaceId: "av-cn-mile",
     quote: "Beach as far as the eye could see. Three different ceremony spots scouted, picked one in 10 minutes.",
     season: "Nov 2025", guests: 140 },
-  { name: "Camila & Ben",   hotelId: "unico-nayarit",      spaceId: "u-na-pacific",
+  { slug: "camila-ben", name: "Camila & Ben", hotelId: "unico-nayarit", spaceId: "u-na-pacific",
     quote: "Pacific bluff. The light at 5:47pm. Don't ask me how I'm typing through this.",
     season: "Apr 2026", guests: 110 },
-  { name: "Maya & Theo",    hotelId: "nobu-miami",         spaceId: "no-mb-eden",
+  { slug: "maya-theo", name: "Maya & Theo", hotelId: "nobu-miami", spaceId: "no-mb-eden",
     quote: "Eden Roc Solarium. White everything. Tom Ford could not have art-directed it better.",
     season: "Feb 2026", guests: 180 },
 ];
