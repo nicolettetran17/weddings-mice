@@ -121,6 +121,38 @@
         box-shadow: 0 0 0 2px rgba(212, 83, 126, 0.35);
       }
     }
+
+    /* Moodboard palette chips — thumbnail swatches + label (see PALETTE_CHIPS.swatches) */
+    .chat-chip.chat-chip--palette {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.75rem 0.55rem;
+      border-radius: 0.85rem;
+      max-width: min(100%, 17rem);
+      text-align: left;
+    }
+    .chat-chip--palette .chat-chip-palette-swatches {
+      display: flex;
+      width: 100%;
+      gap: 4px;
+    }
+    .chat-chip--palette .chat-chip-palette-swatches span {
+      flex: 1 1 0;
+      min-width: 0;
+      height: 1.3rem;
+      border-radius: 0.3rem;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+    }
+    .chat-chip--palette .chat-chip-palette-label {
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+    }
+
     .chat-summary-card {
       margin-top: 0.5rem;
       border-radius: 12px;
@@ -298,18 +330,58 @@
       }
     }
 
-    /* Seven-step cards in main chat column (not only in the drawer) */
+    /* Seven-step cards in main chat column — compact in-thread variant */
+    .journey-timeline-host {
+      background: rgba(255, 250, 240, 0.16);
+      color: #fffaf0;
+    }
     .journey-timeline-host .how-timeline {
       max-width: none;
     }
-    .journey-timeline-host h2.font-title {
-      font-size: clamp(1.35rem, 4.2vw, 1.9rem);
-      line-height: 1.15;
+    .journey-timeline-host .how-timeline::before,
+    .journey-timeline-host .how-timeline::after {
+      top: 0.85rem;
+      bottom: 0.85rem;
+      left: 0.85rem;
+    }
+    .journey-timeline-host .how-step {
+      padding: 0 0 0.55rem 2.45rem;
     }
     @media (min-width: 640px) {
-      .journey-timeline-host h2.font-title {
-        font-size: clamp(1.5rem, 3vw, 2.15rem);
-      }
+      .journey-timeline-host .how-step { padding-bottom: 0.65rem; }
+    }
+    .journey-timeline-host .how-step__node {
+      width: 1.7rem;
+      height: 1.7rem;
+      border-width: 1.5px;
+      top: 0.05rem;
+    }
+    .journey-timeline-host .how-step__check { width: 0.8rem; height: 0.8rem; }
+    .journey-timeline-host .how-step__index { font-size: 0.62rem; }
+    .journey-timeline-host .how-step__card {
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.6rem;
+      background: rgba(255, 250, 240, 0.92);
+    }
+    @media (min-width: 640px) {
+      .journey-timeline-host .how-step__card { padding: 0.55rem 0.85rem; }
+    }
+    .journey-timeline-host .how-step__card::before {
+      top: 0.85rem;
+      left: -0.55rem;
+      width: 0.55rem;
+    }
+    .journey-timeline-host .journey-compact-eyebrow {
+      font-family: var(--font-sans, system-ui);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: rgba(255, 250, 240, 0.85);
+    }
+    .journey-timeline-host .journey-compact-progress {
+      font-variant-numeric: tabular-nums;
+      color: rgba(255, 250, 240, 0.85);
     }
 
     /* Save my date — swipe hold + confetti (hero / urgency Figma 290:392) */
@@ -614,6 +686,26 @@
       animation: aiw-match-step-in 0.55s ease 1.2s forwards;
     }
 
+    /* Vendor marketplace tiles (Step 4 / Vendor Marketplace) */
+    .aiw-marketplace-cat-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 1.65rem;
+      height: 1.65rem;
+      border-radius: 9999px;
+      background: radial-gradient(120% 100% at 30% 20%, #FFFFFF 0%, #F4E4C8 60%, #E2C28E 100%);
+      font-size: 0.95rem;
+      line-height: 1;
+      box-shadow:
+        inset 0 0 0 1px rgba(180, 129, 77, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+    .aiw-marketplace-tile {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .aiw-confetti-piece {
         animation-duration: 0.35s !important;
@@ -690,13 +782,6 @@
           <button id="reset-btn" type="button" class="shrink-0 text-xs font-medium uppercase tracking-[0.12em] text-[var(--color-ink-muted)] transition hover:text-[var(--color-ink)]">Reset</button>
         </header>
 
-        <!-- Context bar — Figma 316:10 (breadcrumb above the thread) -->
-        <div id="chapter-context-bar" class="aiw-context-bar shrink-0">
-          <span id="chapter-context-label" class="meta">Moodboard</span>
-          <span class="sep">·</span>
-          <span id="chapter-context-step" class="meta">Step 1 of 7</span>
-        </div>
-
         <!-- Optional status banner slot — Figma 316:16. Render via `setStatusBanner(...)` -->
         <div id="status-banner" class="aiw-status-banner shrink-0" hidden>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -706,20 +791,8 @@
           <p id="status-banner-body" class="flex-1 m-0"></p>
         </div>
 
-        <!-- Chapter progress — 7-step streamlined spine -->
-        <div id="chapter-progress" class="chat-shell-progress shrink-0 border-b border-[rgba(228,226,225,0.35)] bg-[rgba(252,249,248,0.5)] px-4 py-2.5 sm:px-6 sm:py-3" aria-hidden="false">
-          <div class="mb-1.5 flex items-center justify-between gap-3">
-            <span id="chapter-label" class="min-w-0 truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--color-sage-600)]">Step 1 of 7 — Moodboard</span>
-            <span id="chapter-pct" class="shrink-0 text-[11px] font-semibold tabular-nums text-[color:var(--color-tan-500)]">14%</span>
-          </div>
-          <div class="h-[3px] overflow-hidden rounded-full bg-black/[0.08]">
-            <div id="chapter-fill" class="h-full rounded-full bg-[color:var(--color-tan-500)] transition-[width] duration-500 ease-out" style="width:14%"></div>
-          </div>
-          <div id="chapter-dots" class="mt-2 flex gap-1"></div>
-        </div>
-
         <div id="chat-scroll-region" class="chat-main-scroll thin-scroll mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col overflow-y-auto">
-          <aside id="journey-timeline-host" class="journey-timeline-host shrink-0 border-b border-[rgba(228,226,225,0.45)] px-4 pb-4 pt-4 sm:px-6 sm:pb-5 sm:pt-5" aria-label="Your journey — seven planning steps"></aside>
+          <aside id="journey-timeline-host" class="journey-timeline-host shrink-0 border-b border-[rgba(255,250,240,0.18)] px-4 pb-2.5 pt-3 sm:px-6 sm:pb-3 sm:pt-3.5" aria-label="Your journey — planning steps"></aside>
           <div id="chat" class="chat-thread chat-thread--immersive mx-auto min-h-0 w-full flex-1 space-y-7 px-4 py-6 sm:space-y-8 sm:px-6 sm:py-8"></div>
         </div>
 
@@ -835,78 +908,77 @@
 
     /** Streamlined 7-step spine: Moodboard → Logistics → Venue Selection → Space Design → Add-ons → Quote → Save My Date */
     const CHAPTERS = [
-      { key: "moodboard",       shortLabel: "Moodboard",       label: "Step 1 of 7 — Moodboard",       pct: 14,
+      { key: "moodboard",       shortLabel: "Moodboard",       label: "Moodboard",       pct: 14,
         cardTitle: "Set the mood",          cardCopy: "Tell me the feeling, the magazine cover, and the color story." },
-      { key: "logistics",       shortLabel: "Logistics",       label: "Step 2 of 7 — Logistics",       pct: 28,
+      { key: "logistics",       shortLabel: "Logistics",       label: "Logistics",       pct: 28,
         cardTitle: "Lock the essentials",   cardCopy: "Guest count, season, destination, and an honest budget." },
-      { key: "venue-selection", shortLabel: "Venue Selection", label: "Step 3 of 7 — Venue Selection", pct: 42,
+      { key: "venue-selection", shortLabel: "Venue Selection", label: "Venue Selection", pct: 42,
         cardTitle: "Browse venues",         cardCopy: "Properties matched to your moodboard, region, and guest count." },
-      { key: "space-design",    shortLabel: "Space Design",    label: "Step 4 of 7 — Space Design",    pct: 57,
+      { key: "space-design",    shortLabel: "Space Design",    label: "Space Design",    pct: 57,
         cardTitle: "Design the space",      cardCopy: "Pick the exact room, then re-imagine it in your palette." },
-      { key: "addons",          shortLabel: "Add-ons",         label: "Step 5 of 7 — Add-ons",         pct: 71,
+      { key: "addons",          shortLabel: "Add-ons",         label: "Add-ons",         pct: 71,
         cardTitle: "Dress the day",         cardCopy: "Florals, lighting, late-night food — toggle and watch the total move." },
-      { key: "quote",           shortLabel: "Quote",           label: "Step 6 of 7 — Quote",           pct: 85,
+      { key: "quote",           shortLabel: "Quote",           label: "Quote",           pct: 85,
         cardTitle: "See the quote",         cardCopy: "Transparent contract preview with one all-in number — pre-tax." },
-      { key: "save-the-date",   shortLabel: "Save My Date",    label: "Step 7 of 7 — Save My Date",    pct: 100,
+      { key: "save-the-date",   shortLabel: "Save My Date",    label: "Save My Date",    pct: 100,
         cardTitle: "Save the date",         cardCopy: "Sign and place a refundable $500 hold. Concierge takes it from here." },
     ];
 
-    const MAGAZINE_COVERS = [
-      { label: "Vogue: ultra-glam editorial", value: "cinematic-noir" },
-      { label: "Architectural Digest: refined luxury", value: "minimalist-stone" },
-      { label: "Rolling Stone: cool and effortless", value: "boho-jungle" },
-      { label: "Martha Stewart: romantic and garden-lush", value: "soft-romantic" },
-      { label: "Condé Nast Traveler: tropical-luxe escapist", value: "tropical-sunset" },
+    /**
+     * Expedited "I'm ready to book" flow — five visible stops that reuse the same
+     * underlying chapter handlers (venue selection through deposit). Each entry
+     * points back at its source chapter index so the timeline can stay simple.
+     */
+    const BOOK_FLOW_CHAPTERS = [
+      { underlying: 2, key: "venue",       shortLabel: "Venue",   label: "Venue",
+        cardTitle: "Pick your venue",      cardCopy: "Browse properties matched to where, when, and how many." },
+      { underlying: 3, key: "space",       shortLabel: "Space",   label: "Space",
+        cardTitle: "Reserve a space",      cardCopy: "Walk the rooms — choose the one that fits your celebration." },
+      { underlying: 4, key: "marketplace", shortLabel: "Vendors", label: "Vendor Marketplace",
+        cardTitle: "Vendor marketplace",   cardCopy: "Florals, photo, entertainment, food — vetted vendors with live pricing." },
+      { underlying: 5, key: "calculator",  shortLabel: "Price",   label: "Price Calculator",
+        cardTitle: "Price calculator",     cardCopy: "Live, transparent breakdown — your inputs, one all-in number." },
+      { underlying: 6, key: "sign",        shortLabel: "Sign",    label: "Sign",
+        cardTitle: "Sign &amp; save the date", cardCopy: "Refundable $500 hold — concierge takes it from here." },
     ];
 
+    function activeChaptersList() {
+      return pkg.expedited ? BOOK_FLOW_CHAPTERS : CHAPTERS;
+    }
+    function activeDisplayIdx() {
+      if (!pkg.expedited) return chapterIdx;
+      const idx = BOOK_FLOW_CHAPTERS.findIndex(c => c.underlying === chapterIdx);
+      return idx < 0 ? 0 : idx;
+    }
+
+    const MAGAZINE_COVERS = [
+      { label: "Vogue: ultra-glam editorial",                  value: "cinematic-noir",   icon: "📷" },
+      { label: "Architectural Digest: refined luxury",         value: "minimalist-stone", icon: "🏛️" },
+      { label: "Rolling Stone: cool and effortless",           value: "boho-jungle",      icon: "🎸" },
+      { label: "Martha Stewart: romantic and garden-lush",     value: "soft-romantic",    icon: "🌷" },
+      { label: "Condé Nast Traveler: tropical-luxe escapist",  value: "tropical-sunset",  icon: "🌴" },
+    ];
+
+    /** Each palette: label + 4 representative hex swatches for chip thumbnails */
     const PALETTE_CHIPS = [
-      "Warm terracottas and rust",
-      "Blush, ivory, and gold",
-      "Deep jewel tones — emerald, plum",
-      "Tropical — birds of paradise, lush greens",
-      "Moody whites and cool neutrals",
+      { label: "Warm terracottas and rust", swatches: ["#B85C38", "#D4783E", "#E8D4C4", "#7A3E1D"] },
+      { label: "Blush, ivory, and gold", swatches: ["#F5E6E8", "#F4EDE4", "#C9A227", "#D4B8B8"] },
+      { label: "Deep jewel tones — emerald, plum", swatches: ["#14532D", "#4A1942", "#B8860B", "#1E293B"] },
+      { label: "Tropical — birds of paradise, lush greens", swatches: ["#EA580C", "#166534", "#FACC15", "#0F766E"] },
+      { label: "Moody whites and cool neutrals", swatches: ["#F0EBE3", "#C9C2B6", "#78716C", "#44403C"] },
     ];
 
     let chapterIdx = 0;
     /** When true, region + guests ran before venues; date/budget run after venue list (skip second region ask). */
     let logisticsVenuesShownEarly = false;
-    const chapterLabelEl = () => document.getElementById("chapter-label");
-    const chapterPctEl = () => document.getElementById("chapter-pct");
-    const chapterFillEl = () => document.getElementById("chapter-fill");
-    const chapterDotsEl = () => document.getElementById("chapter-dots");
 
-    function buildChapterDots() {
-      const el = chapterDotsEl();
-      if (!el) return;
-      el.innerHTML = "";
-      for (let j = 0; j < CHAPTERS.length; j++) {
-        const d = document.createElement("div");
-        d.className = "h-[3px] flex-1 rounded-full bg-black/10 transition-colors duration-300";
-        d.dataset.chapterDot = String(j);
-        el.appendChild(d);
-      }
-    }
-
+    /**
+     * Advance the planner to chapter `k`. The compact "Your journey" strip above the
+     * thread is the single live progress indicator; this function just bumps state and
+     * clears the warm-yellow status banner so each new step starts clean.
+     */
     function enterChapter(k) {
       chapterIdx = Math.min(Math.max(k, 0), CHAPTERS.length - 1);
-      const ch = CHAPTERS[chapterIdx];
-      const L = chapterLabelEl(), P = chapterPctEl(), F = chapterFillEl(), dots = chapterDotsEl();
-      if (L) L.textContent = ch.label;
-      if (P) P.textContent = `${ch.pct}%`;
-      if (F) F.style.width = `${ch.pct}%`;
-      if (dots) {
-        [...dots.children].forEach((d, j) => {
-          d.className =
-            "h-[3px] flex-1 rounded-full transition-colors duration-300 " +
-            (j < chapterIdx ? "bg-[color:var(--color-tan-500)]" : j === chapterIdx ? "bg-[color:var(--color-copper-soft)]" : "bg-black/10");
-        });
-      }
-      const ctxLabel = document.getElementById("chapter-context-label");
-      const ctxStep  = document.getElementById("chapter-context-step");
-      if (ctxLabel) ctxLabel.textContent = ch.shortLabel || ch.cardTitle || ch.label;
-      if (ctxStep)  ctxStep.textContent  = `Step ${chapterIdx + 1} of ${CHAPTERS.length}`;
-      // Clear the warm-yellow banner on chapter change. Callers (e.g. venue selection)
-      // can re-arm it after `enterChapter` if the new step needs it.
       setStatusBanner(null);
     }
 
@@ -998,14 +1070,55 @@
       return bubble("bot", text);
     }
 
+    function chipButtonInnerHtml(it) {
+      const sw = it.swatches;
+      if (Array.isArray(sw) && sw.length) {
+        const cells = sw
+          .map(hex => `<span style="background-color:${escapeHtml(hex)}"></span>`)
+          .join("");
+        return `<span class="chat-chip-palette-swatches" aria-hidden="true">${cells}</span><span class="chat-chip-palette-label">${escapeHtml(it.label)}</span>`;
+      }
+      const icon = it.icon
+        ? `<span class="chat-chip-icon" aria-hidden="true">${escapeHtml(it.icon)}</span>`
+        : "";
+      const caption = it.caption
+        ? `<span class="chat-chip-caption">${escapeHtml(it.caption)}</span>`
+        : "";
+      const labelStack = `<span class="chat-chip-label-stack"><span class="chat-chip-label">${escapeHtml(it.label)}</span>${caption}</span>`;
+      return `${icon}${labelStack}`;
+    }
+
+    /**
+     * Render quick-reply chips. Each item supports: label, icon, caption, swatches,
+     * plus arbitrary handler payload (value/action/etc.). The leading chip animates
+     * in first via CSS variable `--chip-i`, and a brief press-bounce plays before
+     * dispatching the choice so the click feels tactile.
+     */
     function setChips(items, onPick) {
       if (!chipsEl) return;
       chipsEl.innerHTML = "";
-      items.forEach(it => {
-        const c = $h(`<button class="chat-chip" type="button">${it.label}</button>`);
+      items.forEach((it, i) => {
+        const palette = Array.isArray(it.swatches) && it.swatches.length;
+        const cls = palette ? "chat-chip chat-chip--palette" : "chat-chip";
+        const c = $h(`<button type="button" class="${cls}" style="--chip-i:${i}">${chipButtonInnerHtml(it)}</button>`);
+        let firing = false;
         c.addEventListener("click", () => {
-          setChips([], null);
-          Promise.resolve(onPick?.(it)).catch(err => console.error("plan: chip handler", err));
+          if (firing) return;
+          firing = true;
+          c.setAttribute("data-pressed", "true");
+          [...chipsEl.children].forEach(el => {
+            if (el !== c) el.style.pointerEvents = "none";
+          });
+          const reduceMotion =
+            typeof window !== "undefined" &&
+            window.matchMedia &&
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          const dispatch = () => {
+            setChips([], null);
+            Promise.resolve(onPick?.(it)).catch(err => console.error("plan: chip handler", err));
+          };
+          if (reduceMotion) dispatch();
+          else setTimeout(dispatch, 130);
         });
         chipsEl.appendChild(c);
       });
@@ -1083,27 +1196,27 @@
     }
 
     const GUEST_CHIPS = [
-      { label: "Just us + a few (under 20)", guests: 14, key: "micro" },
-      { label: "Intimate gathering (20–50)", guests: 36, key: "intimate" },
-      { label: "The sweet spot (50–100)", guests: 75, key: "sweet" },
-      { label: "Big celebration (100–200)", guests: 140, key: "big" },
-      { label: "Grand affair (200+)", guests: 220, key: "grand" },
+      { label: "Just us + a few (under 20)", guests: 14,  key: "micro",    icon: "💞" },
+      { label: "Intimate gathering (20–50)", guests: 36,  key: "intimate", icon: "🪑" },
+      { label: "The sweet spot (50–100)",    guests: 75,  key: "sweet",    icon: "🥂" },
+      { label: "Big celebration (100–200)",  guests: 140, key: "big",      icon: "🎶" },
+      { label: "Grand affair (200+)",        guests: 220, key: "grand",    icon: "🎆" },
     ];
 
     const BUDGET_CHIPS = [
-      { label: "Under $30k" },
-      { label: "$30k–$60k" },
-      { label: "$60k–$100k" },
-      { label: "$100k–$175k" },
-      { label: "$175k–$300k" },
-      { label: "$300k+" },
+      { label: "Under $30k",    icon: "🌱", caption: "Lean & beautiful" },
+      { label: "$30k–$60k",     icon: "🌼", caption: "Comfortable" },
+      { label: "$60k–$100k",    icon: "🌿", caption: "Considered" },
+      { label: "$100k–$175k",   icon: "💎", caption: "Designer" },
+      { label: "$175k–$300k",   icon: "🏛️", caption: "Editorial" },
+      { label: "$300k+",        icon: "👑", caption: "No-limits" },
     ];
 
     const REGION_CHIPS = [
-      { label: "Pacific — Los Cabos, Vallarta, Nayarit", value: "pacific" },
-      { label: "Caribbean — Cancún, Riviera Maya, Punta Cana", value: "caribbean" },
-      { label: "Stateside — Miami, Orlando", value: "atlantic" },
-      { label: "Open — surprise me across the portfolio", value: null },
+      { label: "Pacific — Los Cabos, Vallarta, Nayarit",         value: "pacific",   icon: "🌅" },
+      { label: "Caribbean — Cancún, Riviera Maya, Punta Cana",   value: "caribbean", icon: "🏝️" },
+      { label: "Stateside — Miami, Orlando",                     value: "atlantic",  icon: "🌴" },
+      { label: "Open — surprise me across the portfolio",        value: null,        icon: "✨" },
     ];
 
     /* ============ Pricing data — powers the live calculator on Add-ons + Quote ============ */
@@ -1164,26 +1277,35 @@
     ];
 
     const BOOK_ADDONS = [
-      { id: "arch-florals",     label: "Statement floral archway",            price: 4200 },
-      { id: "hanging-florals",  label: "Hanging florals over reception",      price: 5800 },
-      { id: "lounge-vignette",  label: "Sunset lounge vignette",              price: 2400 },
-      { id: "cocktail-tower",   label: "Champagne tower & cocktail bar",      price: 3200 },
-      { id: "string-lights",    label: "Bistro & string lights overhead",     price: 1850 },
-      { id: "sparkler-sendoff", label: "Sparkler send-off + photographer",    price:  950 },
-      { id: "late-night",       label: "Late-night taco cart",                price: 1700 },
-      { id: "live-painter",     label: "Live painter (signature artist)",     price: 3500 },
-      { id: "fireworks",        label: "Beachfront fireworks finale",         price: 6500 },
+      { id: "arch-florals",     category: "florals",  label: "Statement floral archway",            price: 4200, vendor: "Bloom Atelier · Riviera Maya", tagline: "Lush ceremony archway built in your palette." },
+      { id: "hanging-florals",  category: "florals",  label: "Hanging florals over reception",      price: 5800, vendor: "Bloom Atelier · Riviera Maya", tagline: "Floating greenery + bloom installation overhead." },
+      { id: "lounge-vignette",  category: "florals",  label: "Sunset lounge vignette",              price: 2400, vendor: "Botanic Studio · Tulum",       tagline: "Velvet seating + bloom moment for golden hour." },
+      { id: "string-lights",    category: "lighting", label: "Bistro &amp; string lights overhead", price: 1850, vendor: "Lumen Production",             tagline: "Warm overhead canopy from cocktails through send-off." },
+      { id: "cocktail-tower",   category: "food",     label: "Champagne tower &amp; cocktail bar",  price: 3200, vendor: "Coupe Mixology",               tagline: "Five-tier coupe tower + two signature cocktails." },
+      { id: "late-night",       category: "food",     label: "Late-night taco cart",                price: 1700, vendor: "Calle Verde",                  tagline: "Wood-fired cart with vegan, al pastor, &amp; fish." },
+      { id: "live-painter",     category: "ent",      label: "Live painter (signature artist)",     price: 3500, vendor: "Studio Mila",                  tagline: "Heirloom canvas captured during cocktail hour." },
+      { id: "sparkler-sendoff", category: "photo",    label: "Sparkler send-off + photographer",    price:  950, vendor: "Drift Stories",                tagline: "Twilight send-off captured by the second shooter." },
+      { id: "fireworks",        category: "ent",      label: "Beachfront fireworks finale",         price: 6500, vendor: "Sirius Pyrotechnics",          tagline: "Three-minute synced finale over the water." },
+    ];
+
+    /** Marketplace categories — render order + icon for the grouped Add-ons / Vendor canvas. */
+    const ADDON_CATEGORIES = [
+      { id: "florals",  label: "Florals & Decor",       icon: "🌿" },
+      { id: "lighting", label: "Lighting & Production", icon: "💡" },
+      { id: "food",     label: "Food & Beverage",       icon: "🍾" },
+      { id: "ent",      label: "Entertainment",         icon: "🎶" },
+      { id: "photo",    label: "Photo & Film",          icon: "📸" },
     ];
 
     const BOOK_DATE_CHIPS = [
-      "Spring 2026 (Mar–May)",
-      "Summer 2026 (Jun–Aug)",
-      "Fall 2026 (Sep–Nov)",
-      "Winter 2026/27",
-      "Spring 2027",
-      "Summer 2027",
-      "Fall 2027",
-      "2028 or later",
+      { label: "Spring 2026 (Mar–May)", icon: "🌸" },
+      { label: "Summer 2026 (Jun–Aug)", icon: "☀️" },
+      { label: "Fall 2026 (Sep–Nov)",   icon: "🍂" },
+      { label: "Winter 2026/27",        icon: "❄️" },
+      { label: "Spring 2027",           icon: "🌸" },
+      { label: "Summer 2027",           icon: "☀️" },
+      { label: "Fall 2027",             icon: "🍂" },
+      { label: "2028 or later",         icon: "🌠" },
     ];
 
     function mapRegionFromText(v) {
@@ -1241,6 +1363,7 @@
       setCanvasDrawerOpen(false);
       clearChips();
       setStatusBanner(null);
+      const journey = plannerJourney();
       Object.assign(pkg, {
         date: null, region: null, guests: null, vibeId: null,
         hotelId: null, spaceId: null,
@@ -1248,13 +1371,13 @@
         guestsLabel: null, addonIds: [],
         bookPackageId: "signature", bookContract: null,
         heldUntil: null, deposited: false,
+        expedited: journey === "book",
       });
       chapterIdx = 0;
       logisticsVenuesShownEarly = false;
       textHandler = null;
       refreshPackage();
-      buildChapterDots();
-      enterChapter(0);
+      enterChapter(pkg.expedited ? 2 : 0);
 
       // Carry-over from the home hero (?when=summer-2027&where=cancun&journey=...)
       const search = new URLSearchParams(window.location.search);
@@ -1266,10 +1389,9 @@
 
       renderTimelineCanvas();
 
-      const journey = plannerJourney();
       const tail = heroPrefillClause();
       const welcomeBook =
-        `Welcome — I'm <strong>Allie</strong>, your wedding planner at All In Weddings. You're ready to book — we'll move with purpose through seven steps and end on a refundable $500 hold. <strong>Congratulations on your engagement.</strong>${tail}`;
+        `Welcome — I'm <strong>Allie</strong>, your booking concierge at All In Weddings. You're ready to lock it in, so we're skipping the moodboard. Five fast stops — <strong>venue → space → vendors → price → sign</strong> — ending on a refundable $500 hold. <strong>Congratulations.</strong>${tail}`;
       const welcomeDreaming =
         `Welcome — I'm <strong>Allie</strong>, your wedding planner at All In Weddings. Still dreaming, and that's exactly where the best weddings start. We'll walk through seven steps together — no commitment until it feels right. <strong>Congratulations on this chapter.</strong>${tail}`;
       const welcomeDefault =
@@ -1277,7 +1399,8 @@
 
       await bot(journey === "book" ? welcomeBook : journey === "dreaming" ? welcomeDreaming : welcomeDefault);
       await pause(620);
-      await beginMoodboard();
+      if (pkg.expedited) await beginExpeditedBookFlow();
+      else await beginMoodboard();
     }
 
     /** Homepage “Real brides” tiles → `plan.html?story=<slug>` opens the Step 4 space dossier for that wedding. */
@@ -1319,10 +1442,10 @@
         bookContract: null,
         heldUntil: null,
         deposited: false,
+        expedited: false,
       });
       chapterIdx = 0;
       refreshPackage();
-      buildChapterDots();
       enterChapter(3);
       animateTimelineProgress();
       renderTimelineCanvas();
@@ -1334,34 +1457,60 @@
       setCanvasDrawerOpen(true);
     }
 
-    /* ============ Seven-step journey cards (main chat) + same list drives progress line ============ */
+    /* ============ Journey cards (main chat) + same list drives progress line ============
+       Default flow renders all 7 CHAPTERS; expedited "ready to book" mode renders the
+       5-stop BOOK_FLOW_CHAPTERS list. Both reuse the same timeline DOM + animation. */
     function renderTimelineCanvas() {
-      const stepsHtml = CHAPTERS.map((ch, idx) => `
-        <li class="how-step" data-step-key="${ch.key}" data-step-idx="${idx}" style="--how-step-index:${idx}">
-          <div class="how-step__node" aria-hidden="true">
-            <span class="how-step__index">${String(idx + 1).padStart(2, "0")}</span>
-            <svg class="how-step__check" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" pathLength="1"/>
-            </svg>
-          </div>
-          <div class="how-step__card">
-            <p class="aiw-eyebrow aiw-eyebrow--tan">Step ${String(idx + 1).padStart(2, "0")}</p>
-            <h3 class="mt-1 font-title text-2xl text-ink leading-tight sm:text-[1.7rem]">${ch.cardTitle}</h3>
-            <p class="mt-1.5 text-sm text-ink-soft">${ch.cardCopy}</p>
-          </div>
-        </li>
-      `).join("");
+      const host = journeyTimelineHostEl || document.getElementById("journey-timeline-host");
+      const compact = !!host;
+      const list = activeChaptersList();
+      const total = list.length;
+
+      const stepsHtml = list.map((ch, idx) => {
+        const cardInner = compact
+          ? `<p class="font-sans text-[12px] font-medium leading-snug text-ink sm:text-[13px]">${ch.shortLabel || ch.cardTitle}</p>`
+          : `<p class="aiw-eyebrow aiw-eyebrow--tan">Step ${String(idx + 1).padStart(2, "0")}</p>
+             <h3 class="mt-1 font-title text-2xl text-ink leading-tight sm:text-[1.7rem]">${ch.cardTitle}</h3>
+             <p class="mt-1.5 text-sm text-ink-soft">${ch.cardCopy}</p>`;
+        return `
+          <li class="how-step" data-step-key="${ch.key}" data-step-idx="${idx}" style="--how-step-index:${idx}">
+            <div class="how-step__node" aria-hidden="true">
+              <span class="how-step__index">${String(idx + 1).padStart(2, "0")}</span>
+              <svg class="how-step__check" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" pathLength="1"/>
+              </svg>
+            </div>
+            <div class="how-step__card">${cardInner}</div>
+          </li>
+        `;
+      }).join("");
+
+      const eyebrow = pkg.expedited
+        ? `Ready-to-book express · ${total} stops`
+        : `Your journey · ${total} steps`;
+      const heroHeadline = pkg.expedited
+        ? "Five fast stops — venue to signed."
+        : "From mood to saved date — together.";
+      const heroBlurb = pkg.expedited
+        ? "You said you're ready. We're skipping the moodboard so you can pick a venue, lock a space, dress it with vendors, see the price, and sign — all in one thread."
+        : "Each card below is a chapter — the line fills in as we go. Tell me how the day <em>feels</em> first; everything else follows.";
+
+      const headerHtml = compact
+        ? `<div class="mb-2 flex items-center justify-between gap-3">
+             <p id="journey-timeline-heading" class="journey-compact-eyebrow">${eyebrow}</p>
+             <span id="journey-compact-progress" class="journey-compact-progress text-[11px] font-semibold">Step 1 / ${total}</span>
+           </div>`
+        : `<p id="journey-timeline-heading" class="aiw-eyebrow">${eyebrow}</p>
+           <h2 class="font-title text-4xl tracking-tight text-ink mt-1 sm:text-5xl">${heroHeadline}</h2>
+           <p class="text-ink-soft mt-2 mb-6 max-w-md text-sm sm:text-[15px]">${heroBlurb}</p>`;
 
       const block = `
         <div class="px-0 sm:px-0">
-          <p id="journey-timeline-heading" class="aiw-eyebrow">Your journey · seven steps</p>
-          <h2 class="font-title text-4xl tracking-tight text-ink mt-1 sm:text-5xl">From mood to saved date — together.</h2>
-          <p class="text-ink-soft mt-2 mb-6 max-w-md text-sm sm:text-[15px]">Each card below is a chapter — the line fills in as we go. Tell me how the day <em>feels</em> first; everything else follows.</p>
+          ${headerHtml}
           <ol class="how-timeline" id="planner-timeline" aria-labelledby="journey-timeline-heading">${stepsHtml}</ol>
         </div>
       `;
 
-      const host = journeyTimelineHostEl || document.getElementById("journey-timeline-host");
       if (host) {
         host.innerHTML = block;
       } else {
@@ -1374,29 +1523,150 @@
     function animateTimelineProgress() {
       const tl = document.getElementById("planner-timeline");
       if (!tl) return;
-      const total = CHAPTERS.length;
+      const total = activeChaptersList().length;
+      const displayIdx = activeDisplayIdx();
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const ratio = total ? Math.min(1, (chapterIdx + 1) / total) : 0;
+      const ratio = total ? Math.min(1, (displayIdx + 1) / total) : 0;
       tl.style.setProperty("--how-progress", String(ratio));
       tl.classList.toggle("is-animating", !reduceMotion);
       [...tl.querySelectorAll(".how-step")].forEach((el, idx) => {
-        el.classList.toggle("is-current", idx === chapterIdx);
-        el.classList.toggle("is-active", idx <= chapterIdx);
+        el.classList.toggle("is-current", idx === displayIdx);
+        el.classList.toggle("is-active", idx <= displayIdx);
       });
+      const compactProgress = document.getElementById("journey-compact-progress");
+      if (compactProgress) {
+        compactProgress.textContent = `Step ${displayIdx + 1} / ${total}`;
+      }
+    }
+
+    /* ============ READY-TO-BOOK · EXPRESS PRE-FLIGHT ============
+       Five-stop expedited flow for couples arriving via "I'm ready to book". We
+       skip moodboard + budget interview and gather only what venue matching needs:
+       region → guests → date. Each prompt is one chip-pick. Then we drop straight
+       into beginVenueSelection() (chapter 2 underlying). */
+    async function beginExpeditedBookFlow() {
+      enterChapter(2);
+      animateTimelineProgress();
+      await pause(280);
+      await askExpeditedRegion();
+    }
+
+    async function askExpeditedRegion() {
+      clearChips();
+      textHandler = null;
+      if (pkg.region) {
+        await afterExpeditedRegion();
+        return;
+      }
+      await bot(`Three taps and we're at venues. <strong>Where</strong> are we celebrating?`);
+      setChips(REGION_CHIPS, async pick => {
+        userSay(pick.label);
+        pkg.region = pick.value;
+        await afterExpeditedRegion();
+      });
+      textHandler = async v => {
+        const t = v.trim();
+        if (!t) return;
+        userSay(t);
+        pkg.region = mapRegionFromText(t);
+        await afterExpeditedRegion();
+      };
+    }
+
+    async function afterExpeditedRegion() {
+      clearChips();
+      textHandler = null;
+      await pause(260);
+      await askExpeditedGuests();
+    }
+
+    async function askExpeditedGuests() {
+      clearChips();
+      textHandler = null;
+      if (pkg.guests) {
+        await afterExpeditedGuests();
+        return;
+      }
+      await bot(`<strong>How many guests?</strong> Drives venue scale and per-guest pricing.`);
+      setChips(GUEST_CHIPS, async pick => {
+        userSay(pick.label);
+        const row = GUEST_CHIPS.find(x => x.label === pick.label);
+        pkg.guests = row ? row.guests : 100;
+        pkg.guestsLabel = pick.label;
+        await afterExpeditedGuests();
+      });
+      textHandler = async v => {
+        const t = v.trim();
+        if (!t) return;
+        userSay(t);
+        const n = parseInt(t.replace(/\D/g, ""), 10);
+        pkg.guests = Number.isFinite(n) && n > 0 ? n : 100;
+        pkg.guestsLabel = t;
+        await afterExpeditedGuests();
+      };
+    }
+
+    async function afterExpeditedGuests() {
+      clearChips();
+      textHandler = null;
+      await pause(260);
+      await askExpeditedDate();
+    }
+
+    async function askExpeditedDate() {
+      clearChips();
+      textHandler = null;
+      if (pkg.date) {
+        await afterExpeditedEssentials();
+        return;
+      }
+      await bot(`<strong>When?</strong> Season is enough — exact Saturday locks after the venue.`);
+      setChips(BOOK_DATE_CHIPS, async pick => {
+        userSay(pick.label);
+        pkg.date = pick.label;
+        await afterExpeditedEssentials();
+      });
+      textHandler = async v => {
+        const t = v.trim();
+        if (!t) return;
+        userSay(t);
+        pkg.date = t;
+        await afterExpeditedEssentials();
+      };
+    }
+
+    async function afterExpeditedEssentials() {
+      clearChips();
+      textHandler = null;
+      // Prime a default vibe so Step 4 imagined-design has palette context — couple
+      // can override on the canvas with "Try another vibe".
+      if (!pkg.vibeId) {
+        pkg.vibeId = pkg.region === "atlantic" ? "minimalist-stone"
+                  : pkg.region === "pacific"   ? "soft-romantic"
+                  : "tropical-sunset";
+      }
+      refreshPackage();
+      const region = escapeHtml(regionLabelForMatching());
+      const guests = escapeHtml(String(pkg.guests || ""));
+      const date   = escapeHtml(pkg.date || "TBD");
+      await pause(260);
+      await bot(`Locked: <strong>${guests} guests</strong> · <strong>${region}</strong> · <strong>${date}</strong>. Pulling matching venues now.`);
+      await pause(260);
+      await beginVenueSelection();
     }
 
     /* ============ STEP 1 · MOODBOARD ============ */
     async function beginMoodboard() {
       enterChapter(0);
       animateTimelineProgress();
-      await bot(`Step 1 — your <strong>moodboard</strong>. Close your eyes for a beat: when you picture the day, what's the <em>very first feeling</em>?`);
+      await bot(`Let's start with your <strong>moodboard</strong>. Close your eyes for a beat: when you picture the day, what's the <em>very first feeling</em>?`);
       setChips(
         [
-          { label: "Magical and dreamy" },
-          { label: "Elegant and timeless" },
-          { label: "Fun and festive" },
-          { label: "Intimate and emotional" },
-          { label: "Wild and unforgettable" },
+          { label: "Magical and dreamy",     icon: "✨" },
+          { label: "Elegant and timeless",   icon: "🥂" },
+          { label: "Fun and festive",        icon: "🎉" },
+          { label: "Intimate and emotional", icon: "🤍" },
+          { label: "Wild and unforgettable", icon: "🔥" },
         ],
         async pick => {
           userSay(pick.label);
@@ -1497,14 +1767,11 @@
       renderTimelineCanvas();
       const cover = escapeHtml(pkg.coverLabel || "That direction");
       await bot(`${cover} — clear vision. Last beat for the moodboard: which <strong>palette</strong> feels most like you when you picture florals and tablescape?`);
-      setChips(
-        PALETTE_CHIPS.map(label => ({ label })),
-        async pick => {
-          userSay(pick.label);
-          pkg.paletteLabel = pick.label;
-          await afterPalette();
-        }
-      );
+      setChips(PALETTE_CHIPS, async pick => {
+        userSay(pick.label);
+        pkg.paletteLabel = pick.label;
+        await afterPalette();
+      });
       textHandler = async v => {
         const t = v.trim();
         if (!t) return;
@@ -1527,8 +1794,8 @@
     async function beginLogistics() {
       enterChapter(1);
       animateTimelineProgress();
-      await bot(`Step 2 — <strong>logistics</strong>. How many guests? This drives venue scale and the per-guest math — then we'll match properties to your moodboard before locking timing and budget.`);
-      setChips(GUEST_CHIPS.map(g => ({ label: g.label })), async pick => {
+      await bot(`Now <strong>logistics</strong>. How many guests? This drives venue scale and the per-guest math — then we'll match properties to your moodboard before locking timing and budget.`);
+      setChips(GUEST_CHIPS, async pick => {
         userSay(pick.label);
         const row = GUEST_CHIPS.find(x => x.label === pick.label);
         pkg.guests = row ? row.guests : 100;
@@ -1553,8 +1820,8 @@
       if (pkg.date) {
         await bot(`I picked up <strong>${escapeHtml(pkg.date)}</strong> from home. Keep that timing?`);
         setChips([
-          { label: `Yes — ${pkg.date}`, action: "keep" },
-          { label: "Change timing", action: "change" },
+          { label: `Yes — ${pkg.date}`, action: "keep",   icon: "✅" },
+          { label: "Change timing",     action: "change", icon: "🗓️" },
         ], async pick => {
           userSay(pick.label);
           if (pick.action === "keep") {
@@ -1573,7 +1840,7 @@
       clearChips();
       textHandler = null;
       await bot(`When are you steering toward? Season's fine — we don't need an exact Saturday yet.`);
-      setChips(BOOK_DATE_CHIPS.map(label => ({ label })), async pick => {
+      setChips(BOOK_DATE_CHIPS, async pick => {
         userSay(pick.label);
         pkg.date = pick.label;
         await dateNudge(pkg.date);
@@ -1612,8 +1879,8 @@
         const label = (REGION_CHIPS.find(r => r.value === pkg.region)?.label || pkg.region).split(" — ")[0];
         await bot(`Destination — <strong>${escapeHtml(label)}</strong>. Keep that?`);
         setChips([
-          { label: "Keep destination", action: "keep" },
-          { label: "Pick a different region", action: "change" },
+          { label: "Keep destination",        action: "keep",   icon: "✅" },
+          { label: "Pick a different region", action: "change", icon: "🧭" },
         ], async pick => {
           userSay(pick.label);
           if (pick.action === "keep") return afterRegionEarlyVenues();
@@ -1766,7 +2033,10 @@
         logisticsVenuesShownEarly && !pkg.budgetBand
           ? " First pass leans on moodboard + region + guest count — we'll sharpen with timing and budget right after."
           : "";
-      await bot(`Step 3 — <strong>venue selection</strong>. Pulling properties that fit your moodboard, region, and ${pkg.guests || ""} guests…${earlyVenueHint}`);
+      const venueIntro = pkg.expedited
+        ? `<strong>Stop 1 of 5 · Venue.</strong> Pulling properties that fit your region, guest count, and timing…`
+        : `Time for <strong>venue selection</strong>. Pulling properties that fit your moodboard, region, and ${pkg.guests || ""} guests…${earlyVenueHint}`;
+      await bot(venueIntro);
       await showVenueMatchingInterstitial(ranked);
       await bot(`<strong>${ranked.length}</strong> matches — opening <strong>Board</strong> with your list. Tap a property card to step inside.`);
       // Surface a warm-yellow status banner when matches feel constrained — Figma node 316:16.
@@ -1799,10 +2069,64 @@
       attachVenueListingHandlers(ranked);
     }
 
+    function matchScoreHash(str) {
+      let h = 0;
+      for (let i = 0; i < str.length; i++) h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+      return Math.abs(h);
+    }
+
+    /** Rough mid-point of selected budget band for mock “fit” vs property fromUSD */
+    function budgetMidEstimateUsd() {
+      const b = String(pkg.budgetBand || "").toLowerCase();
+      if (b.includes("under") || b.includes("<")) return 25000;
+      if (b.includes("30") && b.includes("60")) return 45000;
+      if (b.includes("60") && b.includes("100")) return 80000;
+      if (b.includes("100") && b.includes("175")) return 135000;
+      if (b.includes("175") && b.includes("300")) return 240000;
+      if (b.includes("300")) return 360000;
+      return 75000;
+    }
+
+    /**
+     * Deterministic “% match for you” for Planning board tiles (prototype heuristic:
+     * moodboard vibe, region, guest scale, budget vs estimate, list rank, upcoming).
+     */
+    function venueMatchPercentForYou(h, rankIndex) {
+      const key = `${h.id}|${pkg.vibeId || ""}|${pkg.region || ""}|${pkg.guests || 0}|${pkg.budgetBand || ""}|${pkg.date || ""}|${rankIndex}`;
+      let score = 88 - rankIndex * 3 + (matchScoreHash(key) % 5) - 2;
+      if (pkg.region && h.region === pkg.region) score += 4;
+      if (pkg.region && h.region !== pkg.region) score -= 20;
+      const mid = budgetMidEstimateUsd();
+      const p = h.fromUSD || 0;
+      if (mid > 0 && p > 0) {
+        const rel = p / mid;
+        if (rel >= 0.65 && rel <= 1.2) score += 5;
+        else if (rel <= 1.45) score += 2;
+        else score -= 4;
+      }
+      const g = pkg.guests || 0;
+      if (g >= 140 && p >= 35000) score += 2;
+      if (g > 0 && g <= 60 && p > 0 && p <= 48000) score += 2;
+      const v = pkg.vibeId || "";
+      if (v === "minimalist-stone" && h.brand === "nobu") score += 3;
+      if (v === "cinematic-noir" && h.brand === "hard-rock") score += 2;
+      if (v === "boho-jungle" && (h.brand === "unico" || h.brand === "ava")) score += 2;
+      if (v === "tropical-sunset" && h.region === "caribbean") score += 2;
+      if (v === "soft-romantic") score += 1;
+      if (v === "mystic-cenote" && (h.brand === "unico" || /tulum|riviera/i.test(h.city || ""))) score += 2;
+      if (h.upcoming) score -= 6;
+      return Math.min(98, Math.max(66, Math.round(score)));
+    }
+
+    function venueMatchScoreBadgeHtml(h, rankIndex, positionClass) {
+      const pct = venueMatchPercentForYou(h, rankIndex);
+      return `<span class="pointer-events-none absolute ${positionClass} z-[2] rounded-full bg-[rgba(12,11,10,0.66)] px-2.5 py-1 text-[11px] font-semibold leading-none text-white shadow-sm ring-1 ring-white/18 backdrop-blur-[3px]">${pct}% match for you</span>`;
+    }
+
     function renderVenuesCanvas(hotels) {
       const region = pkg.region ? `the ${pkg.region}` : "all destinations";
-      const altCardsHtml = hotels.slice(1).map((h, idx) => renderAltVenueCard(h, idx)).join("");
-      const bestHtml = hotels.length ? renderBestFitVenueCard(hotels[0]) : "";
+      const altCardsHtml = hotels.slice(1).map((h, idx) => renderAltVenueCard(h, idx + 1)).join("");
+      const bestHtml = hotels.length ? renderBestFitVenueCard(hotels[0], 0) : "";
       const notifyHtml = hotels.length
         ? `
           <div class="aiw-card--page bg-[color:var(--color-surface-page)] px-4 py-3">
@@ -1851,17 +2175,19 @@
     }
 
     /** Best-fit card — Figma 317:3 (sage-100 badge + Playfair title + date pills + "Select this date →") */
-    function renderBestFitVenueCard(h) {
+    function renderBestFitVenueCard(h, rankIndex = 0) {
       const brand = brandOfHotel(h.id);
       const dateLabel = pkg.date || "Two open weekends";
       const altDate   = h.upcoming ? "Opening soon" : `${brand.name}`;
       const heroImg = hotelCardImageUrl(h.id);
+      const pct = venueMatchPercentForYou(h, rankIndex);
       return `
-        <button type="button" class="aiw-card text-left w-full overflow-hidden hover:shadow-md transition" data-venue-id="${h.id}" aria-label="Select ${h.name}">
+        <button type="button" class="aiw-card text-left w-full overflow-hidden hover:shadow-md transition" data-venue-id="${h.id}" aria-label="Select ${h.name}, ${pct}% match for you">
           <div class="relative -mx-4 -mt-4 mb-1 h-[min(200px,36vw)] min-h-[140px] overflow-hidden rounded-t-[var(--radius-lg)]">
             <img src="${heroImg}" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" referrerpolicy="no-referrer-when-downgrade" />
             <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-black/15 to-transparent"></div>
             <div class="pointer-events-none absolute inset-0 aiw-grain opacity-40 mix-blend-overlay"></div>
+            ${venueMatchScoreBadgeHtml(h, rankIndex, "right-3 top-3")}
           </div>
           <div class="flex">
             <span class="aiw-pill aiw-pill--sage">Best fit · ${brand.name}</span>
@@ -1888,22 +2214,26 @@
     }
 
     /** Alt venue card — Figma 323:2 / 323:25 (numeric marker + image + Explore button, alternates left/right) */
-    function renderAltVenueCard(h, idx) {
+    function renderAltVenueCard(h, rankIndex) {
       const brand = brandOfHotel(h.id);
-      const flip = idx % 2 === 1;
-      const marker = String(idx + 1).padStart(2, "0");
+      const altIdx = rankIndex - 1;
+      const flip = altIdx % 2 === 1;
+      const marker = String(rankIndex).padStart(2, "0");
       const meta = [
         h.city ? `${h.city}, ${h.country}` : null,
         brand.name,
         h.upcoming ? "Opening soon" : "Available now",
       ].filter(Boolean);
       const heroImg = hotelCardImageUrl(h.id);
+      const pct = venueMatchPercentForYou(h, rankIndex);
+      const matchPos = flip ? "left-3 bottom-3" : "right-3 bottom-3";
       const imageHtml = `
         <div class="relative flex-1 min-w-0 overflow-hidden self-stretch rounded-[var(--radius-md)]" style="min-height:220px">
           <img src="${heroImg}" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" referrerpolicy="no-referrer-when-downgrade" />
           <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10"></div>
           <div class="absolute inset-0 aiw-grain opacity-50 mix-blend-overlay"></div>
           <span class="aiw-avail-badge absolute top-3 ${flip ? "left-3" : "right-3"}">${h.upcoming ? "Opening soon" : "Available"}</span>
+          ${venueMatchScoreBadgeHtml(h, rankIndex, matchPos)}
         </div>`;
       const textHtml = `
         <div class="flex flex-col gap-3 w-[148px] shrink-0 px-1 py-2 ${flip ? "items-end text-right" : "items-start text-left"}">
@@ -1926,7 +2256,7 @@
           </span>
         </div>`;
       return `
-        <button type="button" class="aiw-card w-full text-left hover:shadow-md transition" data-venue-id="${h.id}" aria-label="Explore ${h.name}">
+        <button type="button" class="aiw-card w-full text-left hover:shadow-md transition" data-venue-id="${h.id}" aria-label="Explore ${h.name}, ${pct}% match for you">
           <div class="flex ${flip ? "justify-end" : "justify-start"} items-start">
             <span class="aiw-marker">${marker}</span>
           </div>
@@ -2224,7 +2554,10 @@
       enterChapter(3);
       animateTimelineProgress();
       const h = byId(HOTELS, pkg.hotelId);
-      await bot(`Step 4 — <strong>space design</strong>. Walk the rooms at ${h.name}. Tap a space for the full dossier — then <strong>Choose this space</strong> when one feels right and I'll re-imagine it in your palette.`);
+      const spaceIntro = pkg.expedited
+        ? `<strong>Stop 2 of 5 · Space.</strong> Walk the rooms at ${h.name}. Tap a space for the full dossier, then <strong>Choose this space</strong> when one fits.`
+        : `On to <strong>space design</strong>. Walk the rooms at ${h.name}. Tap a space for the full dossier — then <strong>Choose this space</strong> when one feels right and I'll re-imagine it in your palette.`;
+      await bot(spaceIntro);
       renderSpacesCanvas(h);
       clearChips();
       textHandler = null;
@@ -2251,7 +2584,7 @@
             </div>
           </div>
           <div class="aiw-section-label">
-            <p class="aiw-eyebrow">Step 4 · Pick a space</p>
+            <p class="aiw-eyebrow">Pick a space</p>
           </div>
           <p class="text-sm text-ink-soft mb-4 px-1">${spaces.length} spaces · capacity · feel</p>
           <div id="space-grid" class="space-y-2.5">${cardsHtml}</div>
@@ -2335,7 +2668,7 @@
       refreshPackage();
       setCanvas(`
         <div>
-          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Step 4 · Imagined design</p>
+          <p class="text-xs uppercase tracking-[0.18em] text-ink-muted mb-1">Imagined design</p>
           <h2 class="font-title text-4xl mb-4">${s.name}, in <em class="text-copper">${vibe.label.toLowerCase()}</em></h2>
 
           <div class="grid sm:grid-cols-2 gap-4 mb-6">
@@ -2375,8 +2708,8 @@
       document.getElementById("design-continue").addEventListener("click", () => beginAddons());
       clearChips();
       setChips([
-        { label: "Continue → add-ons", action: "continue" },
-        { label: "Try another vibe",   action: "again" },
+        { label: "Continue → add-ons", action: "continue", icon: "✨" },
+        { label: "Try another vibe",   action: "again",    icon: "🔄" },
       ], async pick => {
         userSay(pick.label);
         if (pick.action === "again") {
@@ -2629,13 +2962,16 @@
       });
     }
 
-    /* ============ STEP 5 · ADD-ONS ============ */
+    /* ============ STEP 5 · ADD-ONS / VENDOR MARKETPLACE ============ */
     async function beginAddons() {
       enterChapter(4);
       animateTimelineProgress();
       clearChips();
       textHandler = null;
-      await bot(`Step 5 — <strong>add-ons</strong>. Toggle anything you want; the running total moves live.`);
+      const intro = pkg.expedited
+        ? `<strong>Vendor marketplace.</strong> Five categories, one running total. Tap to add — the price calculator updates live.`
+        : `Next, <strong>add-ons</strong>. Toggle anything you want; the running total moves live.`;
+      await bot(intro);
       renderAddonsCanvas();
     }
 
@@ -2687,41 +3023,73 @@
       `;
     }
 
+    /**
+     * Vendor marketplace canvas. Items are grouped into the five ADDON_CATEGORIES
+     * so the choice feels like browsing a real marketplace — each tile shows the
+     * vendor name + a one-line tagline alongside the price. Selection state is
+     * still driven by `pkg.addonIds` and the running estimate is unchanged.
+     */
     function renderAddonsCanvas() {
       const calc = renderRunningEstimate();
-      const items = BOOK_ADDONS.map(a => {
-        const selected = (pkg.addonIds || []).includes(a.id);
+      const groupsHtml = ADDON_CATEGORIES.map(cat => {
+        const items = BOOK_ADDONS.filter(a => a.category === cat.id);
+        if (!items.length) return "";
+        const tiles = items.map(a => {
+          const selected = (pkg.addonIds || []).includes(a.id);
+          return `
+            <button type="button" data-addon="${a.id}"
+              class="aiw-card aiw-marketplace-tile w-full text-left transition hover:shadow-md cursor-pointer ${selected ? "ring-2 ring-[color:var(--color-tan-500)]" : ""}">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[color:var(--color-sage-600)]">${escapeHtml(a.vendor)}</p>
+                  <p class="font-medium leading-snug text-[15px] text-ink">${a.label}</p>
+                  <p class="mt-1 text-[12.5px] leading-snug text-ink-soft">${a.tagline}</p>
+                </div>
+                <span class="${selected ? "aiw-pill aiw-pill--inverse" : "aiw-pill"} shrink-0" style="${selected ? "background:var(--color-tan-500);" : ""}">${selected ? "Added" : "+ Add"}</span>
+              </div>
+              <div class="mt-3 flex items-baseline justify-between gap-3 border-t border-[color:var(--color-border-default)]/60 pt-2">
+                <span class="text-[11px] uppercase tracking-[0.16em] text-ink-muted">Flat rate</span>
+                <span class="font-semibold text-ink">${usd(a.price)}</span>
+              </div>
+            </button>
+          `;
+        }).join("");
         return `
-          <button type="button" data-addon="${a.id}"
-            class="aiw-card w-full text-left transition hover:shadow-md cursor-pointer ${selected ? "ring-2 ring-[color:var(--color-tan-500)]" : ""}">
-            <div class="flex items-center justify-between gap-3">
-              <span class="font-medium leading-snug text-[15px]">${a.label}</span>
-              <span class="${selected ? "aiw-pill aiw-pill--inverse" : "aiw-pill"}" style="${selected ? "background:var(--color-tan-500);" : ""}">${selected ? "Added" : "+ Add"}</span>
-            </div>
-            <p class="text-[12px] text-[color:var(--color-sage-600)]">${usd(a.price)}</p>
-          </button>
+          <section class="mb-6">
+            <header class="mb-2 flex items-center gap-2 px-1">
+              <span class="aiw-marketplace-cat-icon" aria-hidden="true">${cat.icon}</span>
+              <h3 class="font-title text-lg leading-tight text-ink">${cat.label}</h3>
+              <span class="ml-auto text-[11px] text-ink-muted">${items.length} vendor${items.length === 1 ? "" : "s"}</span>
+            </header>
+            <div class="grid gap-2.5 sm:grid-cols-2">${tiles}</div>
+          </section>
         `;
       }).join("");
       const count = (pkg.addonIds || []).length;
+      const eyebrow = pkg.expedited ? "Vendor Marketplace" : "Add-ons";
+      const headline = pkg.expedited ? "Browse vetted vendors." : "Dress the day.";
+      const subline = pkg.expedited
+        ? "Each vendor is pre-negotiated and bookable through the calculator. Stack as many as you want — the price updates live."
+        : "Florals, lighting, late-night food — toggle as many as you like.";
+      const continueLabel = pkg.expedited ? "Continue → price calculator" : "Continue → see your quote";
       setCanvas(`
         <div>
           ${calc}
           <div class="aiw-section-label">
-            <p class="aiw-eyebrow">Step 5 · Add-ons</p>
+            <p class="aiw-eyebrow">${eyebrow}</p>
           </div>
-          <h2 class="font-title text-4xl mb-4 px-1">Dress the day.</h2>
-          <div class="grid sm:grid-cols-2 gap-2.5">${items}</div>
-          <div class="mt-6 flex flex-wrap items-center justify-between gap-3 px-1">
-            <p class="text-sm text-[color:var(--color-sage-600)]">${count} add-on${count === 1 ? "" : "s"} selected</p>
-            <button id="addons-continue" type="button" class="btn btn--primary btn--default">Continue → see your quote</button>
+          <h2 class="font-title text-4xl mb-1 px-1">${headline}</h2>
+          <p class="mb-5 px-1 max-w-2xl text-sm text-ink-soft">${subline}</p>
+          ${groupsHtml}
+          <div class="mt-2 flex flex-wrap items-center justify-between gap-3 px-1">
+            <p class="text-sm text-[color:var(--color-sage-600)]">${count} vendor${count === 1 ? "" : "s"} added</p>
+            <a id="addons-continue" href="https://www.figma.com/design/FAF8ZGTyNyYOXtDSNU4ovB/RCD?node-id=310-2&t=rhLo9yzPKEHweMjG-1" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--default">${continueLabel}</a>
           </div>
         </div>
       `);
       document.querySelectorAll("[data-addon]").forEach(el => {
         el.addEventListener("click", () => toggleAddon(el.dataset.addon));
       });
-      const cont = document.getElementById("addons-continue");
-      if (cont) cont.addEventListener("click", () => beginQuote());
     }
 
     function toggleAddon(id) {
@@ -2731,13 +3099,16 @@
       refreshPackage();
     }
 
-    /* ============ STEP 6 · QUOTE ============ */
+    /* ============ STEP 6 · QUOTE / PRICE CALCULATOR ============ */
     async function beginQuote() {
       enterChapter(5);
       animateTimelineProgress();
       clearChips();
       textHandler = null;
-      await bot(`Step 6 — your <strong>quote</strong>. Transparent contract preview, one all-in number, sign when it feels right.`);
+      const quoteIntro = pkg.expedited
+        ? `<strong>Stop 4 of 5 · Price calculator.</strong> Live, transparent breakdown. Adjust anything; the all-in number recomputes instantly.`
+        : `Here's your <strong>quote</strong>. Transparent contract preview, one all-in number, sign when it feels right.`;
+      await bot(quoteIntro);
       renderQuoteCanvas();
     }
 
@@ -2955,7 +3326,7 @@
           </div>
 
           <div class="aiw-section-label mt-8">
-            <p class="aiw-eyebrow">Step 6 · Quote</p>
+            <p class="aiw-eyebrow">Quote</p>
           </div>
 
           <form id="quote-sign-form" class="aiw-card--page mt-4 rounded-[var(--radius-lg)] p-6 space-y-4">
@@ -3013,7 +3384,10 @@
       animateTimelineProgress();
       clearChips();
       textHandler = null;
-      await bot(`Step 7 — <strong>save my date</strong>. Swipe the 24-hour badge to lock your window — then the confetti flies.`);
+      const saveIntro = pkg.expedited
+        ? `<strong>Stop 5 of 5 · Sign &amp; save the date.</strong> Swipe the 24-hour badge to lock your window — refundable $500 hold, then the confetti flies.`
+        : `Final step — <strong>save my date</strong>. Swipe the 24-hour badge to lock your window — then the confetti flies.`;
+      await bot(saveIntro);
       openDepositModal();
     }
 
@@ -3189,7 +3563,7 @@
                 <path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <p class="text-xs uppercase tracking-[0.22em] text-ink-muted mb-2">Step 7 · Saved</p>
+            <p class="text-xs uppercase tracking-[0.22em] text-ink-muted mb-2">Saved</p>
             <h2 class="font-title text-6xl tracking-tight italic">Forever &amp; always.</h2>
             <p class="text-ink-soft mt-3 max-w-md mx-auto">
               ${hotel.name} · ${s.name} · ${escapeHtml(pkg.date || "—")} · ${pkg.guests || "—"} guests.
@@ -3229,7 +3603,7 @@
         <div class="deposit-save-flow" data-node-id="290:392">
           <div class="flex items-center justify-between border-b border-border-default px-[18px] py-3.5">
             <button type="button" id="deposit-cancel" class="text-[12px] font-medium text-ink-muted transition hover:text-ink">Not now</button>
-            <p class="font-title text-[11px] uppercase tracking-[0.12em] text-ink">All In Weddings</p>
+            <img src="../rcd-design-system/assets/logos/aiw-horizontal-gray.png" alt="All In Weddings" class="h-5 w-auto max-w-[140px] object-contain"/>
             <span class="h-7 w-7 shrink-0 rounded-full bg-gradient-to-br from-rose-200 to-rose-400 ring-1 ring-border-default/60" aria-hidden="true"></span>
           </div>
 
@@ -3254,7 +3628,7 @@
           </div>
 
           <section class="aiw-save-brand px-7 pb-2 pt-8 text-center" aria-labelledby="save-date-brand-heading">
-            <p class="font-sans text-[9px] font-semibold uppercase tracking-[0.28em] text-copper">All In Weddings</p>
+            <img src="../rcd-design-system/assets/logos/aiw-horizontal-gray.png" alt="All In Weddings" class="mx-auto h-5 w-auto max-w-[150px] object-contain"/>
             <h2 id="save-date-brand-heading" class="mt-3 font-title text-ink">
               <span class="aiw-save-brand-save block text-[clamp(2.1rem,8.5vw,2.85rem)] leading-[0.92] tracking-[-0.02em] italic">Save</span>
               <span class="block -mt-0.5 text-[clamp(2.25rem,8.5vw,3rem)] leading-[0.92] tracking-[-0.035em]">my date<span class="text-copper">.</span></span>
@@ -3729,17 +4103,14 @@
           clearState();
           start().catch(e => console.error(e));
         } else if (pkg.deposited) {
-          buildChapterDots();
           enterChapter(6);
           renderTimelineCanvas();
           void confirmDeposit();
         } else if (pkg.bookContract?.signed) {
-          buildChapterDots();
           enterChapter(6);
           renderTimelineCanvas();
           openDepositModal();
         } else {
-          buildChapterDots();
           enterChapter(5);
           renderTimelineCanvas();
           renderQuoteCanvas();

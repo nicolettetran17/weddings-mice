@@ -122,7 +122,7 @@ export function hotelCardImageUrl(hotelId) {
   return LVC_HOTEL_CARD_IMAGES[hotelId] || LVC_HOTEL_CARD_IMAGES._default;
 }
 
-/** Homepage “Real brides” tile image — falls back to hotel stock when unset. */
+/** Homepage “Real couples” tile image — falls back to hotel stock when unset. */
 export function storyCardImageUrl(bride, hotelId) {
   return bride.storyCardPhoto || hotelCardImageUrl(hotelId);
 }
@@ -211,56 +211,65 @@ export const VENDORS = [
   { id: "bd-kintsugi", cat: "band",     name: "Kintsugi Strings",     based: "Los Angeles, USA", rating: 5.0, reviews:  56, fromUSD: 8800, tags: ["String quartet","Ceremony","Cinematic"] },
 ];
 
-/* ---------- Social proof / past brides ---------- */
-/** Ceremony / detail photos: Katie Byrd Photography — Nobu Los Cabos (Bri + Kris Obaseki). License for production use is separate from this prototype. */
-const KATIE_BYRD_NOBU_POST =
-  "https://katiebyrdphotography.com/nobu-hotel-los-cabos-wedding-bri-kris-obaseki/";
-const KATIE_BYRD_NOBU_IMG = (n) =>
-  `https://katiebyrdphotography.com/wp-content/uploads/2023/04/Nobu-Hotel-Los-Cabos-Luxury-Destination-Wedding${n}-1024x683.jpg`;
+/* ---------- Social proof / “Real couples” tiles (Unsplash stock — Unsplash License; credit links for production use) ---------- */
+const uCouple = (photoId) =>
+  `https://images.unsplash.com/photo-${photoId}?auto=format&fit=crop&w=1200&q=80`;
 
 export const BRIDES = [
   { slug: "bri-kris-nobu-ceremony", name: "Bri & Kris", hotelId: "nobu-los-cabos", spaceId: "no-lc-stone",
     quote: "A floral arch on the beach at Nobu — the destination wedding we kept replaying in our heads until it was real.",
     season: "Los Cabos", guests: 120,
-    storyCardPhoto: KATIE_BYRD_NOBU_IMG(59),
-    photoCredit: "Katie Byrd Photography",
-    photoCreditHref: KATIE_BYRD_NOBU_POST },
+    storyCardPhoto: uCouple("1694709283346-bbc66a18e731"),
+    photoCredit: "Lauren Mitchell / Unsplash",
+    photoCreditHref: "https://unsplash.com/photos/a-bride-and-groom-holding-hands-and-smiling-glouLzM1PMg" },
   { slug: "bri-kris-nobu-celebration", name: "Bri & Kris", hotelId: "nobu-los-cabos", spaceId: "no-lc-stone",
     quote: "From welcome party to fireworks — every frame still feels like a magazine spread.",
     season: "Los Cabos", guests: 120,
-    storyCardPhoto: KATIE_BYRD_NOBU_IMG(30),
-    photoCredit: "Katie Byrd Photography",
-    photoCreditHref: KATIE_BYRD_NOBU_POST },
+    storyCardPhoto: uCouple("1609150883040-cfd45714ce10"),
+    photoCredit: "Sofia Hernandez / Unsplash",
+    photoCreditHref: "https://unsplash.com/photos/2-women-in-red-and-white-floral-dress-plYDwH5DVNg" },
   { slug: "bri-kris-nobu-details", name: "Bri & Kris", hotelId: "nobu-los-cabos", spaceId: "no-lc-pool",
     quote: "Quiet luxury that isn’t boring — stone, light, and the Sea of Cortez doing half the decorating for us.",
     season: "Los Cabos", guests: 120,
-    storyCardPhoto: KATIE_BYRD_NOBU_IMG(41),
-    photoCredit: "Katie Byrd Photography",
-    photoCreditHref: KATIE_BYRD_NOBU_POST },
-  /** Imagery from Shaadi Destinations — South Asian weddings at Nobu Los Cabos (prototype; secure rights for production). */
+    storyCardPhoto: uCouple("1719179542047-a4d84fd35c1f"),
+    photoCredit: "Stacey Vandas / Unsplash",
+    photoCreditHref: "https://unsplash.com/photos/a-bride-and-groom-standing-in-front-of-a-white-building-7d7ciajVgWA" },
   { slug: "meghana-neil-nobu-shaadi", name: "Meghana & Neil", hotelId: "nobu-los-cabos", spaceId: "no-lc-stone",
     quote: "Terraces, ocean light, and room for every tradition — Nobu felt built for our baraat and our ballroom moment in one weekend.",
     season: "Los Cabos", guests: 180,
-    storyCardPhoto:
-      "https://images.squarespace-cdn.com/content/v1/6627d116ba2358384fb2b475/57d7f2bb-c9c7-4ad0-bd69-28bf476a164c/Nobu+Los+Cabos+South+Asian+Indian+Weddings+8+-+Web.jpg?format=1500w",
-    photoCredit: "Shaadi Destinations",
-    photoCreditHref:
-      "https://www.shaadidestinations.com/nobu-hotel-los-cabos-south-asian-indian-wedding" },
+    storyCardPhoto: uCouple("1769500810098-0bb1a7642e21"),
+    photoCredit: "Rejaul Karim / Unsplash",
+    photoCreditHref: "https://unsplash.com/photos/a-newlywed-couple-in-traditional-indian-wedding-attire-bn-f6gXUlHU" },
   { slug: "aria-marcus", name: "Aria & Marcus", hotelId: "unico-riviera-maya", spaceId: "u-rm-cenote",
     quote: "We told the chatbot 'mystic boho cathedral' and it spit back our exact wedding. We cried. We booked.",
-    season: "March 2026", guests: 78 },
+    season: "March 2026", guests: 78,
+    storyCardPhoto: uCouple("1775496795916-beafad891653"),
+    photoCredit: "Sushanta Rokka / Unsplash",
+    photoCreditHref: "https://unsplash.com/photos/a-bride-and-groom-in-traditional-wedding-attire-FY_KEUAiCZE" },
   { slug: "jenna-tomas", name: "Jenna & Tomás", hotelId: "hr-punta-cana", spaceId: "hr-pc-sky",
     quote: "Sky Terrace at sunset. 220 of our loudest friends. Hard Rock did NOT come to play around.",
-    season: "Jan 2026", guests: 220 },
+    season: "Jan 2026", guests: 220,
+    storyCardPhoto: uCouple("1591164473007-703c2c1c4905"),
+    photoCredit: "Unsplash",
+    photoCreditHref: "https://unsplash.com/photos/man-in-black-suit-jacket-kissing-woman-in-white-wedding-dress-dSe8sD9Y8vk" },
   { slug: "sofia-will", name: "Sofía & Will", hotelId: "ava-cancun", spaceId: "av-cn-mile",
     quote: "Beach as far as the eye could see. Three different ceremony spots scouted, picked one in 10 minutes.",
-    season: "Nov 2025", guests: 140 },
+    season: "Nov 2025", guests: 140,
+    storyCardPhoto: uCouple("1736278495165-df4602834dcd"),
+    photoCredit: "Unsplash",
+    photoCreditHref: "https://unsplash.com/photos/a-man-and-a-woman-dancing-on-the-beach-dU0ch2Yn7S8" },
   { slug: "camila-ben", name: "Camila & Ben", hotelId: "unico-nayarit", spaceId: "u-na-pacific",
     quote: "Pacific bluff. The light at 5:47pm. Don't ask me how I'm typing through this.",
-    season: "Apr 2026", guests: 110 },
+    season: "Apr 2026", guests: 110,
+    storyCardPhoto: uCouple("1609533537430-b218ff5d6c6c"),
+    photoCredit: "Unsplash",
+    photoCreditHref: "https://unsplash.com/photos/man-in-red-suit-jacket-kissing-woman-in-white-shirt-WzF1FQ9ElGI" },
   { slug: "maya-theo", name: "Maya & Theo", hotelId: "nobu-miami", spaceId: "no-mb-eden",
     quote: "Eden Roc Solarium. White everything. Tom Ford could not have art-directed it better.",
-    season: "Feb 2026", guests: 180 },
+    season: "Feb 2026", guests: 180,
+    storyCardPhoto: uCouple("1744407087657-1b2759d560ce"),
+    photoCredit: "Connor Esau / Unsplash",
+    photoCreditHref: "https://unsplash.com/photos/two-grooms-share-a-kiss-in-a-scenic-setting-SHdGDBrwmx0" },
 ];
 
 /* ---------- Vibe presets (chips for the chatbot) ---------- */

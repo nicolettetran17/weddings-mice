@@ -118,7 +118,7 @@ export function renderNav({ active = "home", landing = false, variant = "default
           <path d="M0 1h18M0 6h18M0 11h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
       </a>
-      <p class="pointer-events-none absolute left-1/2 -translate-x-1/2 font-sans text-sm font-medium uppercase tracking-[0.3em] text-[#1b1c1c]">All In Weddings</p>
+      <img src="${LOGO_PATH}/aiw-horizontal-gray.png" alt="All In Weddings" class="pointer-events-none absolute left-1/2 h-6 -translate-x-1/2 object-contain sm:h-7"/>
       <a href="./index.html" class="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-[#f0eded] shadow-[0_0_0_1px_rgba(207,197,187,0.35)] ring-1 ring-white/60" aria-label="Your profile">
         <span class="grid h-full w-full place-items-center font-title text-lg leading-none text-[#4c463f]">N</span>
       </a>
@@ -128,9 +128,8 @@ export function renderNav({ active = "home", landing = false, variant = "default
   return `
   <nav class="sticky top-0 z-30 bg-canvas/80 backdrop-blur border-b border-border-subtle">
     <div class="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
-      <a href="./index.html" class="flex items-center gap-3">
-        <img src="${LOGO_PATH}/aiw-circle-black.png" alt="" class="h-9 w-9 object-contain"/>
-        <span class="font-title text-2xl tracking-tight">All In Weddings</span>
+      <a href="./index.html" class="flex items-center gap-3" aria-label="All In Weddings — home">
+        <img src="${LOGO_PATH}/aiw-horizontal-gray.png" alt="All In Weddings" class="h-8 w-auto max-w-[200px] object-contain object-left"/>
       </a>
       <div class="hidden md:flex items-center gap-8 text-sm">
         <a href="./index.html#portfolio"  class="hover:text-copper ${active==="home"?"text-ink":"text-ink-soft"}">Portfolio</a>

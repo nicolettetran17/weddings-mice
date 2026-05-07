@@ -10,6 +10,7 @@
    ========================================================== */
 :root {
   --color-sage-100:             #ebeee7;
+  --color-sage-500:             #8a9573;   /* mid-tone sage for glyphs / Allie avatar */
   --color-sage-600:             #646f53;
   --color-tan-100:              #f3e6d3;
   --color-tan-500:              #ca9151;   /* alias of --color-copper for chat surfaces */
@@ -328,8 +329,26 @@
   border-radius: 0;
   box-shadow: none;
   background:
-    radial-gradient(120% 80% at 50% -10%, rgba(255, 252, 248, 0.95) 0%, transparent 55%),
-    linear-gradient(180deg, #faf7f4 0%, #f3ebe4 38%, #fcf9f8 100%);
+    radial-gradient(120% 80% at 50% -10%, rgba(255, 245, 226, 0.35) 0%, transparent 55%),
+    var(--color-tan-500);
+  color: #fffaf0;
+}
+.chat-shell--immersive .chat-bubble--bot {
+  background: rgba(255, 250, 240, 0.94);
+  color: var(--color-ink);
+  box-shadow: 0 8px 22px rgba(101, 60, 18, 0.14);
+}
+.chat-shell--immersive .chat-bubble--user {
+  background: rgba(28, 24, 18, 0.78);
+  color: #fffaf0;
+  border-color: transparent;
+}
+.chat-shell--immersive .chat-assistant-name,
+.chat-shell--immersive .chat-assistant-tag {
+  color: #fffaf0;
+}
+.chat-shell--immersive .chat-assistant-tag {
+  color: rgba(255, 250, 240, 0.78);
 }
 .chat-thread--immersive {
   scrollbar-color: rgba(166, 155, 143, 0.35) transparent;
@@ -432,9 +451,17 @@ body.aiw-canvas-drawer-open {
   background: rgba(252, 249, 248, 0.92);
 }
 .chat-shell--immersive .chat-shell-header {
-  background: rgba(252, 249, 248, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(202, 145, 81, 0.72);
+  border-bottom-color: rgba(255, 250, 240, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.chat-shell--immersive .chat-input-bar--immersive {
+  background: linear-gradient(180deg, transparent, rgba(202, 145, 81, 0.92) 28%, rgba(202, 145, 81, 0.98));
+  border-top-color: rgba(255, 250, 240, 0.18);
+}
+.chat-shell--immersive .chat-input-wrap--immersive {
+  background: rgba(255, 250, 240, 0.95);
 }
 .chat-thread {
   scrollbar-color: rgba(166, 155, 143, 0.45) transparent;
@@ -454,12 +481,30 @@ body.aiw-canvas-drawer-open {
   width: 40px;
   height: 40px;
   border-radius: 9999px;
-  background: var(--color-tan-500);
+  background: transparent;
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  color: var(--color-paper);
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
+  color: var(--color-sage-500);
+  filter:
+    drop-shadow(0 0 6px rgba(138, 149, 115, 0.65))
+    drop-shadow(0 0 14px rgba(138, 149, 115, 0.45));
+  animation: aiw-allie-glow 2.6s ease-in-out infinite;
+}
+@keyframes aiw-allie-glow {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 5px rgba(138, 149, 115, 0.55))
+      drop-shadow(0 0 12px rgba(138, 149, 115, 0.4));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 9px rgba(138, 149, 115, 0.85))
+      drop-shadow(0 0 22px rgba(138, 149, 115, 0.55));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-assistant-avatar { animation: none; }
 }
 .chat-assistant-name {
   font-family: var(--font-sans);
@@ -587,35 +632,134 @@ body.aiw-canvas-drawer-open {
   transform: translateX(1px);
 }
 
-/* Quick-reply chips — sage-100 tone, dark inverse on selection */
+/* Quick-reply chips — tactile pill with optional icon bubble + caption.
+   Each chip animates in on a stagger (`--chip-i` set per item by setChips). */
+.chat-chips-row {
+  --chip-stagger: 55ms;
+}
 .chat-chip {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 8px 14px;
+  gap: 0.55rem;
+  padding: 0.5rem 0.9rem 0.5rem 0.55rem;
+  min-height: 2.4rem;
   border-radius: 9999px;
-  border: 1px solid var(--color-border-default);
-  background: var(--color-paper);
+  border: 1px solid rgba(180, 129, 77, 0.32);
+  background:
+    linear-gradient(180deg, var(--color-paper) 0%, #FBF6EB 100%);
   font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   color: var(--color-ink);
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 1px 2px rgba(42, 42, 40, 0.06),
+    0 6px 14px -10px rgba(180, 129, 77, 0.35);
+  transform: translateY(0);
+  transition:
+    transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease;
+  will-change: transform;
+  animation: chat-chip-rise 380ms cubic-bezier(0.4, 0.2, 0.2, 1) both;
+  animation-delay: calc(var(--chip-i, 0) * var(--chip-stagger));
+}
+/* Chips with no leading icon get an even left padding so they read centered. */
+.chat-chip:not(:has(.chat-chip-icon)) {
+  padding-left: 0.95rem;
 }
 .chat-chip:hover {
-  background: var(--color-sage-100);
-  border-color: rgba(100, 111, 83, 0.4);
+  transform: translateY(-2px);
+  border-color: rgba(180, 129, 77, 0.65);
+  background:
+    linear-gradient(180deg, #FFFFFF 0%, #F6E9D2 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 8px 18px -10px rgba(180, 129, 77, 0.55),
+    0 12px 26px -14px rgba(42, 42, 40, 0.2);
+}
+.chat-chip:active {
+  transform: translateY(0) scale(0.96);
+  transition-duration: 90ms;
 }
 .chat-chip:focus-visible {
   outline: 2px solid var(--color-ink);
-  outline-offset: 2px;
+  outline-offset: 3px;
+}
+.chat-chip[data-pressed="true"] {
+  animation: chat-chip-pop 360ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-color: rgba(180, 129, 77, 0.85);
+  background:
+    linear-gradient(180deg, #FFFFFF 0%, #F0DEB8 100%);
 }
 .chat-chip[data-selected="true"] {
-  background: var(--color-ink);
+  background:
+    radial-gradient(120% 200% at 0% 0%, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, #2a2a28 0%, #1b1c1c 100%);
   color: var(--color-paper);
   border-color: var(--color-ink);
+}
+.chat-chip-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 9999px;
+  background:
+    radial-gradient(120% 100% at 30% 20%, #FFFFFF 0%, #F4E4C8 60%, #E2C28E 100%);
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+  box-shadow:
+    inset 0 0 0 1px rgba(180, 129, 77, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.chat-chip:hover .chat-chip-icon {
+  transform: rotate(-7deg) scale(1.08);
+}
+.chat-chip[data-selected="true"] .chat-chip-icon {
+  background:
+    radial-gradient(120% 100% at 30% 20%, #FFFFFF 0%, #E0D2B5 60%, #B4814D 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.chat-chip-label-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.15;
+  text-align: left;
+}
+.chat-chip-caption {
+  margin-top: 1px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(76, 70, 63, 0.62);
+}
+.chat-chip[data-selected="true"] .chat-chip-caption {
+  color: rgba(255, 255, 255, 0.7);
+}
+@keyframes chat-chip-rise {
+  0%   { opacity: 0; transform: translateY(8px) scale(0.94); }
+  100% { opacity: 1; transform: translateY(0)   scale(1); }
+}
+@keyframes chat-chip-pop {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-chip,
+  .chat-chip-icon { animation: none !important; transition: none; }
+  .chat-chip:hover { transform: none; }
 }
 
 /* Pulse for "100 brides looking" urgency badge */
