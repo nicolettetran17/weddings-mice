@@ -10,10 +10,11 @@
    ========================================================== */
 :root {
   --color-sage-100:             #ebeee7;
-  --color-sage-500:             #8a9573;   /* mid-tone sage for glyphs / Allie avatar */
+  --color-sage-500:             #8a9573;
   --color-sage-600:             #646f53;
   --color-tan-100:              #f3e6d3;
   --color-tan-500:              #ca9151;   /* alias of --color-copper for chat surfaces */
+  --color-tan-700:              #9a6e40;   /* deep tan — Allie avatar / brand accents */
   --color-warm-warning-surface: #fdf1dc;
   --color-warm-warning-text:    #c47f12;
   --color-warm-warning-deep:    #b55106;
@@ -470,7 +471,7 @@ body.aiw-canvas-drawer-open {
   max-width: 42rem;
 }
 
-/* Bot avatar — tan/copper circle with diamond mark, per Figma "Avatar-Allie Ai" 174:11152 */
+/* Bot avatar — glowing tan-700 diamond glyph, per Figma "Avatar-Allie Ai" 174:11152 */
 .chat-assistant-meta {
   display: flex;
   align-items: flex-start;
@@ -485,22 +486,22 @@ body.aiw-canvas-drawer-open {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  color: var(--color-sage-500);
+  color: var(--color-tan-700);
   filter:
-    drop-shadow(0 0 6px rgba(138, 149, 115, 0.65))
-    drop-shadow(0 0 14px rgba(138, 149, 115, 0.45));
+    drop-shadow(0 0 6px rgba(154, 110, 64, 0.65))
+    drop-shadow(0 0 14px rgba(154, 110, 64, 0.45));
   animation: aiw-allie-glow 2.6s ease-in-out infinite;
 }
 @keyframes aiw-allie-glow {
   0%, 100% {
     filter:
-      drop-shadow(0 0 5px rgba(138, 149, 115, 0.55))
-      drop-shadow(0 0 12px rgba(138, 149, 115, 0.4));
+      drop-shadow(0 0 5px rgba(154, 110, 64, 0.55))
+      drop-shadow(0 0 12px rgba(154, 110, 64, 0.4));
   }
   50% {
     filter:
-      drop-shadow(0 0 9px rgba(138, 149, 115, 0.85))
-      drop-shadow(0 0 22px rgba(138, 149, 115, 0.55));
+      drop-shadow(0 0 9px rgba(154, 110, 64, 0.85))
+      drop-shadow(0 0 22px rgba(154, 110, 64, 0.55));
   }
 }
 @media (prefers-reduced-motion: reduce) {
