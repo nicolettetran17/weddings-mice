@@ -137,9 +137,12 @@
         radial-gradient(900px 600px at 10% 0%, rgba(255,255,255,0.5), transparent 55%),
         linear-gradient(180deg, var(--color-sage-bg) 0%, var(--color-sage-bg-deep) 100%);
     }
-    /* Horizontal center, vertical anchor at top (crop favors upper frame) */
+    /* Horizontal center, vertical anchor at top (crop favors upper frame).
+       The still photo is now a fallback/poster behind the video montage. */
     #hero-photo {
       display: block;
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       min-height: 100%;
@@ -158,6 +161,32 @@
       0%   { transform: scale(1.04) translate3d(0, 0, 0); }
       50%  { transform: scale(1.10) translate3d(-1%, -0.8%, 0); }
       100% { transform: scale(1.04) translate3d(0, 0, 0); }
+    }
+
+    /* Hero YouTube embed — muted, looping. The iframe oversizes itself so a
+       16:9 video covers any hero aspect ratio without letterbox bars. The
+       still photo behind acts as poster (visible during the brief load flash
+       and any prefers-reduced-motion fallback). */
+    .hero-youtube {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 700ms cubic-bezier(0.4, 0.2, 0.2, 1);
+    }
+    .hero-youtube.is-ready { opacity: 1; }
+    .hero-youtube__frame {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100vw;
+      height: 56.25vw;     /* 16:9 of viewport width */
+      min-height: 100%;
+      min-width: 177.78vh; /* 16:9 of viewport height (cover both axes) */
+      transform: translate(-50%, -50%);
+      border: 0;
+      pointer-events: none;
     }
 
     /* Full-bleed hero — form overlaid on photo (no white card) */
@@ -727,7 +756,7 @@
     </div>
   </header>
 
-  <!-- Hero — full-bleed photo, form overlaid (no white card) -->
+  <!-- Hero — full-bleed YouTube video (muted, looping; still photo as poster + reduced-motion fallback) -->
   <section class="hero-fullbleed border-b border-[color:var(--color-rcd-rule)]">
     <div class="hero-fullbleed__media" aria-hidden="true">
       <img
@@ -739,6 +768,17 @@
         fetchpriority="high"
         decoding="async"
       />
+      <div class="hero-youtube" data-hero-youtube>
+        <iframe
+          class="hero-youtube__frame"
+          src="https://www.youtube.com/embed/S9nPefAj1k4?autoplay=1&mute=1&loop=1&playlist=S9nPefAj1k4&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&showinfo=0"
+          title="Beach wedding montage"
+          frameborder="0"
+          loading="eager"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
     </div>
 
     <div id="hero-sparkles" class="hero-sparkle-layer" aria-hidden="true"></div>
@@ -1472,12 +1512,33 @@
       });
     }
 
+    /**
+     * Hero YouTube background. Fades the iframe in once YouTube has loaded so
+     * the still photo poster covers the brief gray flash. Reduced-motion users
+     * keep the still photo only (the iframe is removed entirely).
+     */
+    function setupHeroYouTube() {
+      const wrap = document.querySelector("[data-hero-youtube]");
+      if (!wrap) return;
+      if (homePrefersReducedMotion()) {
+        wrap.remove();
+        return;
+      }
+      const iframe = wrap.querySelector("iframe");
+      if (!iframe) return;
+      const reveal = () => wrap.classList.add("is-ready");
+      iframe.addEventListener("load", () => setTimeout(reveal, 350), { once: true });
+      // Safety net in case the load event never fires (cached iframe, etc.).
+      setTimeout(reveal, 2200);
+    }
+
     splitHomeHeadline();
     document.body.classList.add("aiw-anim-ready");
     injectHomeSparkles();
     setupHomeParallax();
     setupHomeScrollReveals();
     triggerHeroEntrance();
+    setupHeroYouTube();
   </script>
 </body>
 </html>

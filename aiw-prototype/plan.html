@@ -384,6 +384,84 @@
       color: rgba(255, 250, 240, 0.85);
     }
 
+    /* Collapsible header — entire row is the click target */
+    .journey-collapse-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      width: 100%;
+      margin: 0;
+      padding: 0.15rem 0;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      color: inherit;
+      text-align: left;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .journey-collapse-toggle:focus-visible {
+      outline: 2px solid rgba(255, 250, 240, 0.6);
+      outline-offset: 2px;
+      border-radius: 0.35rem;
+    }
+    .journey-collapse-toggle__right {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+    .journey-collapse-chevron {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.55rem;
+      height: 1.55rem;
+      border-radius: 9999px;
+      background: rgba(255, 250, 240, 0.16);
+      border: 1px solid rgba(255, 250, 240, 0.22);
+      color: #fffaf0;
+      transition: background-color 200ms ease, border-color 200ms ease;
+    }
+    .journey-collapse-toggle:hover .journey-collapse-chevron {
+      background: rgba(255, 250, 240, 0.28);
+      border-color: rgba(255, 250, 240, 0.32);
+    }
+    .journey-collapse-chevron svg {
+      width: 0.85rem;
+      height: 0.85rem;
+      transition: transform 240ms cubic-bezier(0.4, 0.2, 0.2, 1);
+    }
+    .journey-timeline-host[data-journey-collapsed="true"] .journey-collapse-chevron svg {
+      transform: rotate(-180deg);
+    }
+
+    /* Collapsing shell wraps the <ol> so we can animate height + fade */
+    .journey-collapse-shell {
+      overflow: hidden;
+      max-height: 1400px;
+      opacity: 1;
+      margin-top: 0.5rem;
+      transition:
+        max-height 320ms cubic-bezier(0.4, 0.2, 0.2, 1),
+        opacity 220ms ease,
+        margin-top 320ms cubic-bezier(0.4, 0.2, 0.2, 1);
+    }
+    .journey-timeline-host[data-journey-collapsed="true"] .journey-collapse-shell {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+      pointer-events: none;
+    }
+    .journey-timeline-host[data-journey-collapsed="true"] {
+      padding-bottom: 0.5rem;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .journey-collapse-chevron svg,
+      .journey-collapse-shell {
+        transition: none !important;
+      }
+    }
+
     /* Save my date — swipe hold + confetti (hero / urgency Figma 290:392) */
     .aiw-save-hero {
       position: relative;
@@ -936,10 +1014,10 @@
         cardTitle: "Reserve a space",      cardCopy: "Walk the rooms — choose the one that fits your celebration." },
       { underlying: 4, key: "marketplace", shortLabel: "Vendors", label: "Vendor Marketplace",
         cardTitle: "Vendor marketplace",   cardCopy: "Florals, photo, entertainment, food — vetted vendors with live pricing." },
-      { underlying: 5, key: "calculator",  shortLabel: "Price",   label: "Price Calculator",
-        cardTitle: "Price calculator",     cardCopy: "Live, transparent breakdown — your inputs, one all-in number." },
-      { underlying: 6, key: "sign",        shortLabel: "Sign",    label: "Sign",
-        cardTitle: "Sign &amp; save the date", cardCopy: "Refundable $500 hold — concierge takes it from here." },
+      { underlying: 5, key: "proposal",    shortLabel: "Proposal",     label: "Your Proposal",
+        cardTitle: "Your proposal",        cardCopy: "Transparent contract preview — one all-in number, every line shown, sign when it feels right." },
+      { underlying: 6, key: "save",        shortLabel: "Save my date", label: "Save my date",
+        cardTitle: "Save my date",         cardCopy: "Refundable $500 hold for 24 hours while concierge picks up the thread." },
     ];
 
     function activeChaptersList() {
@@ -1391,7 +1469,7 @@
 
       const tail = heroPrefillClause();
       const welcomeBook =
-        `Welcome — I'm <strong>Allie</strong>, your booking concierge at All In Weddings. You're ready to lock it in, so we're skipping the moodboard. Five fast stops — <strong>venue → space → vendors → price → sign</strong> — ending on a refundable $500 hold. <strong>Congratulations.</strong>${tail}`;
+        `Welcome — I'm <strong>Allie</strong>, your booking concierge at All In Weddings. You're ready to lock it in, so we're skipping the moodboard. Five fast stops — <strong>venue → space → vendors → proposal → save my date</strong> — ending on a refundable $500 hold for 24 hours. <strong>Congratulations.</strong>${tail}`;
       const welcomeDreaming =
         `Welcome — I'm <strong>Allie</strong>, your wedding planner at All In Weddings. Still dreaming, and that's exactly where the best weddings start. We'll walk through seven steps together — no commitment until it feels right. <strong>Congratulations on this chapter.</strong>${tail}`;
       const welcomeDefault =
@@ -1496,27 +1574,57 @@
         : "Each card below is a chapter — the line fills in as we go. Tell me how the day <em>feels</em> first; everything else follows.";
 
       const headerHtml = compact
-        ? `<div class="mb-2 flex items-center justify-between gap-3">
-             <p id="journey-timeline-heading" class="journey-compact-eyebrow">${eyebrow}</p>
-             <span id="journey-compact-progress" class="journey-compact-progress text-[11px] font-semibold">Step 1 / ${total}</span>
-           </div>`
+        ? `<button type="button" id="journey-collapse-toggle" class="journey-collapse-toggle"
+              aria-controls="planner-timeline" aria-expanded="${journeyCollapsed ? "false" : "true"}"
+              aria-label="${journeyCollapsed ? "Expand your journey" : "Collapse your journey"}">
+             <span id="journey-timeline-heading" class="journey-compact-eyebrow">${eyebrow}</span>
+             <span class="journey-collapse-toggle__right">
+               <span id="journey-compact-progress" class="journey-compact-progress text-[11px] font-semibold">Step 1 / ${total}</span>
+               <span class="journey-collapse-chevron" aria-hidden="true">
+                 <svg viewBox="0 0 24 24" fill="none">
+                   <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                 </svg>
+               </span>
+             </span>
+           </button>`
         : `<p id="journey-timeline-heading" class="aiw-eyebrow">${eyebrow}</p>
            <h2 class="font-title text-4xl tracking-tight text-ink mt-1 sm:text-5xl">${heroHeadline}</h2>
            <p class="text-ink-soft mt-2 mb-6 max-w-md text-sm sm:text-[15px]">${heroBlurb}</p>`;
 
+      const listHtml = `<ol class="how-timeline" id="planner-timeline" aria-labelledby="journey-timeline-heading">${stepsHtml}</ol>`;
+      const bodyHtml = compact
+        ? `<div class="journey-collapse-shell">${listHtml}</div>`
+        : listHtml;
+
       const block = `
         <div class="px-0 sm:px-0">
           ${headerHtml}
-          <ol class="how-timeline" id="planner-timeline" aria-labelledby="journey-timeline-heading">${stepsHtml}</ol>
+          ${bodyHtml}
         </div>
       `;
 
       if (host) {
+        host.setAttribute("data-journey-collapsed", journeyCollapsed ? "true" : "false");
         host.innerHTML = block;
+        wireJourneyCollapseToggle(host);
       } else {
         setCanvas(block);
       }
       animateTimelineProgress();
+    }
+
+    /** Module-level UI state — persists across re-renders within a session. */
+    let journeyCollapsed = false;
+
+    function wireJourneyCollapseToggle(host) {
+      const btn = host.querySelector("#journey-collapse-toggle");
+      if (!btn) return;
+      btn.addEventListener("click", () => {
+        journeyCollapsed = !journeyCollapsed;
+        host.setAttribute("data-journey-collapsed", journeyCollapsed ? "true" : "false");
+        btn.setAttribute("aria-expanded", journeyCollapsed ? "false" : "true");
+        btn.setAttribute("aria-label", journeyCollapsed ? "Expand your journey" : "Collapse your journey");
+      });
     }
 
     /** Drives the gradient line + active dots on the canvas timeline as we move through chapters. */
@@ -3071,7 +3179,7 @@
       const subline = pkg.expedited
         ? "Each vendor is pre-negotiated and bookable through the calculator. Stack as many as you want — the price updates live."
         : "Florals, lighting, late-night food — toggle as many as you like.";
-      const continueLabel = pkg.expedited ? "Continue → price calculator" : "Continue → see your quote";
+      const continueLabel = pkg.expedited ? "Continue → see your proposal" : "Continue → see your quote";
       setCanvas(`
         <div>
           ${calc}
@@ -3083,12 +3191,15 @@
           ${groupsHtml}
           <div class="mt-2 flex flex-wrap items-center justify-between gap-3 px-1">
             <p class="text-sm text-[color:var(--color-sage-600)]">${count} vendor${count === 1 ? "" : "s"} added</p>
-            <a id="addons-continue" href="https://www.figma.com/design/FAF8ZGTyNyYOXtDSNU4ovB/RCD?node-id=310-2&t=rhLo9yzPKEHweMjG-1" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--default">${continueLabel}</a>
+            <button id="addons-continue" type="button" class="btn btn--primary btn--default">${continueLabel}</button>
           </div>
         </div>
       `);
       document.querySelectorAll("[data-addon]").forEach(el => {
         el.addEventListener("click", () => toggleAddon(el.dataset.addon));
+      });
+      document.getElementById("addons-continue")?.addEventListener("click", () => {
+        void beginQuote();
       });
     }
 
@@ -3106,7 +3217,7 @@
       clearChips();
       textHandler = null;
       const quoteIntro = pkg.expedited
-        ? `<strong>Stop 4 of 5 · Price calculator.</strong> Live, transparent breakdown. Adjust anything; the all-in number recomputes instantly.`
+        ? `<strong>Stop 4 of 5 · Your proposal.</strong> Transparent contract preview — one all-in number, every line shown. Review, then sign at the bottom to unlock the 24-hour hold.`
         : `Here's your <strong>quote</strong>. Transparent contract preview, one all-in number, sign when it feels right.`;
       await bot(quoteIntro);
       renderQuoteCanvas();
@@ -3385,8 +3496,8 @@
       clearChips();
       textHandler = null;
       const saveIntro = pkg.expedited
-        ? `<strong>Stop 5 of 5 · Sign &amp; save the date.</strong> Swipe the 24-hour badge to lock your window — refundable $500 hold, then the confetti flies.`
-        : `Final step — <strong>save my date</strong>. Swipe the 24-hour badge to lock your window — then the confetti flies.`;
+        ? `<strong>Stop 5 of 5 · Save my date.</strong> Swipe the 24-hour badge to lock your window — refundable $500 hold, the clock starts at 24:00:00, concierge reaches out before it runs out.`
+        : `Final step — <strong>save my date</strong>. Swipe the 24-hour badge to lock your window for the next 24 hours — refundable $500 hold, then the confetti flies.`;
       await bot(saveIntro);
       openDepositModal();
     }
