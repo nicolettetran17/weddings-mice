@@ -919,10 +919,8 @@
     </div>
   </main>
 
-  <!-- ===== Save my date modal (Figma 290:392 — content from openDepositModal) ===== -->
-  <div id="deposit-modal" class="hidden fixed inset-0 z-50 bg-ink/70 backdrop-blur-sm flex items-end justify-center sm:items-center sm:p-4">
-    <div id="deposit-modal-content" class="max-h-[min(92dvh,820px)] w-full max-w-[390px] overflow-y-auto rounded-t-3xl border border-border-default bg-paper shadow-2xl sm:rounded-2xl" data-node-id="290:392"></div>
-  </div>
+  <!-- Save my date now renders as the final canvas page via renderSaveDateCanvas() (Figma 290:392) -->
+
 
   <!-- ===== Logic ===== -->
   <script type="module">
@@ -3210,17 +3208,18 @@
       refreshPackage();
     }
 
-    /* ============ STEP 6 · QUOTE / PRICE CALCULATOR ============ */
+    /* ============ STEP 6 · PROPOSAL / QUOTE ============ */
     async function beginQuote() {
       enterChapter(5);
       animateTimelineProgress();
       clearChips();
       textHandler = null;
       const quoteIntro = pkg.expedited
-        ? `<strong>Stop 4 of 5 · Your proposal.</strong> Transparent contract preview — one all-in number, every line shown. Review, then sign at the bottom to unlock the 24-hour hold.`
-        : `Here's your <strong>quote</strong>. Transparent contract preview, one all-in number, sign when it feels right.`;
+        ? `<strong>Stop 4 of 5 · Your proposal.</strong> Transparent contract preview — one all-in number, every line shown. Tap <strong>Save my date</strong> at the bottom to start the 24-hour hold.`
+        : `Here's your <strong>proposal</strong>. Transparent contract preview, one all-in number. Tap <strong>Save my date</strong> when it feels right — the 24-hour hold starts the moment you do.`;
       await bot(quoteIntro);
       renderQuoteCanvas();
+      setCanvasDrawerOpen(true);
     }
 
     function quoteBackToAddons() {
@@ -3428,29 +3427,13 @@
               </ul>
             </details>
 
-            <button type="button" id="quote-save-cta" class="btn btn--invert btn--default btn--block mt-5">Save your plan and date</button>
+            <button type="button" id="quote-save-cta" class="btn btn--invert btn--default btn--block mt-5">Save my date — start your 24-hour hold →</button>
             <button type="button" id="quote-chat-hit" class="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-white/15 py-2.5 text-[12px] text-white/75 transition hover:bg-white/10">
               <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/15 text-xs" aria-hidden="true">✦</span>
               Ask Allie to stress-test this quote
             </button>
-            <p class="mt-4 text-center text-[10px] text-white/45">$500 refundable hold · 14-day peace-of-mind window</p>
+            <p class="mt-4 text-center text-[10px] text-white/45">$500 refundable hold · 24-hour lock window · concierge follow-up</p>
           </div>
-
-          <div class="aiw-section-label mt-8">
-            <p class="aiw-eyebrow">Quote</p>
-          </div>
-
-          <form id="quote-sign-form" class="aiw-card--page mt-4 rounded-[var(--radius-lg)] p-6 space-y-4">
-            <div id="quote-sign-section" class="scroll-mt-4 space-y-4">
-              <label class="aiw-eyebrow block" for="quote-signature">Type your full legal name to sign</label>
-              <input id="quote-signature" class="input" placeholder="e.g. Maya Wallace" autocomplete="name" required />
-              <label class="flex items-start gap-3 text-sm text-ink-soft">
-                <input id="quote-agree" type="checkbox" class="mt-1" required />
-                <span>I agree to the All In Weddings booking terms and authorize a refundable $500 hold to lock these dates, pricing, and inclusions.</span>
-              </label>
-              <button type="submit" class="btn btn--secondary btn--default btn--block">Sign &amp; save my date →</button>
-            </div>
-          </form>
         </div>
       `);
 
@@ -3461,32 +3444,20 @@
       document.getElementById("quote-scroll-breakdown")?.addEventListener("click", () => {
         document.getElementById("quote-breakdown-top")?.scrollIntoView({ behavior: "smooth", block: "start" });
       });
-      document.getElementById("quote-save-cta")?.addEventListener("click", () => {
-        document.getElementById("quote-sign-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
       document.getElementById("quote-chat-hit")?.addEventListener("click", () => {
         document.getElementById("text-input")?.focus();
       });
-
-      const form = document.getElementById("quote-sign-form");
-      if (form) {
-        form.onsubmit = e => {
-          e.preventDefault();
-          const sig = document.getElementById("quote-signature")?.value.trim() || "";
-          const agreed = document.getElementById("quote-agree")?.checked;
-          if (!pkg.spaceId || !pkg.hotelId) {
-            void bot(`I still need a venue and a space before we can save the date — scroll up and pick one.`);
-            return;
-          }
-          if (!sig || !agreed) {
-            void bot(`Type your name and agree to the terms — that's the last beat before we hold the date.`);
-            return;
-          }
-          pkg.bookContract = { name: sig, signed: true, ts: Date.now() };
-          userSay(`Signed: ${sig}.`);
-          void beginSaveTheDate();
-        };
-      }
+      document.getElementById("quote-save-cta")?.addEventListener("click", () => {
+        if (!pkg.spaceId || !pkg.hotelId) {
+          void bot(`I still need a venue and a space before we can save the date — scroll up and pick one.`);
+          return;
+        }
+        // Stamp a contract so restore logic knows the user committed,
+        // then advance straight to the Save My Date canvas page.
+        pkg.bookContract = { signed: true, ts: Date.now() };
+        userSay(`Locking my date — start the 24-hour hold.`);
+        void beginSaveTheDate();
+      });
     }
 
     /* ============ STEP 7 · SAVE MY DATE ============ */
@@ -3496,10 +3467,10 @@
       clearChips();
       textHandler = null;
       const saveIntro = pkg.expedited
-        ? `<strong>Stop 5 of 5 · Save my date.</strong> Swipe the 24-hour badge to lock your window — refundable $500 hold, the clock starts at 24:00:00, concierge reaches out before it runs out.`
-        : `Final step — <strong>save my date</strong>. Swipe the 24-hour badge to lock your window for the next 24 hours — refundable $500 hold, then the confetti flies.`;
+        ? `<strong>Stop 5 of 5 · Save my date.</strong> The 24-hour countdown is live — swipe the badge below to lock your refundable $500 hold. Concierge reaches out before the clock runs out.`
+        : `Final step — <strong>save my date</strong>. Your 24-hour countdown just started — swipe the badge to lock your window with a refundable $500 hold.`;
       await bot(saveIntro);
-      openDepositModal();
+      renderSaveDateCanvas();
     }
 
     function usdHoldEstimateLine(subtotal) {
@@ -3606,7 +3577,6 @@
             await bot(`That weekend just got a simultaneous hold — <strong>${escapeHtml(pkg.date || "your dates")}</strong> is no longer open at ${escapeHtml(byId(SPACES, pkg.spaceId)?.name || "that space")}. Here are the clean pivots that keep your package math honest.`);
             holdCountdownCleanup?.();
             holdCountdownCleanup = null;
-            document.getElementById("deposit-modal")?.classList.add("hidden");
             renderDateConflictCanvas();
             return;
           }
@@ -3658,7 +3628,6 @@
     async function finishHoldCelebration(s, hotel) {
       holdCountdownCleanup?.();
       holdCountdownCleanup = null;
-      document.getElementById("deposit-modal")?.classList.add("hidden");
       pkg.deposited = true;
       saveState({ ...pkg });
       await bot(`<strong>It's official.</strong> Your 24-hour hold is live — concierge will reach out within 24 hours to introduce themselves and schedule your kickoff call.`);
@@ -3694,26 +3663,31 @@
       });
     }
 
-    function openDepositModal() {
+    /**
+     * Renders the Save My Date experience as a full canvas page (the natural
+     * "end of journey" destination), replacing the prior modal overlay. Same
+     * live 24-hour countdown + swipe-to-lock thumb — just lives inline in the
+     * planning board canvas alongside every other step.
+     */
+    function renderSaveDateCanvas() {
       depositSwipeCleanup?.();
       depositSwipeCleanup = null;
       holdCountdownCleanup?.();
       holdCountdownCleanup = null;
-      const wrap = document.getElementById("deposit-modal-content");
-      const modal = document.getElementById("deposit-modal");
       const s = pkg.spaceId ? byId(SPACES, pkg.spaceId) : null;
       const hotel = s ? byId(HOTELS, s.hotelId) : null;
       const p = bookPackage();
-      if (!s || !hotel || !wrap || !modal || !p) return;
+      if (!s || !hotel || !p) return;
+      setCanvasDrawerOpen(true);
       const b = bookPriceBreakdown();
       const estLine = usdHoldEstimateLine(b.subtotal);
       const heroImg = hotelCardImageUrl(hotel.id);
       const couplesDemand = 32 + (hotel.id.length * 3 + (s.id?.length || 0) * 2) % 28;
 
-      wrap.innerHTML = `
-        <div class="deposit-save-flow" data-node-id="290:392">
+      setCanvas(`
+        <div class="deposit-save-flow mx-auto max-w-[420px] overflow-hidden rounded-2xl border border-border-default bg-paper shadow-sm" data-node-id="290:392">
           <div class="flex items-center justify-between border-b border-border-default px-[18px] py-3.5">
-            <button type="button" id="deposit-cancel" class="text-[12px] font-medium text-ink-muted transition hover:text-ink">Not now</button>
+            <button type="button" id="deposit-cancel" class="text-[12px] font-medium text-ink-muted transition hover:text-ink">← Back to proposal</button>
             <img src="../rcd-design-system/assets/logos/aiw-horizontal-gray.png" alt="All In Weddings" class="h-5 w-auto max-w-[140px] object-contain"/>
             <span class="h-7 w-7 shrink-0 rounded-full bg-gradient-to-br from-rose-200 to-rose-400 ring-1 ring-border-default/60" aria-hidden="true"></span>
           </div>
@@ -3825,7 +3799,7 @@
             <button type="button" id="deposit-confirm" class="fixed left-0 top-0 h-px w-px overflow-hidden p-0 opacity-0" aria-label="Confirm hold without swiping">Confirm</button>
           </div>
         </div>
-      `;
+      `);
 
       const deadline = Date.now() + 24 * 60 * 60 * 1000;
       const fullMs = 24 * 60 * 60 * 1000;
@@ -3855,7 +3829,12 @@
       document.getElementById("deposit-cancel")?.addEventListener("click", () => {
         holdCountdownCleanup?.();
         holdCountdownCleanup = null;
-        modal.classList.add("hidden");
+        depositSwipeCleanup?.();
+        depositSwipeCleanup = null;
+        enterChapter(5);
+        animateTimelineProgress();
+        renderQuoteCanvas();
+        void bot(`No rush — proposal's still here. Tap <strong>Save my date</strong> again whenever you're ready.`);
       }, { once: true });
       document.getElementById("deposit-confirm")?.addEventListener("click", () => void confirmDeposit(), { once: true });
 
@@ -3871,8 +3850,6 @@
       requestAnimationFrame(() => {
         attachHoldSwipe();
       });
-
-      modal.classList.remove("hidden");
     }
 
     /** Prototype: conflict when date is Summer 2027, or once per tab session when `?dateTaken=1`. */
@@ -4106,7 +4083,7 @@
           saveState({ ...pkg });
           refreshPackage();
           void bot(`Updated to <strong>${escapeHtml(label)}</strong> — run the $500 hold again when you're ready.`);
-          openDepositModal();
+          renderSaveDateCanvas();
         });
       });
 
@@ -4153,16 +4130,13 @@
       renderTimelineCanvas();
     }
 
-    /* ============ DEPOSIT MODAL (buttons wired inside openDepositModal) ============ */
-    const depositModalEl = document.getElementById("deposit-modal");
-
+    /* ============ HOLD CONFIRMATION (a11y fallback for the swipe-to-lock CTA) ============ */
     async function confirmDeposit() {
       const s = pkg.spaceId ? byId(SPACES, pkg.spaceId) : null;
       const hotel = s ? byId(HOTELS, s.hotelId) : null;
       if (!s || !hotel) {
         holdCountdownCleanup?.();
         holdCountdownCleanup = null;
-        depositModalEl?.classList.add("hidden");
         console.warn("plan: confirmDeposit without valid space/hotel");
         return;
       }
@@ -4170,7 +4144,6 @@
       if (pkg.deposited) {
         holdCountdownCleanup?.();
         holdCountdownCleanup = null;
-        depositModalEl?.classList.add("hidden");
         mountHoldSuccessCanvas(s, hotel);
         return;
       }
@@ -4178,14 +4151,13 @@
       if (shouldSimulateDateConflict()) {
         holdCountdownCleanup?.();
         holdCountdownCleanup = null;
-        depositModalEl?.classList.add("hidden");
         await bot(`That weekend just got a simultaneous hold — <strong>${escapeHtml(pkg.date || "your dates")}</strong> is no longer open at ${escapeHtml(s.name)}. Here are the clean pivots that keep your package math honest.`);
         renderDateConflictCanvas();
         return;
       }
 
       const track = document.getElementById("hold-swipe-track");
-      burstConfetti(track || depositModalEl);
+      burstConfetti(track || canvasEl);
       await new Promise(r => setTimeout(r, 400));
       await finishHoldCelebration(s, hotel);
     }
@@ -4220,7 +4192,7 @@
         } else if (pkg.bookContract?.signed) {
           enterChapter(6);
           renderTimelineCanvas();
-          openDepositModal();
+          renderSaveDateCanvas();
         } else {
           enterChapter(5);
           renderTimelineCanvas();
